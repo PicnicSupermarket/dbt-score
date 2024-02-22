@@ -1,0 +1,24 @@
+repos:
+- repo: https://github.com/pre-commit/pre-commit-hooks
+  rev: v4.5.0
+  hooks:
+    - id: check-added-large-files
+    - id: check-toml
+    - id: end-of-file-fixer
+    - id: trailing-whitespace
+-   repo: https://github.com/charliermarsh/ruff-pre-commit
+    rev: v0.2.2
+    hooks:
+      - id: ruff
+        args: [ --fix ]
+        description: Run linter with fixes enabled
+      - id: ruff-format
+        description: Run formatter
+-   repo: local
+    hooks:
+      - id: tox
+        name: tox
+        description: Run tox
+        entry: pdm run tox
+        language: system
+        pass_filenames: false

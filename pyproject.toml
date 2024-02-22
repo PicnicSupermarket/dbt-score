@@ -1,0 +1,74 @@
+[build-system]
+requires = ["pdm-backend"]
+build-backend = "pdm.backend"
+
+[project]
+name = "dbt-score"
+dynamic = ["version"]
+
+description = "Linter for dbt model metadata."
+authors = [
+    {name = "Kirill Druzhinin", email = "kirill.druzhinin@teampicnic.com"},
+    {name = "Jochem van Dooren", email = "jochemmathijs.vandooren@teampicnic.com"},
+    {name = "Matthieu Caneill ", email = "matthieu.caneill@teampicnic.com"},
+]
+dependencies = [
+    "dbt>=1.0.0.36.4",
+]
+requires-python = ">=3.8"
+readme = "README.md"
+license = {text = "MIT"}
+
+[tool.pdm]
+[tool.pdm.dev-dependencies]
+dev = [
+    "tox-pdm~=0.7.2",
+    "tox~=4.13",
+]
+lint = [
+    "ruff~=0.2.2",
+    "mypy~=1.8",
+]
+test = [
+    "pytest~=8.0",
+    "coverage[toml]~=7.4"
+]
+docs = [
+    "mkdocs-material~=9.5",
+    "mkdocstrings[python]~=0.24.0"
+]
+
+[tool.pdm.version]
+source = "scm"
+
+### Mypy ###
+
+[tool.mypy]
+strict = true
+
+[[tool.mypy.overrides]]
+module = "tests.*"
+disallow_untyped_defs = false
+
+### Ruff ###
+
+[tool.ruff]
+line-length = 88
+
+[tool.ruff.lint.mccabe]
+max-complexity = 10
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+
+### Coverage ###
+
+[tool.coverage.run]
+source = [
+    "tests",
+    "src"
+]
+
+[tool.coverage.report]
+show_missing = true
+fail_under = 80
