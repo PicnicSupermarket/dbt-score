@@ -7,7 +7,7 @@ on:
     paths:
       - "docs/**"
       - "src/**"
-      - ".github/workflows/docs.yml"
+      - .github/workflows/docs.yml
 
 jobs:
   build:
