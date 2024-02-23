@@ -1,0 +1,28 @@
+name: dbt-score
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - "docs/**"
+      - "src/**"
+      - ".github/workflows/docs.yml"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+  steps:
+    - uses: actions/checkout@v4
+    - name: Set up PDM
+      uses: pdm-project/setup-pdm@v4
+      with:
+        python-version: 3.11
+
+    - name: Install dependencies
+      run: |
+        pdm run tox -e docs
+#    - name: Publish docs
+#      run: |
+#        TODO

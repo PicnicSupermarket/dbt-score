@@ -1,0 +1,39 @@
+name: dbt-score
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "*.md"
+      - docs/**
+      - .github/workflows/docs.yml
+      - "src/**"
+
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+  strategy:
+    matrix:
+      python: [ "3.8", "3.9", "3.10", "3.11" ]
+
+  steps:
+    - uses: actions/checkout@v4
+    - name: Set up PDM
+      uses: pdm-project/setup-pdm@v3
+      with:
+        python-version: '3.8'
+
+    - name: Install dependencies
+      run: |
+        pdm sync -d
+    - name: Run Tests
+      run: |
+        pdm run tox -e py,lint
+#    - name: Publish docs
+#       run: |
+#         TODO
+#    - name: Publish package
+#      run: |
+#        pdm publish --no-build
