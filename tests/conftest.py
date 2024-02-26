@@ -1,7 +1,9 @@
 """Test configuration."""
 
+from pytest import ExitCode, Session
 
-def pytest_sessionfinish(session, exitstatus):
+
+def pytest_sessionfinish(session: Session, exitstatus: int):
     """Avoid ci failure if no tests are found."""
-    if exitstatus == 5:
-        session.exitstatus = 0
+    if exitstatus == ExitCode.NO_TESTS_COLLECTED:
+        session.exitstatus = ExitCode.OK

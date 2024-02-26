@@ -47,11 +47,25 @@ strict = true
 [[tool.mypy.overrides]]
 module = "tests.*"
 disallow_untyped_defs = false
+disallow_incomplete_defs = false
+disallow_untyped_calls = false
 
 ### Ruff ###
 
 [tool.ruff]
 line-length = 88
+
+[tool.ruff.lint]
+extend-select = [
+    "B", # flake8-bugbear
+    "C90", # mccabe
+    "I", # isort
+    "PL", # pylint
+    "Q", # flake8-quotes
+    "RUF", # ruff
+    "E", # pycodestyle errors
+    "W", # pycodestyle warnings
+]
 
 [tool.ruff.lint.mccabe]
 max-complexity = 10
