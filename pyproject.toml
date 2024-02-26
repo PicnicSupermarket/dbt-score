@@ -8,12 +8,10 @@ dynamic = ["version"]
 
 description = "Linter for dbt model metadata."
 authors = [
-    {name = "Kirill Druzhinin", email = "kirill.druzhinin@teampicnic.com"},
-    {name = "Jochem van Dooren", email = "jochemmathijs.vandooren@teampicnic.com"},
-    {name = "Matthieu Caneill ", email = "matthieu.caneill@teampicnic.com"},
+    {name = "Picnic Analyst Development Platform", email = "analyst-development-platform@teampicnic.com"}
 ]
 dependencies = [
-    "dbt>=1.0.0.36.4",
+    "dbt-core~=1.7",
 ]
 requires-python = ">=3.8"
 readme = "README.md"

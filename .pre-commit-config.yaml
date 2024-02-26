@@ -19,6 +19,6 @@ repos:
       - id: tox
         name: tox
         description: Run tox
-        entry: pdm run tox
+        entry: pdm run tox -e py
         language: system
         pass_filenames: false
