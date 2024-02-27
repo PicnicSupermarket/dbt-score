@@ -11,9 +11,9 @@ authors = [
     {name = "Picnic Analyst Development Platform", email = "analyst-development-platform@teampicnic.com"}
 ]
 dependencies = [
-    "dbt-core~=1.7",
+    "dbt-core>=1.5",
 ]
-requires-python = ">=3.8"
+requires-python = ">=3.10"
 readme = "README.md"
 license = {text = "MIT"}
 
