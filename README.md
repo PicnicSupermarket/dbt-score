@@ -19,6 +19,9 @@ pre-commit install
 pdm install --group :all
 ```
 
+The pdm command will install all project's dependency groups, including all the dependencies needed for development
+purposes.
+
 ### Lint
 
 `dbt_score` uses:
