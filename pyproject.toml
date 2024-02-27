@@ -10,6 +10,14 @@ description = "Linter for dbt model metadata."
 authors = [
     {name = "Picnic Analyst Development Platform", email = "analyst-development-platform@teampicnic.com"}
 ]
+
+classifiers = [
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Intended Audience :: Developers",
+    "Operating System :: OS Independent",
+]
+
 dependencies = [
     "dbt-core>=1.5",
 ]

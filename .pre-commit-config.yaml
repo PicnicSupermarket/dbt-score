@@ -16,9 +16,15 @@ repos:
         description: Run formatter
 -   repo: local
     hooks:
-      - id: tox
-        name: tox
-        description: Run tox
-        entry: pdm run tox -e py,lint
+      - id: tox_lint
+        name: lint
+        description: Run lint
+        entry: pdm run tox -e lint
+        language: system
+        pass_filenames: false
+      - id: tox_test
+        name: test
+        description: Run test
+        entry: pdm run tox -e py
         language: system
         pass_filenames: false

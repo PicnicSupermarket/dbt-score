@@ -32,7 +32,6 @@ Cheatsheet:
 pdm run ruff check .
 pdm run ruff check --fix
 pdm run mypy .
-pre-commit run --all-files
 pdm run tox -e lint
 ```
 
@@ -62,4 +61,20 @@ Cheatsheet:
 ```shell
 pdm run mkdocs build
 pdm run mkdocs serve
+```
+
+### Pre-commit
+
+Cheatsheet:
+
+Execute hooks manually:
+
+```shell
+pre-commit run --all-files
+```
+
+Create a commit bypassing hooks:
+
+```shell
+git commit --no-verify
 ```
