@@ -26,10 +26,14 @@ jobs:
         uses: pdm-project/setup-pdm@v4
         with:
           python-version: "3.10"
-
       - name: Install dependencies
         run: |
           pdm sync -d
+      - name: Run Prettier
+        uses: creyD/prettier_action@v4.3
+        with:
+          dry: True
+          prettier_options: "--check **/*.{json,yaml,yml,md}"
       - name: Run Tox
         run: |
           pdm run tox -e py,lint

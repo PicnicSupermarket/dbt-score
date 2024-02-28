@@ -19,7 +19,7 @@ repos:
     hooks:
       - id: prettier
         description: Run prettier
-        types_or: [yaml, toml, json, markdown]
+        types_or: [yaml, json, markdown]
   - repo: local
     hooks:
       - id: tox_lint
