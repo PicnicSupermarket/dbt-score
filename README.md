@@ -44,9 +44,9 @@ pdm run tox -e lint
 
 `dbt_score` uses:
 
-- [pytest](https://docs.pytest.org/) as a main test framework.
-- [coverage](https://coverage.readthedocs.io/en/latest/index.html) for test coverage.
-- [tox](https://tox.wiki/en/latest/) for testing against multiple Python versions.
+* [pytest](https://docs.pytest.org/) as a main test framework.
+* [coverage](https://coverage.readthedocs.io/en/latest/index.html) for test coverage.
+* [tox](https://tox.wiki/en/latest/) for testing against multiple Python versions.
 
 Cheatsheet:
 
