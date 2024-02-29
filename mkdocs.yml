@@ -1,0 +1,8 @@
+site_name: dbt-score
+theme:
+  name: material
+plugins:
+  - search
+  - mkdocstrings
+nav:
+  - Home: index.md
