@@ -20,6 +20,7 @@ classifiers = [
 
 dependencies = [
     "dbt-core>=1.5",
+    "click>=7.1.1, <9.0.0",
 ]
 requires-python = ">=3.10"
 readme = "README.md"
@@ -71,6 +72,7 @@ extend-select = [
     "PL", # pylint
     "Q", # flake8-quotes
     "RUF", # ruff
+    "D", # pycodestyle
     "E", # pycodestyle errors
     "W", # pycodestyle warnings
 ]
