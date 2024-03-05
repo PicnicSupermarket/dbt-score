@@ -48,6 +48,9 @@ docs = [
 [tool.pdm.version]
 source = "scm"
 
+[tool.pdm.scripts]
+dbt-score = {call = "dbt_score.cli:cli"}
+
 ### Mypy ###
 
 [tool.mypy]

@@ -15,7 +15,7 @@ BANNER: Final[str] = """\b
 
 
 @click.version_option(message="%(version)s")
-@click.group(help=BANNER)
+@click.group(help=BANNER, invoke_without_command=False)
 def cli() -> None:
     """CLI entrypoint."""
 
