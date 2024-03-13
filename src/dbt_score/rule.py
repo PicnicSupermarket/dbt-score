@@ -1,16 +1,11 @@
 """Rule definitions."""
 
 import functools
-import logging
 from dataclasses import dataclass
 from enum import Enum
 from typing import Any, Callable, Type
 
 from dbt_score.models import Model
-
-logging.basicConfig()
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
 
 
 class Severity(Enum):
@@ -65,16 +60,17 @@ def rule(
     ) -> Type[Rule]:
         @functools.wraps(func)
         def wrapper_rule(*args: Any, **kwargs: Any) -> Any:
-            logger.debug("Executing `%s` with severity: %s.", func.__name__, severity)
             return func(*args, **kwargs)
 
-        # Create the rule class
         if func.__doc__ is None and description is None:
             raise TypeError("Rule must define `description` or `func.__doc__`.")
 
+        # Get description parameter, otherwise use the docstring.
         rule_description = description or (
             func.__doc__.split("\n")[0] if func.__doc__ else None
         )
+
+        # Create the rule class inheriting from Rule.
         rule_class = type(
             func.__name__,
             (Rule,),
