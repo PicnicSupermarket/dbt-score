@@ -1,6 +1,5 @@
 """Rule definitions."""
 
-
 import functools
 import logging
 from dataclasses import dataclass

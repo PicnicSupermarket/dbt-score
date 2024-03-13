@@ -1,4 +1,5 @@
 """Objects related to loading the dbt manifest."""
+
 from collections import defaultdict
 from dataclasses import dataclass, field
 from typing import Any
