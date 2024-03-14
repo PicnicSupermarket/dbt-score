@@ -1,14 +1,13 @@
 """All general rules."""
 
 from dbt_score.models import Model
-from dbt_score.rule import Rule, RuleViolation, Severity, rule
+from dbt_score.rule import Rule, RuleViolation, rule
 
 
 class ComplexRule(Rule):
     """Complex rule."""
 
     description = "Example of a complex rule."
-    severity = Severity.CRITICAL
 
     @classmethod
     def preprocess(cls) -> int:
