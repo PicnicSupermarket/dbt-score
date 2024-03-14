@@ -191,10 +191,6 @@ class ManifestLoader:
         for node_id, node_values in self.raw_nodes.items():
             if node_values.get("resource_type") == "model":
                 model = Model.from_node(node_values, self.tests.get(node_id, []))
-
-                if model.unique_id == "model.dwh.ft_purchase_order_line_article":
-                    print(model)
-
                 self.models.append(model)
 
     def _reindex_tests(self) -> None:
