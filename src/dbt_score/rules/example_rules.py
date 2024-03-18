@@ -24,7 +24,7 @@ class ComplexRule(Rule):
 
 
 @rule()
-def has_owner(self, model: Model) -> RuleViolation | None:
+def has_owner(self: Rule, model: Model) -> RuleViolation | None:
     """A model should have an owner defined."""
     if "owner" not in model.meta:
         return RuleViolation("Define the owner of the model in the meta section.")
@@ -33,7 +33,7 @@ def has_owner(self, model: Model) -> RuleViolation | None:
 
 
 @rule()
-def has_primary_key(self, model: Model) -> RuleViolation | None:
+def has_primary_key(self: Rule, model: Model) -> RuleViolation | None:
     """A model should have a primary key defined, unless it's a view."""
     if not model.config.get("materialized") == "picnic_view":
         has_pk = False
@@ -49,7 +49,7 @@ def has_primary_key(self, model: Model) -> RuleViolation | None:
 
 
 @rule()
-def primary_key_has_uniqueness_test(self, model: Model) -> RuleViolation | None:
+def primary_key_has_uniqueness_test(self: Rule, model: Model) -> RuleViolation | None:
     """Primary key columns should have a uniqueness test defined."""
     columns_with_pk = []
     if model.config.get("materialized") == "view":
@@ -66,7 +66,7 @@ def primary_key_has_uniqueness_test(self, model: Model) -> RuleViolation | None:
 
 
 @rule()
-def columns_have_description(self, model: Model) -> RuleViolation | None:
+def columns_have_description(self: Rule, model: Model) -> RuleViolation | None:
     """All columns of a model should have a description."""
     invalid_column_names = [
         column.name for column in model.columns if not column.description
@@ -81,7 +81,7 @@ def columns_have_description(self, model: Model) -> RuleViolation | None:
 
 
 @rule(description="A model should have at least one test defined.")
-def has_test(self, model: Model) -> RuleViolation | None:
+def has_test(self: Rule, model: Model) -> RuleViolation | None:
     """A model should have at least one model-level or column-level test defined.
 
     This does not include singular tests, which are tests defined in a separate .sql

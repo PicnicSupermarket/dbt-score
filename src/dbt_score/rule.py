@@ -2,7 +2,7 @@
 
 from dataclasses import dataclass
 from enum import Enum
-from typing import Callable, Type
+from typing import Any, Callable, Type
 
 from dbt_score.models import Model
 
@@ -43,7 +43,7 @@ class Rule:
 def rule(
     description: str | None = None,
     severity: Severity = Severity.MEDIUM,
-) -> Callable[[Callable[[Model], RuleViolation | None]], Type[Rule]]:
+) -> Callable[[Callable[[Any, Model], RuleViolation | None]], Type[Rule]]:
     """Rule decorator.
 
     The rule decorator creates a rule class (subclass of Rule) and returns it.
@@ -54,7 +54,7 @@ def rule(
     """
 
     def decorator_rule(
-        func: Callable[[Model], RuleViolation | None],
+        func: Callable[[Any, Model], RuleViolation | None],
     ) -> Type[Rule]:
         """Decorator function."""
         if func.__doc__ is None and description is None:
