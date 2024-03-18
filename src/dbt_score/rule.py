@@ -1,9 +1,8 @@
 """Rule definitions."""
 
-import functools
 from dataclasses import dataclass
 from enum import Enum
-from typing import Any, Callable, Type
+from typing import Callable, Type
 
 from dbt_score.models import Model
 
@@ -36,10 +35,9 @@ class Rule:
         if not hasattr(cls, "description"):
             raise TypeError("Subclass must define class attribute `description`.")
 
-    @classmethod
-    def evaluate(cls, model: Model) -> RuleViolation | None:
+    def evaluate(self, model: Model) -> RuleViolation | None:
         """Evaluates the rule."""
-        raise NotImplementedError("Subclass must implement class method `evaluate`.")
+        raise NotImplementedError("Subclass must implement method `evaluate`.")
 
 
 def rule(
@@ -58,10 +56,7 @@ def rule(
     def decorator_rule(
         func: Callable[[Model], RuleViolation | None],
     ) -> Type[Rule]:
-        @functools.wraps(func)
-        def wrapper_rule(*args: Any, **kwargs: Any) -> Any:
-            return func(*args, **kwargs)
-
+        """Decorator function."""
         if func.__doc__ is None and description is None:
             raise TypeError("Rule must define `description` or `func.__doc__`.")
 
@@ -77,7 +72,7 @@ def rule(
             {
                 "description": rule_description,
                 "severity": severity,
-                "evaluate": wrapper_rule,
+                "evaluate": func,
             },
         )
 

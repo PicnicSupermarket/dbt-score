@@ -29,12 +29,14 @@ class Test:
         type: The type of the test, e.g. `unique`.
         kwargs: The kwargs of the test.
         tags: The list of tags attached to the test.
+        _raw_values: The raw values of the test in the manifest.
     """
 
     name: str
     type: str
     kwargs: dict[str, Any] = field(default_factory=dict)
     tags: list[str] = field(default_factory=list)
+    _raw_values: dict[str, Any] = field(default_factory=dict)
 
     @classmethod
     def from_node(cls, test_node: dict[str, Any]) -> "Test":
@@ -45,6 +47,7 @@ class Test:
             kwargs=test_node["test_metadata"].get("kwargs", {}),
             tags=test_node.get("tags", []),
         )
+        test._raw_values = test_node
         return test
 
 
@@ -55,16 +58,51 @@ class Column:
     Attributes:
         name: The name of the column.
         description: The description of the column.
+        data_type: The data type of the column.
+        meta: The metadata attached to the column.
         constraints: The list of constraints attached to the column.
         tags: The list of tags attached to the column.
         tests: The list of tests attached to the column.
+        _raw_values: The raw values of the column as defined in the node.
+        _raw_test_values: The raw test values of the column as defined in the node.
     """
 
     name: str
     description: str
+    data_type: str | None = None
+    meta: dict[str, Any] = field(default_factory=dict)
     constraints: list[Constraint] = field(default_factory=list)
     tags: list[str] = field(default_factory=list)
     tests: list[Test] = field(default_factory=list)
+    _raw_values: dict[str, Any] = field(default_factory=dict)
+    _raw_test_values: list[dict[str, Any]] = field(default_factory=list)
+
+    @classmethod
+    def from_node_values(
+        cls, values: dict[str, Any], test_values: list[dict[str, Any]]
+    ) -> "Column":
+        """Create a column object from raw values."""
+        column = cls(
+            name=values["name"],
+            description=values["description"],
+            data_type=values["data_type"],
+            meta=values["meta"],
+            constraints=[
+                Constraint(
+                    name=constraint["name"],
+                    type=constraint["type"],
+                    expression=constraint["expression"],
+                )
+                for constraint in values["constraints"]
+            ],
+            tags=values["tags"],
+            tests=[Test.from_node(test) for test in test_values],
+        )
+
+        column._raw_values = values
+        column._raw_test_values = test_values
+
+        return column
 
 
 @dataclass
@@ -74,8 +112,8 @@ class Model:
     Attributes:
         unique_id: The id of the model, e.g. `model.package.model_name`.
         name: The name of the model.
+        relation_name: The relation name of the model, e.g. `db.schema.model_name`.
         description: The full description of the model.
-        patch_path: The yml path of the model, e.g. `package://model_dir/dir/file.yml`.
         original_file_path: The sql path of the model, `e.g. model_dir/dir/file.sql`.
         config: The config of the model.
         meta: The meta of the model.
@@ -83,15 +121,20 @@ class Model:
         package_name: The package name of the model.
         database: The database name of the model.
         schema: The schema name of the model.
+        raw_code: The raw code of the model.
+        alias: The alias of the model.
+        patch_path: The yml path of the model, e.g. `package://model_dir/dir/file.yml`.
         tags: The list of tags attached to the model.
         tests: The list of tests attached to the model.
         depends_on: Dictionary of models/sources/macros that the model depends on.
+        _node_values: The raw values of the model in the manifest.
+        _test_values: The raw test values of the model in the manifest.
     """
 
     unique_id: str
     name: str
+    relation_name: str
     description: str
-    patch_path: str
     original_file_path: str
     config: dict[str, Any]
     meta: dict[str, Any]
@@ -99,9 +142,14 @@ class Model:
     package_name: str
     database: str
     schema: str
+    raw_code: str
+    alias: str | None = None
+    patch_path: str | None = None
     tags: list[str] = field(default_factory=list)
     tests: list[Test] = field(default_factory=list)
     depends_on: dict[str, list[str]] = field(default_factory=dict)
+    _node_values: dict[str, Any] = field(default_factory=dict)
+    _test_values: list[dict[str, Any]] = field(default_factory=list)
 
     def get_column(self, column_name: str) -> Column | None:
         """Get a column by name."""
@@ -113,58 +161,51 @@ class Model:
 
     @staticmethod
     def _get_columns(
-        node_values: dict[str, Any], tests_values: list[dict[str, Any]]
+        node_values: dict[str, Any], test_values: list[dict[str, Any]]
     ) -> list[Column]:
-        """Get columns from a node and it's tests in the manifest."""
-        columns = [
-            Column(
-                name=values.get("name"),
-                description=values.get("description"),
-                constraints=[
-                    Constraint(
-                        name=constraint.get("name"),
-                        type=constraint.get("type"),
-                        expression=constraint.get("expression"),
-                    )
-                    for constraint in values.get("constraints", [])
-                ],
-                tags=values.get("tags", []),
-                tests=[
-                    Test.from_node(test)
-                    for test in tests_values
-                    if test["test_metadata"].get("kwargs", {}).get("column_name")
-                    == values.get("name")
+        """Get columns from a node and its tests in the manifest."""
+        return [
+            Column.from_node_values(
+                values,
+                [
+                    test
+                    for test in test_values
+                    if test["test_metadata"]["kwargs"].get("column_name") == name
                 ],
             )
             for name, values in node_values.get("columns", {}).items()
         ]
-        return columns
 
     @classmethod
     def from_node(
-        cls, node_values: dict[str, Any], tests_values: list[dict[str, Any]]
+        cls, node_values: dict[str, Any], test_values: list[dict[str, Any]]
     ) -> "Model":
         """Create a model object from a node and it's tests in the manifest."""
         model = cls(
             unique_id=node_values["unique_id"],
             name=node_values["name"],
-            description=node_values.get("description", ""),
-            patch_path=node_values["patch_path"],
+            relation_name=node_values["relation_name"],
+            description=node_values["description"],
             original_file_path=node_values["original_file_path"],
-            config=node_values.get("config", {}),
-            meta=node_values.get("meta", {}),
-            columns=cls._get_columns(node_values, tests_values),
+            config=node_values["config"],
+            meta=node_values["meta"],
+            columns=cls._get_columns(node_values, test_values),
             package_name=node_values["package_name"],
             database=node_values["database"],
             schema=node_values["schema"],
-            tags=node_values.get("tags", []),
+            alias=node_values["alias"],
+            patch_path=node_values["patch_path"],
+            tags=node_values["tags"],
             tests=[
                 Test.from_node(test)
-                for test in tests_values
-                if not test["test_metadata"].get("kwargs", {}).get("column_name")
+                for test in test_values
+                if not test["test_metadata"]["kwargs"].get("column_name")
             ],
-            depends_on=node_values.get("depends_on", {}),
+            depends_on=node_values["depends_on"],
         )
+
+        model._node_values = node_values
+        model._test_values = test_values
 
         return model
 
