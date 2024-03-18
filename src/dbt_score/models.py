@@ -193,6 +193,7 @@ class Model:
             package_name=node_values["package_name"],
             database=node_values["database"],
             schema=node_values["schema"],
+            raw_code=node_values["raw_code"],
             alias=node_values["alias"],
             patch_path=node_values["patch_path"],
             tags=node_values["tags"],
