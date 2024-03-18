@@ -222,8 +222,7 @@ class ManifestLoader:
         Args:
             file_path: The file path of the JSON manifest.
         """
-        self.file_path = file_path
-        self.raw_manifest = json.loads(self.file_path.read_text(encoding="utf-8"))
+        self.raw_manifest = json.loads(file_path.read_text(encoding="utf-8"))
         self.raw_nodes = self.raw_manifest.get("nodes", {})
         self.models: list[Model] = []
         self.tests: dict[str, list[dict[str, Any]]] = defaultdict(list)
