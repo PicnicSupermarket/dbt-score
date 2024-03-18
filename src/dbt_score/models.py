@@ -10,14 +10,27 @@ class Constraint:
     """Constraint for a column.
 
     Attributes:
-        name: The name of the constraint.
         type: The type of the constraint, e.g. `foreign_key`.
+        name: The name of the constraint.
         expression: The expression of the constraint, e.g. `schema.other_table`.
+        _raw_values: The raw values of the constraint in the manifest.
     """
 
-    name: str
     type: str
-    expression: str
+    name: str | None = None
+    expression: str | None = None
+    _raw_values: dict[str, Any] = field(default_factory=dict)
+
+    @classmethod
+    def from_raw_values(cls, raw_values: dict[str, Any]) -> "Constraint":
+        """Create a constraint object from a constraint node in the manifest."""
+        constraint = cls(
+            type=raw_values["type"],
+            name=raw_values["name"],
+            expression=raw_values["expression"],
+        )
+        constraint._raw_values = raw_values
+        return constraint
 
 
 @dataclass
@@ -88,11 +101,7 @@ class Column:
             data_type=values["data_type"],
             meta=values["meta"],
             constraints=[
-                Constraint(
-                    name=constraint["name"],
-                    type=constraint["type"],
-                    expression=constraint["expression"],
-                )
+                Constraint.from_raw_values(constraint)
                 for constraint in values["constraints"]
             ],
             tags=values["tags"],
