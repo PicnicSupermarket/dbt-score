@@ -1,7 +1,8 @@
 """Objects related to loading the dbt manifest."""
-
+import json
 from collections import defaultdict
 from dataclasses import dataclass, field
+from pathlib import Path
 from typing import Any
 
 
@@ -28,7 +29,7 @@ class Constraint:
             type=raw_values["type"],
             name=raw_values["name"],
             expression=raw_values["expression"],
-            _raw_values=raw_values
+            _raw_values=raw_values,
         )
 
 
@@ -58,7 +59,7 @@ class Test:
             type=test_node["test_metadata"]["name"],
             kwargs=test_node["test_metadata"].get("kwargs", {}),
             tags=test_node.get("tags", []),
-            _raw_values=test_node
+            _raw_values=test_node,
         )
 
 
@@ -105,7 +106,7 @@ class Column:
             tags=values["tags"],
             tests=[Test.from_node(test) for test in test_values],
             _raw_values=values,
-            _raw_test_values=test_values
+            _raw_test_values=test_values,
         )
 
 
@@ -215,14 +216,15 @@ class Model:
 class ManifestLoader:
     """Load the models and tests from the manifest."""
 
-    def __init__(self, raw_manifest: dict[str, Any]):
+    def __init__(self, file_path: Path):
         """Initialize the ManifestLoader.
 
         Args:
-            raw_manifest: The dictionary representation of the JSON manifest.
+            file_path: The file path of the JSON manifest.
         """
-        self.raw_manifest = raw_manifest
-        self.raw_nodes = raw_manifest.get("nodes", {})
+        self.file_path = file_path
+        self.raw_manifest = json.loads(self.file_path.read_text(encoding="utf-8"))
+        self.raw_nodes = self.raw_manifest.get("nodes", {})
         self.models: list[Model] = []
         self.tests: dict[str, list[dict[str, Any]]] = defaultdict(list)
 
