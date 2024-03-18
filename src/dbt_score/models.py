@@ -136,8 +136,8 @@ class Model:
         tags: The list of tags attached to the model.
         tests: The list of tests attached to the model.
         depends_on: Dictionary of models/sources/macros that the model depends on.
-        _node_values: The raw values of the model in the manifest.
-        _test_values: The raw test values of the model in the manifest.
+        _raw_values: The raw values of the model (node) in the manifest.
+        _raw_test_values: The raw test values of the model (node) in the manifest.
     """
 
     unique_id: str
@@ -157,8 +157,8 @@ class Model:
     tags: list[str] = field(default_factory=list)
     tests: list[Test] = field(default_factory=list)
     depends_on: dict[str, list[str]] = field(default_factory=dict)
-    _node_values: dict[str, Any] = field(default_factory=dict)
-    _test_values: list[dict[str, Any]] = field(default_factory=list)
+    _raw_values: dict[str, Any] = field(default_factory=dict)
+    _raw_test_values: list[dict[str, Any]] = field(default_factory=list)
 
     def get_column(self, column_name: str) -> Column | None:
         """Get a column by name."""
@@ -214,8 +214,8 @@ class Model:
             depends_on=node_values["depends_on"],
         )
 
-        model._node_values = node_values
-        model._test_values = test_values
+        model._raw_values = node_values
+        model._raw_test_values = test_values
 
         return model
 
