@@ -43,7 +43,7 @@ class Rule:
 def rule(
     description: str | None = None,
     severity: Severity = Severity.MEDIUM,
-) -> Callable[[Callable[[Any, Model], RuleViolation | None]], Type[Rule]]:
+) -> Callable[[Callable[[Model], RuleViolation | None]], Type[Rule]]:
     """Rule decorator.
 
     The rule decorator creates a rule class (subclass of Rule) and returns it.
@@ -54,7 +54,7 @@ def rule(
     """
 
     def decorator_rule(
-        func: Callable[[Any, Model], RuleViolation | None],
+        func: Callable[[Model], RuleViolation | None],
     ) -> Type[Rule]:
         """Decorator function."""
         if func.__doc__ is None and description is None:
@@ -65,6 +65,10 @@ def rule(
             func.__doc__.split("\n")[0] if func.__doc__ else None
         )
 
+        def wrapped_func(self: Rule, *args: Any, **kwargs: Any) -> RuleViolation | None:
+            """Wrap func to add `self`."""
+            return func(*args, **kwargs)
+
         # Create the rule class inheriting from Rule.
         rule_class = type(
             func.__name__,
@@ -72,7 +76,7 @@ def rule(
             {
                 "description": rule_description,
                 "severity": severity,
-                "evaluate": func,
+                "evaluate": wrapped_func,
             },
         )
 
