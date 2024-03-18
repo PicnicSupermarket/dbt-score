@@ -24,13 +24,12 @@ class Constraint:
     @classmethod
     def from_raw_values(cls, raw_values: dict[str, Any]) -> "Constraint":
         """Create a constraint object from a constraint node in the manifest."""
-        constraint = cls(
+        return cls(
             type=raw_values["type"],
             name=raw_values["name"],
             expression=raw_values["expression"],
+            _raw_values=raw_values
         )
-        constraint._raw_values = raw_values
-        return constraint
 
 
 @dataclass
@@ -54,14 +53,13 @@ class Test:
     @classmethod
     def from_node(cls, test_node: dict[str, Any]) -> "Test":
         """Create a test object from a test node in the manifest."""
-        test = cls(
+        return cls(
             name=test_node["name"],
             type=test_node["test_metadata"]["name"],
             kwargs=test_node["test_metadata"].get("kwargs", {}),
             tags=test_node.get("tags", []),
+            _raw_values=test_node
         )
-        test._raw_values = test_node
-        return test
 
 
 @dataclass
@@ -95,7 +93,7 @@ class Column:
         cls, values: dict[str, Any], test_values: list[dict[str, Any]]
     ) -> "Column":
         """Create a column object from raw values."""
-        column = cls(
+        return cls(
             name=values["name"],
             description=values["description"],
             data_type=values["data_type"],
@@ -106,12 +104,9 @@ class Column:
             ],
             tags=values["tags"],
             tests=[Test.from_node(test) for test in test_values],
+            _raw_values=values,
+            _raw_test_values=test_values
         )
-
-        column._raw_values = values
-        column._raw_test_values = test_values
-
-        return column
 
 
 @dataclass
@@ -190,7 +185,7 @@ class Model:
         cls, node_values: dict[str, Any], test_values: list[dict[str, Any]]
     ) -> "Model":
         """Create a model object from a node and it's tests in the manifest."""
-        model = cls(
+        return cls(
             unique_id=node_values["unique_id"],
             name=node_values["name"],
             relation_name=node_values["relation_name"],
@@ -212,12 +207,9 @@ class Model:
                 if not test["test_metadata"]["kwargs"].get("column_name")
             ],
             depends_on=node_values["depends_on"],
+            _raw_values=node_values,
+            _raw_test_values=test_values,
         )
-
-        model._raw_values = node_values
-        model._raw_test_values = test_values
-
-        return model
 
 
 class ManifestLoader:
