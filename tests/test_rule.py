@@ -22,7 +22,7 @@ def test_rule_decorator(decorator_rule, class_rule, model1, model2):
     assertions(class_rule_instance)
 
 
-def test_missing_description_rule_class(class_rule):
+def test_missing_description_rule_class():
     """Test missing description in rule class."""
     with pytest.raises(TypeError):
         class BadRule(Rule):
@@ -33,7 +33,7 @@ def test_missing_description_rule_class(class_rule):
                 return None
 
 
-def test_missing_evaluate_rule_class(class_rule, model1):
+def test_missing_evaluate_rule_class(model1):
     """Test missing evaluate implementation in rule class."""
     class BadRule(Rule):
         """Bad example rule."""
