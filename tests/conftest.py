@@ -1,4 +1,7 @@
 """Test configuration."""
+
+import json
+from pathlib import Path
 from typing import Any, Type
 
 from dbt_score.models import Model
@@ -13,84 +16,13 @@ def pytest_sessionfinish(session: Session, exitstatus: int):
 
 
 @fixture
-def raw_manifest() -> dict[str, Any]:
+def raw_manifest() -> Any:
     """Mock the raw manifest."""
-    return {
-        "nodes": {
-            "analysis.package.analysis1": {"resource_type": "analysis"},
-            "model.package.model1": {
-                "resource_type": "model",
-                "unique_id": "model.package.model1",
-                "name": "model1",
-                "relation_name": "database.schema.model1",
-                "description": "Description1.",
-                "original_file_path": "/path/to/model1.sql",
-                "config": {},
-                "meta": {},
-                "columns": {
-                    "a": {
-                        "name": "column_a",
-                        "description": "Column A.",
-                        "data_type": "string",
-                        "meta": {},
-                        "constraints": [],
-                        "tags": [],
-                    }
-                },
-                "package_name": "package",
-                "database": "db",
-                "schema": "schema",
-                "raw_code": "SELECT x FROM y",
-                "alias": "model1_alias",
-                "patch_path": "/path/to/model1.yml",
-                "tags": [],
-                "depends_on": {},
-            },
-            "model.package.model2": {
-                "resource_type": "model",
-                "unique_id": "model.package.model2",
-                "name": "model2",
-                "relation_name": "database.schema.model2",
-                "description": "Description2.",
-                "original_file_path": "/path/to/model2.sql",
-                "config": {},
-                "meta": {},
-                "columns": {
-                    "a": {
-                        "name": "column_a",
-                        "description": "Column A.",
-                        "data_type": "string",
-                        "meta": {},
-                        "constraints": [],
-                        "tags": [],
-                    }
-                },
-                "package_name": "package",
-                "database": "db",
-                "schema": "schema",
-                "raw_code": "SELECT x FROM y",
-                "alias": "model2_alias",
-                "patch_path": "/path/to/model2.yml",
-                "tags": [],
-                "depends_on": {},
-            },
-            "test.package.test1": {
-                "resource_type": "test",
-                "attached_node": "model.package.model1",
-                "name": "test1",
-                "test_metadata": {"name": "type", "kwargs": {"column_name": "a"}},
-                "tags": [],
-            },
-            "test.package.test2": {
-                "resource_type": "test",
-                "attached_node": "model.package.model1",
-                "name": "test2",
-                "test_metadata": {"name": "type", "kwargs": {}},
-                "tags": [],
-            },
-            "test.package.test3": {"resource_type": "test"},
-        }
-    }
+    return json.loads(
+        Path(__file__)
+        .parent.joinpath("resources/manifest.json")
+        .read_text(encoding="utf-8")
+    )
 
 
 @fixture
@@ -121,24 +53,6 @@ def decorator_rule() -> Type[Rule]:
 
 @fixture
 def class_rule() -> Type[Rule]:
-    """An example rule created with a class."""
-
-    class ExampleRule(Rule):
-        """Example rule."""
-
-        description = "Description of the rule."
-
-        def evaluate(self, model: Model) -> RuleViolation | None:
-            """Evaluate model."""
-            if model.name == "model1":
-                return RuleViolation(message="Model1 is a violation.")
-            return None
-
-    return ExampleRule
-
-
-@fixture
-def invalid_class_rule() -> Type[Rule]:
     """An example rule created with a class."""
 
     class ExampleRule(Rule):
