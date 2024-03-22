@@ -33,7 +33,7 @@ class Rule:
         """Initializes the subclass."""
         super().__init_subclass__(**kwargs)
         if not hasattr(cls, "description"):
-            raise TypeError("Subclass must define class attribute `description`.")
+            raise AttributeError("Subclass must define class attribute `description`.")
 
     def evaluate(self, model: Model) -> RuleViolation | None:
         """Evaluates the rule."""
@@ -58,7 +58,7 @@ def rule(
     ) -> Type[Rule]:
         """Decorator function."""
         if func.__doc__ is None and description is None:
-            raise TypeError("Rule must define `description` or `func.__doc__`.")
+            raise AttributeError("Rule must define `description` or `func.__doc__`.")
 
         # Get description parameter, otherwise use the docstring.
         rule_description = description or (

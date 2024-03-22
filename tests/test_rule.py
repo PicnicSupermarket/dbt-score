@@ -2,10 +2,10 @@
 
 import pytest
 from dbt_score.models import Model
-from dbt_score.rule import Rule, RuleViolation, Severity
+from dbt_score.rule import Rule, RuleViolation, Severity, rule
 
 
-def test_rule_decorator(decorator_rule, class_rule, model1, model2):
+def test_rule_decorator_and_class(decorator_rule, class_rule, model1, model2):
     """Test rule creation with the rule decorator and class."""
     decorator_rule_instance = decorator_rule()
     class_rule_instance = class_rule()
@@ -23,9 +23,18 @@ def test_rule_decorator(decorator_rule, class_rule, model1, model2):
     assertions(class_rule_instance)
 
 
+def test_missing_description_rule_decorator():
+    """Test missing description in rule decorator."""
+    with pytest.raises(AttributeError):
+
+        @rule()
+        def example_rule(model: Model) -> RuleViolation | None:
+            return None
+
+
 def test_missing_description_rule_class():
     """Test missing description in rule class."""
-    with pytest.raises(TypeError):
+    with pytest.raises(AttributeError):
 
         class BadRule(Rule):
             """Bad example rule."""
