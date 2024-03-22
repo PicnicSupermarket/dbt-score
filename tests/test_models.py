@@ -10,7 +10,7 @@ from dbt_score.models import ManifestLoader
 def test_manifest(read_text, raw_manifest):
     """Test loading a manifest."""
     with patch("dbt_score.models.json.loads", return_value=raw_manifest):
-        loader = ManifestLoader(Path("manifest.json"))
+        loader = ManifestLoader(Path("some.json"))
         assert len(loader.models) == len(
             [
                 node
