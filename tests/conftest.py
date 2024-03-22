@@ -19,8 +19,8 @@ def pytest_sessionfinish(session: Session, exitstatus: int):
 def raw_manifest() -> Any:
     """Mock the raw manifest."""
     return json.loads(
-        Path(__file__)
-        .parent / "resources" / "manifest.json"
+        (Path(__file__)
+         .parent / "resources" / "manifest.json")
         .read_text(encoding="utf-8")
     )
 
