@@ -2,7 +2,7 @@
 
 import pytest
 from dbt_score.exceptions import DuplicatedRuleException
-from dbt_score.registry import RuleRegistry
+from dbt_score.rule_registry import RuleRegistry
 
 
 def test_rule_registry_discovery():
