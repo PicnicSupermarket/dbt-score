@@ -5,9 +5,10 @@ This module implements rule discovery.
 
 import importlib
 import pkgutil
-from typing import Callable, Iterator
+from typing import Iterator, Type
 
 from dbt_score.exceptions import DuplicatedRuleException
+from dbt_score.rule import Rule
 
 THIRD_PARTY_RULES_NAMESPACE = "dbt_score_rules"
 
@@ -17,10 +18,10 @@ class RuleRegistry:
 
     def __init__(self) -> None:
         """Instantiate a rule registry."""
-        self._rules: dict[str, Callable[[], None]] = {}
+        self._rules: dict[str, Type[Rule]] = {}
 
     @property
-    def rules(self) -> dict[str, Callable[[], None]]:
+    def rules(self) -> dict[str, Type[Rule]]:
         """Get all rules."""
         return self._rules
 
@@ -45,7 +46,7 @@ class RuleRegistry:
             module = importlib.import_module(module_name)
             for obj_name in dir(module):
                 obj = module.__dict__[obj_name]
-                if getattr(obj, "_is_rule", False):
+                if type(obj) is type and issubclass(obj, Rule):
                     if obj_name in self.rules:
                         raise DuplicatedRuleException(obj_name)
                     self._rules[obj_name] = obj

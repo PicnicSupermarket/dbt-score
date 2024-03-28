@@ -1,4 +1,5 @@
 """All generic rules."""
+
 from dbt_score.models import Model
 from dbt_score.rule import RuleViolation, rule
 
