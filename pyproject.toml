@@ -86,6 +86,9 @@ max-complexity = 10
 [tool.ruff.lint.pydocstyle]
 convention = "google"
 
+[tool.ruff.lint.pylint]
+max-args = 6
+
 ### Coverage ###
 
 [tool.coverage.run]
