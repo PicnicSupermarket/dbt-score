@@ -55,7 +55,7 @@ def rule(__func: RuleEvaluationType) -> Type[Rule]:
 @overload
 def rule(
     *,
-    description: str | RuleEvaluationType | None = None,
+    description: str | None = None,
     severity: Severity = Severity.MEDIUM,
 ) -> Callable[[RuleEvaluationType], Type[Rule]]:
     ...
@@ -64,7 +64,7 @@ def rule(
 def rule(
     __func: RuleEvaluationType | None = None,
     *,
-    description: str | RuleEvaluationType | None = None,
+    description: str | None = None,
     severity: Severity = Severity.MEDIUM,
 ) -> Type[Rule] | Callable[[RuleEvaluationType], Type[Rule]]:
     """Rule decorator.
