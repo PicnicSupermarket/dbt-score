@@ -5,9 +5,18 @@ from dbt_score.models import Model
 from dbt_score.rule import Rule, RuleViolation, Severity, rule
 
 
-def test_rule_decorator_and_class(decorator_rule, class_rule, model1, model2):
+def test_rule_decorator_and_class(
+    decorator_rule,
+    decorator_rule_no_parens,
+    decorator_rule_args,
+    class_rule,
+    model1,
+    model2,
+):
     """Test rule creation with the rule decorator and class."""
     decorator_rule_instance = decorator_rule()
+    decorator_rule_no_parens_instance = decorator_rule_no_parens()
+    decorator_rule_args_instance = decorator_rule_args()
     class_rule_instance = class_rule()
 
     def assertions(rule_instance):
@@ -20,6 +29,8 @@ def test_rule_decorator_and_class(decorator_rule, class_rule, model1, model2):
         assert rule_instance.evaluate(model2) is None
 
     assertions(decorator_rule_instance)
+    assertions(decorator_rule_no_parens_instance)
+    assertions(decorator_rule_args_instance)
     assertions(class_rule_instance)
 
 
