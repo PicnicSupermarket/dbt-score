@@ -2,7 +2,7 @@
 
 from dataclasses import dataclass
 from enum import Enum
-from typing import Any, Callable, Type
+from typing import Any, Callable, Type, TypeAlias, overload
 
 from dbt_score.models import Model
 
@@ -23,6 +23,9 @@ class RuleViolation:
     message: str | None = None
 
 
+RuleEvaluationType: TypeAlias = Callable[[Model], RuleViolation | None]
+
+
 class Rule:
     """The rule base class."""
 
@@ -40,21 +43,46 @@ class Rule:
         raise NotImplementedError("Subclass must implement method `evaluate`.")
 
 
+# Use @overload to have proper typing for both @rule and @rule(...).
+# https://mypy.readthedocs.io/en/stable/generics.html#decorator-factories
+
+
+@overload
+def rule(__func: RuleEvaluationType) -> Type[Rule]:
+    ...
+
+
+@overload
 def rule(
-    description: str | None = None,
+    *,
+    description: str | RuleEvaluationType | None = None,
     severity: Severity = Severity.MEDIUM,
-) -> Callable[[Callable[[Model], RuleViolation | None]], Type[Rule]]:
+) -> Callable[[RuleEvaluationType], Type[Rule]]:
+    ...
+
+
+def rule(
+    __func: RuleEvaluationType | None = None,
+    *,
+    description: str | RuleEvaluationType | None = None,
+    severity: Severity = Severity.MEDIUM,
+) -> Type[Rule] | Callable[[RuleEvaluationType], Type[Rule]]:
     """Rule decorator.
 
     The rule decorator creates a rule class (subclass of Rule) and returns it.
 
+    Using arguments or not are both supported:
+    - ``@rule``
+    - ``@rule(description="...")``
+
     Args:
+        __func: The rule evaluation function being decorated.
         description: The description of the rule.
         severity: The severity of the rule.
     """
 
     def decorator_rule(
-        func: Callable[[Model], RuleViolation | None],
+        func: RuleEvaluationType,
     ) -> Type[Rule]:
         """Decorator function."""
         if func.__doc__ is None and description is None:
@@ -82,4 +110,9 @@ def rule(
 
         return rule_class
 
-    return decorator_rule
+    if __func is not None:
+        # The syntax @rule is used
+        return decorator_rule(__func)
+    else:
+        # The syntax @rule(...) is used
+        return decorator_rule

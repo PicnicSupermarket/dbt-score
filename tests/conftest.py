@@ -52,6 +52,33 @@ def decorator_rule() -> Type[Rule]:
 
 
 @fixture
+def decorator_rule_no_parens() -> Type[Rule]:
+    """An example rule created with the rule decorator without parentheses."""
+
+    @rule
+    def example_rule(model: Model) -> RuleViolation | None:
+        """Description of the rule."""
+        if model.name == "model1":
+            return RuleViolation(message="Model1 is a violation.")
+        return None
+
+    return example_rule
+
+
+@fixture
+def decorator_rule_args() -> Type[Rule]:
+    """An example rule created with the rule decorator with arguments."""
+
+    @rule(description="Description of the rule.")
+    def example_rule(model: Model) -> RuleViolation | None:
+        if model.name == "model1":
+            return RuleViolation(message="Model1 is a violation.")
+        return None
+
+    return example_rule
+
+
+@fixture
 def class_rule() -> Type[Rule]:
     """An example rule created with a class."""
 
