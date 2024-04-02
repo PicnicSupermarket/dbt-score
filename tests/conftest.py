@@ -6,7 +6,7 @@ from typing import Any, Type
 
 from dbt_score.models import Model
 from dbt_score.rule import Rule, RuleViolation, rule
-from pytest import ExitCode, Session, fixture
+from pytest import fixture
 
 
 @fixture
