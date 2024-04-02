@@ -9,12 +9,6 @@ from dbt_score.rule import Rule, RuleViolation, rule
 from pytest import ExitCode, Session, fixture
 
 
-def pytest_sessionfinish(session: Session, exitstatus: int):
-    """Avoid ci failure if no tests are found."""
-    if exitstatus == ExitCode.NO_TESTS_COLLECTED:
-        session.exitstatus = ExitCode.OK
-
-
 @fixture
 def raw_manifest() -> Any:
     """Mock the raw manifest."""
