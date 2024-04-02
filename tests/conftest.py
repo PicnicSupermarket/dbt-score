@@ -6,13 +6,7 @@ from typing import Any, Type
 
 from dbt_score.models import Model
 from dbt_score.rule import Rule, RuleViolation, rule
-from pytest import ExitCode, Session, fixture
-
-
-def pytest_sessionfinish(session: Session, exitstatus: int):
-    """Avoid ci failure if no tests are found."""
-    if exitstatus == ExitCode.NO_TESTS_COLLECTED:
-        session.exitstatus = ExitCode.OK
+from pytest import fixture
 
 
 @fixture
