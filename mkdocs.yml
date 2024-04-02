@@ -6,3 +6,11 @@ plugins:
   - mkdocstrings
 nav:
   - Home: index.md
+  - Reference:
+      - reference/cli.md
+      - reference/exceptions.md
+      - reference/models.md
+      - reference/rule.md
+      - Rules:
+          - reference/rules/generic.md
+      - reference/rule_registry.md
