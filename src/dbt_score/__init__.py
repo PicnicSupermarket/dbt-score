@@ -1,4 +1,5 @@
 """Init dbt_score package."""
+
 import os
 from pathlib import Path
 

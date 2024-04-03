@@ -1,4 +1,5 @@
 """CLI interface."""
+
 import logging
 import pathlib
 from typing import Final
