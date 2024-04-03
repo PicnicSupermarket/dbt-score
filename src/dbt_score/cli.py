@@ -1,9 +1,15 @@
 """CLI interface."""
-
+import logging
+import pathlib
 from typing import Final
 
 import click
 from dbt.cli.options import MultiOption
+
+from dbt_score import MANIFEST_PATH
+from dbt_score.utils import dbt_parse
+
+logger = logging.getLogger(__name__)
 
 BANNER: Final[str] = r"""
           __ __     __
@@ -29,6 +35,15 @@ def cli() -> None:
     type=tuple,
     multiple=True,
 )
-def lint(select: tuple[str]) -> None:
+@click.option(
+    "--manifest",
+    "-m",
+    help="Manifest filepath.",
+    type=click.Path(exists=True),
+)
+def lint(select: tuple[str], manifest: pathlib.Path) -> None:
     """Lint dbt models metadata."""
-    raise NotImplementedError()
+    manifest_path = MANIFEST_PATH if not manifest else manifest
+    if not manifest_path.exists():
+        logger.info("Executing dbt parse.")
+        dbt_parse()
