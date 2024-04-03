@@ -18,7 +18,7 @@ def set_logging() -> None:
         handlers=handlers,
         level=logging.INFO,
     )
-    for handler in logging.getLogger("").handlers:
+    for handler in logging.getLogger().handlers:
         handler.setLevel(logging.INFO)
 
 

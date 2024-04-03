@@ -1,4 +1,4 @@
-"""Utilities."""
+"""dbt utilities."""
 
 from dbt.cli.main import dbtRunner, dbtRunnerResult
 
@@ -18,6 +18,6 @@ def dbt_parse() -> dbtRunnerResult:
     result: dbtRunnerResult = dbtRunner().invoke(["parse"])
 
     if not result.success:
-        raise DbtParseException("Parsing dbt project failed.")
+        raise DbtParseException("dbt parse failed.") from result.exception
 
     return result

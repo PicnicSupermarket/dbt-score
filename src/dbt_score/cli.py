@@ -8,7 +8,7 @@ import click
 from dbt.cli.options import MultiOption
 
 from dbt_score import MANIFEST_PATH
-from dbt_score.utils import dbt_parse
+from dbt_score.dbt_utils import dbt_parse
 
 logger = logging.getLogger(__name__)
 
