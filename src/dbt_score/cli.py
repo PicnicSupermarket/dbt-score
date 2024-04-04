@@ -1,14 +1,14 @@
 """CLI interface."""
 
 import logging
-import pathlib
+from pathlib import Path
 from typing import Final
 
 import click
 from dbt.cli.options import MultiOption
 
-from dbt_score import MANIFEST_PATH
-from dbt_score.dbt_utils import dbt_parse
+from dbt_score.dbt_utils import get_manifest_path
+from dbt_score.lint import lint_manifest
 
 logger = logging.getLogger(__name__)
 
@@ -42,9 +42,7 @@ def cli() -> None:
     help="Manifest filepath.",
     type=click.Path(exists=True),
 )
-def lint(select: tuple[str], manifest: pathlib.Path) -> None:
+def lint(select: tuple[str], manifest: Path) -> None:
     """Lint dbt models metadata."""
-    manifest_path = MANIFEST_PATH if not manifest else manifest
-    if not manifest_path.exists():
-        logger.info("Executing dbt parse.")
-        dbt_parse()
+    manifest_path = get_manifest_path() if not manifest else manifest
+    lint_manifest(manifest_path)
