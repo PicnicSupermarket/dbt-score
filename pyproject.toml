@@ -89,7 +89,7 @@ convention = "google"
 [tool.ruff.lint.pylint]
 max-args = 6
 
-[tool.ruff.per-file-ignores]
+[tool.ruff.lint.per-file-ignores]
 "tests/**/*.py" = [
     "PLR2004",
 ]

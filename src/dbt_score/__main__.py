@@ -13,11 +13,7 @@ def set_logging() -> None:
     """Set logging configuration."""
     log_format = "%(asctime)s %(levelname)s [%(name)s] %(message)s"
     handler: logging.Handler = logging.StreamHandler(sys.stdout)
-    logging.basicConfig(
-        format=log_format,
-        handlers=[handler],
-        level=logging.INFO,
-    )
+    logging.basicConfig(format=log_format, handlers=[handler])
     for handler in logging.getLogger().handlers:
         handler.setLevel(logging.WARNING)
 
