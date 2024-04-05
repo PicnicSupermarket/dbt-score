@@ -1,6 +1,5 @@
 """CLI interface."""
 
-import logging
 from pathlib import Path
 from typing import Final
 
@@ -10,8 +9,6 @@ from dbt.cli.options import MultiOption
 
 from dbt_score.dbt_utils import dbt_parse, get_manifest_path
 from dbt_score.lint import lint_dbt_project
-
-logger = logging.getLogger(__name__)
 
 BANNER: Final[str] = r"""
           __ __     __
