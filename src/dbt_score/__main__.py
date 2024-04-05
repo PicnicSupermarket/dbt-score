@@ -19,7 +19,7 @@ def set_logging() -> None:
         level=logging.INFO,
     )
     for handler in logging.getLogger().handlers:
-        handler.setLevel(logging.INFO)
+        handler.setLevel(logging.WARNING)
 
 
 if __name__ == "__main__":

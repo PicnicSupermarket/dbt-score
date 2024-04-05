@@ -1,32 +1,36 @@
 """Test the CLI."""
 
-from pathlib import Path
-from unittest.mock import patch
-
+import pytest
 from click.testing import CliRunner
 from dbt_score.cli import lint
 
 
-@patch("dbt_score.lint.dbt_parse")
-def test_parse_not_called(dbt_parse, manifest_path):
-    """Test to ensure dbt parse is not called when the manifest exists."""
+def test_invalid_options():
+    """Test invalid cli options."""
     runner = CliRunner()
-    with patch("dbt_score.cli.get_manifest_path", return_value=manifest_path):
-        result1 = runner.invoke(lint)
-    result2 = runner.invoke(lint, ["--manifest", manifest_path])
-
-    assert result1.exit_code == 0
-    assert result2.exit_code == 0
-    dbt_parse.assert_not_called()
+    result = runner.invoke(
+        lint, ["--manifest", "fake_manifest.json", "--run-dbt-parse"]
+    )
+    assert result.exit_code == 2  # pylint: disable=PLR2004
 
 
-@patch("dbt_score.lint.dbt_parse")
-def test_parse_called(dbt_parse):
-    """Test to ensure dbt parse is called when the manifest does not exist."""
+def test_lint_existing_manifest(manifest_path):
+    """Test lint with an existing manifest."""
     runner = CliRunner()
-    with patch(
-        "dbt_score.cli.get_manifest_path", return_value=Path("fake_manifest.json")
-    ):
-        runner.invoke(lint)
+    result = runner.invoke(lint, ["--manifest", manifest_path])
+    assert result.exit_code == 0
 
-    dbt_parse.assert_called_once()
+
+def test_lint_non_existing_manifest():
+    """Test lint with a non-existing manifest."""
+    runner = CliRunner()
+
+    # Provide manifest in command line.
+    with pytest.raises(FileNotFoundError):
+        runner.invoke(
+            lint, ["--manifest", "fake_manifest.json"], catch_exceptions=False
+        )
+
+    # Use default manifest path..
+    with pytest.raises(FileNotFoundError):
+        runner.invoke(lint, catch_exceptions=False)
