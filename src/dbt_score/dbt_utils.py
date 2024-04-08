@@ -15,10 +15,10 @@ def dbt_parse() -> dbtRunnerResult:
     """Parse a dbt project.
 
     Returns:
-        dbtRunnerResult: dbt parse result
+        The dbt parse run result.
 
     Raises:
-        DbtParseException: dbt parse failed
+        DbtParseException: dbt parse failed.
     """
     dbt_logger_stdout = logging.getLogger("stdout_log")
     dbt_logger_stdout.disabled = True
