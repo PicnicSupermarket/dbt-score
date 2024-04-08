@@ -21,14 +21,11 @@ def dbt_parse() -> dbtRunnerResult:
         DbtParseException: dbt parse failed
     """
     dbt_logger_stdout = logging.getLogger("stdout_log")
-    dbt_logger_file = logging.getLogger("file_log")
     dbt_logger_stdout.disabled = True
-    dbt_logger_file.disabled = True
 
     result: dbtRunnerResult = dbtRunner().invoke(["parse"])
 
     dbt_logger_stdout.disabled = False
-    dbt_logger_file.disabled = False
 
     if not result.success:
         raise DbtParseException("dbt parse failed.") from result.exception
@@ -36,7 +33,7 @@ def dbt_parse() -> dbtRunnerResult:
     return result
 
 
-def get_manifest_path() -> Path:
+def get_default_manifest_path() -> Path:
     """Get the manifest path."""
     return (
         Path().cwd()

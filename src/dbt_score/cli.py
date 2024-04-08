@@ -7,7 +7,7 @@ import click
 from click.core import ParameterSource
 from dbt.cli.options import MultiOption
 
-from dbt_score.dbt_utils import dbt_parse, get_manifest_path
+from dbt_score.dbt_utils import dbt_parse, get_default_manifest_path
 from dbt_score.lint import lint_dbt_project
 
 BANNER: Final[str] = r"""
@@ -39,7 +39,7 @@ def cli() -> None:
     "-m",
     help="Manifest filepath.",
     type=click.Path(path_type=Path),
-    default=get_manifest_path(),
+    default=get_default_manifest_path(),
 )
 @click.option(
     "--run-dbt-parse",
