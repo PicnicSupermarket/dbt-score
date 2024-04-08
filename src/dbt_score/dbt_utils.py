@@ -17,7 +17,7 @@ def dbt_parse() -> dbtRunnerResult:
     Returns:
         dbtRunnerResult: dbt parse result
 
-    raises:
+    Raises:
         DbtParseException: dbt parse failed
     """
     dbt_logger_stdout = logging.getLogger("stdout_log")
