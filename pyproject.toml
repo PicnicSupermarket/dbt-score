@@ -91,7 +91,7 @@ max-args = 6
 
 [tool.ruff.lint.per-file-ignores]
 "tests/**/*.py" = [
-    "PLR2004",
+    "PLR2004",  # magic value comparisons
 ]
 
 ### Coverage ###
