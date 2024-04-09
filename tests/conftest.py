@@ -10,13 +10,15 @@ from pytest import fixture
 
 
 @fixture
-def raw_manifest() -> Any:
+def manifest_path() -> Path:
+    """Mock the manifest path."""
+    return Path(__file__).parent / "resources" / "manifest.json"
+
+
+@fixture
+def raw_manifest(manifest_path) -> Any:
     """Mock the raw manifest."""
-    return json.loads(
-        (Path(__file__).parent / "resources" / "manifest.json").read_text(
-            encoding="utf-8"
-        )
-    )
+    return json.loads(manifest_path.read_text(encoding="utf-8"))
 
 
 @fixture

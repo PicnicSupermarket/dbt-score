@@ -4,11 +4,14 @@ This module implements rule discovery.
 """
 
 import importlib
+import logging
 import pkgutil
 from typing import Iterator, Type
 
 from dbt_score.exceptions import DuplicatedRuleException
 from dbt_score.rule import Rule
+
+logger = logging.getLogger(__name__)
 
 THIRD_PARTY_RULES_NAMESPACE = "dbt_score_rules"
 
@@ -33,7 +36,7 @@ class RuleRegistry:
             return
 
         def onerror(module_name: str) -> None:
-            print(f"Failed to import {module_name}.")
+            logger.warning(f"Failed to import {module_name}.")
 
         for package in pkgutil.walk_packages(namespace.__path__, onerror=onerror):
             yield f"{namespace_name}.{package.name}"
