@@ -50,9 +50,12 @@ class RuleRegistry:
             for obj_name in dir(module):
                 obj = module.__dict__[obj_name]
                 if type(obj) is type and issubclass(obj, Rule):
-                    if obj_name in self.rules:
-                        raise DuplicatedRuleException(obj_name)
-                    self._rules[obj_name] = obj
+                    self._add_rule(obj_name, obj)
+
+    def _add_rule(self, name: str, rule: Type[Rule]) -> None:
+        if name in self.rules:
+            raise DuplicatedRuleException(name)
+        self._rules[name] = rule
 
     def load_all(self) -> None:
         """Load all rules, core and third-party."""

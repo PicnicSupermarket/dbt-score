@@ -42,6 +42,15 @@ class Rule:
         """Evaluates the rule."""
         raise NotImplementedError("Subclass must implement method `evaluate`.")
 
+    @classmethod
+    def source(cls) -> str:
+        """Return the source of the rule, i.e. a fully qualified name."""
+        return f"{cls.__module__}.{cls.__name__}"
+
+    def __hash__(self) -> int:
+        """Compute a unique hash for a rule."""
+        return hash(self.source())
+
 
 # Use @overload to have proper typing for both @rule and @rule(...).
 # https://mypy.readthedocs.io/en/stable/generics.html#decorator-factories
@@ -105,6 +114,9 @@ def rule(
                 "description": rule_description,
                 "severity": severity,
                 "evaluate": wrapped_func,
+                # Forward origin of the decorated function
+                "__qualname__": func.__qualname__,  # https://peps.python.org/pep-3155/
+                "__module__": func.__module__,
             },
         )
 

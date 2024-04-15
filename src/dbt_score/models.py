@@ -213,6 +213,10 @@ class Model:
             _raw_test_values=test_values,
         )
 
+    def __hash__(self) -> int:
+        """Compute a unique hash for a model."""
+        return hash(self.unique_id)
+
 
 class ManifestLoader:
     """Load the models and tests from the manifest."""

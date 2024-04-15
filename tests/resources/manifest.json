@@ -8,7 +8,7 @@
       "unique_id": "model.package.model1",
       "name": "model1",
       "relation_name": "database.schema.model1",
-      "description": "Description1.",
+      "description": null,
       "original_file_path": "/path/to/model1.sql",
       "config": {},
       "meta": {},

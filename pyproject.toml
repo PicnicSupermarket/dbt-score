@@ -61,6 +61,7 @@ module = "tests.*"
 disallow_untyped_defs = false
 disallow_incomplete_defs = false
 disallow_untyped_calls = false
+warn_no_return = false
 
 ### Ruff ###
 
