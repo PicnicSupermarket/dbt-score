@@ -1,4 +1,4 @@
-"""Unit test for the human readable formatter."""
+"""Unit tests for the human readable formatter."""
 
 
 from dbt_score.formatters.human_readable_formatter import HumanReadableFormatter
