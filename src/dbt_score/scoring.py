@@ -19,17 +19,20 @@ class Scorer:
     # - A high severity yields a score 0/3
     score_cardinality = 3
 
+    min_score = 0.0
+    max_score = 1.0
+
     def score_model(self, model_results: ModelResultsType) -> float:
         """Compute the score of a given model."""
         if len(model_results) == 0:
             # No rule? No problem
-            return 1.0
+            return self.max_score
         if any(
             rule.severity == Severity.CRITICAL and isinstance(result, RuleViolation)
             for rule, result in model_results.items()
         ):
             # If there's a CRITICAL violation, the score is 0
-            return 0.0
+            return self.min_score
         else:
             # Otherwise, the score is the weighted average (by severity) of the results
             return sum(
@@ -45,5 +48,5 @@ class Scorer:
     def score_aggregate_models(self, scores: list[float]) -> float:
         """Compute the score of a list of models."""
         if len(scores) == 0:
-            return 1.0
+            return self.max_score
         return sum(scores) / len(scores)
