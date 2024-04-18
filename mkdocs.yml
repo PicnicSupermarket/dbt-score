@@ -12,9 +12,10 @@ nav:
       - reference/evaluation.md
       - reference/models.md
       - reference/rule.md
+      - reference/rule_registry.md
+      - reference/scoring.md
       - Formatters:
           - reference/formatters/index.md
           - reference/formatters/human_readable_formatter.md
       - Rules:
           - reference/rules/generic.md
-      - reference/rule_registry.md
