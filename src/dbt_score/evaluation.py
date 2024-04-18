@@ -6,8 +6,9 @@ from typing import Type
 
 from dbt_score.formatters import Formatter
 from dbt_score.models import ManifestLoader, Model
-from dbt_score.rule import Rule, RuleViolation, Severity
+from dbt_score.rule import Rule, RuleViolation
 from dbt_score.rule_registry import RuleRegistry
+from dbt_score.scoring import Scorer
 
 # The results of a given model are stored in a dictionary, mapping rules to either:
 # - None if there was no issue
@@ -24,17 +25,20 @@ class Evaluation:
         rule_registry: RuleRegistry,
         manifest_loader: ManifestLoader,
         formatter: Formatter,
+        scorer: Scorer,
     ) -> None:
         """Create an Evaluation object.
 
         Args:
-            rule_registry: A rule registry.
-            manifest_loader: A manifest loader.
-            formatter: A formatter.
+            rule_registry: A rule registry to access rules.
+            manifest_loader: A manifest loader to access model metadata.
+            formatter: A formatter to display results.
+            scorer: A scorer to compute scores.
         """
         self._rule_registry = rule_registry
         self._manifest_loader = manifest_loader
         self._formatter = formatter
+        self._scorer = scorer
 
         # For each model, its results
         self.results: dict[Model, ModelResultsType] = {}
@@ -64,40 +68,13 @@ class Evaluation:
                     else:
                         self.results[model][rule.__class__] = result
 
-            self.scores[model] = self.score_model(model)
+            self.scores[model] = self._scorer.score_model(self.results[model])
             self._formatter.model_evaluated(
                 model, self.results[model], self.scores[model]
             )
 
         # Compute score for project
-        self.project_score = self.score_project()
+        self.project_score = self._scorer.score_aggregate_models(
+            list(self.scores.values())
+        )
         self._formatter.project_evaluated(self.project_score)
-
-    def score_model(self, model: Model) -> float:
-        """Compute the score of a given model."""
-        model_results = self.results[model]
-
-        if len(model_results) == 0:
-            # No rule? No problem
-            return 1.0
-        if any(
-            rule.severity == Severity.CRITICAL and isinstance(result, RuleViolation)
-            for rule, result in model_results.items()
-        ):
-            # If there's a CRITICAL violation, the score is 0
-            return 0.0
-        else:
-            # Otherwise, the score is the weighted average (by severity) of the results
-            return sum(
-                [
-                    # The more severe the violation, the more points are lost
-                    3 - rule.severity.value if isinstance(result, RuleViolation) else 3
-                    for rule, result in model_results.items()
-                ]
-            ) / (3 * len(model_results))
-
-    def score_project(self) -> float:
-        """Compute the aggregated score for the project."""
-        if len(self.scores) == 0:
-            return 1.0
-        return sum(self.scores.values()) / len(self.scores)

@@ -163,7 +163,7 @@ def rule_error() -> Type[Rule]:
 
     @rule
     def rule_error(model: Model) -> RuleViolation | None:
-        """I fail."""
+        """Always failing rule."""
         raise Exception("Oh noes, something went wrong")
 
     return rule_error

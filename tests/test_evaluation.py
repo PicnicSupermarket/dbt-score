@@ -18,6 +18,7 @@ def test_evaluation_low_medium_high(
     """Test rule evaluation with a combination of LOW, MEDIUM and HIGH severity."""
     manifest_loader = ManifestLoader(manifest_path)
     mock_formatter = Mock()
+    mock_scorer = Mock()
 
     rule_registry = RuleRegistry()
     rule_registry._add_rule("rule_severity_low", rule_severity_low)
@@ -29,6 +30,7 @@ def test_evaluation_low_medium_high(
         rule_registry=rule_registry,
         manifest_loader=manifest_loader,
         formatter=mock_formatter,
+        scorer=mock_scorer,
     )
     evaluation.evaluate()
 
@@ -39,18 +41,17 @@ def test_evaluation_low_medium_high(
     assert evaluation.results[model1][rule_severity_medium] is None
     assert evaluation.results[model1][rule_severity_high] is None
     assert isinstance(evaluation.results[model1][rule_error], Exception)
-    assert evaluation.scores[model1] == 1.0
 
     assert isinstance(evaluation.results[model2][rule_severity_low], RuleViolation)
     assert isinstance(evaluation.results[model2][rule_severity_medium], RuleViolation)
     assert isinstance(evaluation.results[model2][rule_severity_high], RuleViolation)
     assert isinstance(evaluation.results[model2][rule_error], Exception)
-    assert evaluation.scores[model2] == 0.5
-
-    assert evaluation.project_score == 0.75
 
     assert mock_formatter.model_evaluated.call_count == 2
     assert mock_formatter.project_evaluated.call_count == 1
+
+    assert mock_scorer.score_model.call_count == 2
+    assert mock_scorer.score_aggregate_models.call_count == 1
 
 
 def test_evaluation_critical(
@@ -60,7 +61,6 @@ def test_evaluation_critical(
 ):
     """Test rule evaluation with a CRITICAL severity."""
     manifest_loader = ManifestLoader(manifest_path)
-    mock_formatter = Mock()
 
     rule_registry = RuleRegistry()
     rule_registry._add_rule("rule_severity_low", rule_severity_low)
@@ -69,40 +69,37 @@ def test_evaluation_critical(
     evaluation = Evaluation(
         rule_registry=rule_registry,
         manifest_loader=manifest_loader,
-        formatter=mock_formatter,
+        formatter=Mock(),
+        scorer=Mock(),
     )
     evaluation.evaluate()
 
     model2 = manifest_loader.models[1]
 
     assert isinstance(evaluation.results[model2][rule_severity_critical], RuleViolation)
-    assert evaluation.scores[model2] == 0.0
-
-    assert evaluation.project_score == 0.5
 
 
 def test_evaluation_no_rule(manifest_path):
     """Test rule evaluation when no rule exists."""
     manifest_loader = ManifestLoader(manifest_path)
-    mock_formatter = Mock()
 
     rule_registry = RuleRegistry()
 
     evaluation = Evaluation(
         rule_registry=rule_registry,
         manifest_loader=manifest_loader,
-        formatter=mock_formatter,
+        formatter=Mock(),
+        scorer=Mock(),
     )
     evaluation.evaluate()
 
-    assert list(evaluation.scores.values()) == [1.0, 1.0]
-    assert evaluation.project_score == 1.0
+    for results in evaluation.results.values():
+        assert len(results) == 0
 
 
 def test_evaluation_no_model(manifest_empty_path, rule_severity_low):
     """Test rule evaluation when no model exists."""
     manifest_loader = ManifestLoader(manifest_empty_path)
-    mock_formatter = Mock()
 
     rule_registry = RuleRegistry()
     rule_registry._add_rule("rule_severity_low", rule_severity_low)
@@ -110,27 +107,28 @@ def test_evaluation_no_model(manifest_empty_path, rule_severity_low):
     evaluation = Evaluation(
         rule_registry=rule_registry,
         manifest_loader=manifest_loader,
-        formatter=mock_formatter,
+        formatter=Mock(),
+        scorer=Mock(),
     )
     evaluation.evaluate()
 
+    assert len(evaluation.results) == 0
     assert list(evaluation.scores.values()) == []
-    assert evaluation.project_score == 1.0
 
 
 def test_evaluation_no_model_no_rule(manifest_empty_path):
     """Test rule evaluation when no rule and no model exists."""
     manifest_loader = ManifestLoader(manifest_empty_path)
-    mock_formatter = Mock()
 
     rule_registry = RuleRegistry()
 
     evaluation = Evaluation(
         rule_registry=rule_registry,
         manifest_loader=manifest_loader,
-        formatter=mock_formatter,
+        formatter=Mock(),
+        scorer=Mock(),
     )
     evaluation.evaluate()
 
+    assert len(evaluation.results) == 0
     assert list(evaluation.scores.values()) == []
-    assert evaluation.project_score == 1.0
