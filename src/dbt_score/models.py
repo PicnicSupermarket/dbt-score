@@ -245,7 +245,7 @@ class ManifestLoader:
     def _reindex_tests(self) -> None:
         """Index tests based on their model id."""
         for node_values in self.raw_nodes.values():
-            # Only include tests that are attached to a model.
+            # Only include tests that are attached to a model
             if node_values.get("resource_type") == "test" and (
                 attached_node := node_values.get("attached_node")
             ):

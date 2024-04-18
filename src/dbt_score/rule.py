@@ -52,7 +52,7 @@ class Rule:
         return hash(self.source())
 
 
-# Use @overload to have proper typing for both @rule and @rule(...).
+# Use @overload to have proper typing for both @rule and @rule(...)
 # https://mypy.readthedocs.io/en/stable/generics.html#decorator-factories
 
 
@@ -97,7 +97,7 @@ def rule(
         if func.__doc__ is None and description is None:
             raise AttributeError("Rule must define `description` or `func.__doc__`.")
 
-        # Get description parameter, otherwise use the docstring.
+        # Get description parameter, otherwise use the docstring
         rule_description = description or (
             func.__doc__.split("\n")[0] if func.__doc__ else None
         )
@@ -106,7 +106,7 @@ def rule(
             """Wrap func to add `self`."""
             return func(*args, **kwargs)
 
-        # Create the rule class inheriting from Rule.
+        # Create the rule class inheriting from Rule
         rule_class = type(
             func.__name__,
             (Rule,),
