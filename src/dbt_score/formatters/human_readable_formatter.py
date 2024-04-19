@@ -31,7 +31,7 @@ class HumanReadableFormatter(Formatter):
             elif isinstance(result, RuleViolation):
                 print(
                     f"{self.indent}{self.label_warning} "
-                    f"{rule.source()}: {result.message}"
+                    f"({rule.severity.name.lower()}) {rule.source()}: {result.message}"
                 )
             else:
                 print(f"{self.indent}{self.label_error} {rule.source()}: {result!s}")

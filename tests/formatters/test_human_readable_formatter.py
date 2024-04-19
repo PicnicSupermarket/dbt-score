@@ -13,7 +13,7 @@ def test_human_readable_formatter_model(
     results = {
         rule_severity_low: None,
         rule_severity_medium: Exception("Oh noes"),
-        rule_severity_critical: RuleViolation("Linting error"),
+        rule_severity_critical: RuleViolation("Error"),
     }
     formatter.model_evaluated(model1, results, 10.0)
     stdout = capsys.readouterr().out
@@ -22,7 +22,7 @@ def test_human_readable_formatter_model(
         == """Model \x1B[1mmodel1\x1B[0m
     \x1B[1;32mOK  \x1B[0m tests.conftest.rule_severity_low
     \x1B[1;31mERR \x1B[0m tests.conftest.rule_severity_medium: Oh noes
-    \x1B[1;33mWARN\x1B[0m tests.conftest.rule_severity_critical: Linting error
+    \x1B[1;33mWARN\x1B[0m (critical) tests.conftest.rule_severity_critical: Error
 Score: \x1B[1m100.0\x1B[0m
 
 """
