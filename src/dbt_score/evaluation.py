@@ -59,14 +59,11 @@ class Evaluation:
             self.results[model] = {}
             for rule in rules:
                 try:
-                    result = rule.evaluate(model)
+                    result: RuleViolation | None = rule.evaluate(model)
                 except Exception as e:
                     self.results[model][rule.__class__] = e
                 else:
-                    if result is None:
-                        self.results[model][rule.__class__] = None
-                    else:
-                        self.results[model][rule.__class__] = result
+                    self.results[model][rule.__class__] = result
 
             self.scores[model] = self._scorer.score_model(self.results[model])
             self._formatter.model_evaluated(
