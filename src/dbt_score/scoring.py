@@ -47,6 +47,9 @@ class Scorer:
 
     def score_aggregate_models(self, scores: list[float]) -> float:
         """Compute the score of a list of models."""
+        if 0.0 in scores:
+            # Any model with a CRITICAL violation makes the project score 0
+            return self.min_score
         if len(scores) == 0:
             return self.max_score
         return sum(scores) / len(scores)
