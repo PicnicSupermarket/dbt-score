@@ -25,12 +25,12 @@ def test_lint_non_existing_manifest():
     """Test lint with a non-existing manifest."""
     runner = CliRunner()
 
-    # Provide manifest in command line.
+    # Provide manifest in command line
     with pytest.raises(FileNotFoundError):
         runner.invoke(
             lint, ["--manifest", "fake_manifest.json"], catch_exceptions=False
         )
 
-    # Use default manifest path..
+    # Use default manifest path
     with pytest.raises(FileNotFoundError):
         runner.invoke(lint, catch_exceptions=False)
