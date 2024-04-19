@@ -42,8 +42,17 @@ class Rule:
         """Evaluates the rule."""
         raise NotImplementedError("Subclass must implement method `evaluate`.")
 
+    @classmethod
+    def source(cls) -> str:
+        """Return the source of the rule, i.e. a fully qualified name."""
+        return f"{cls.__module__}.{cls.__name__}"
 
-# Use @overload to have proper typing for both @rule and @rule(...).
+    def __hash__(self) -> int:
+        """Compute a unique hash for a rule."""
+        return hash(self.source())
+
+
+# Use @overload to have proper typing for both @rule and @rule(...)
 # https://mypy.readthedocs.io/en/stable/generics.html#decorator-factories
 
 
@@ -88,7 +97,7 @@ def rule(
         if func.__doc__ is None and description is None:
             raise AttributeError("Rule must define `description` or `func.__doc__`.")
 
-        # Get description parameter, otherwise use the docstring.
+        # Get description parameter, otherwise use the docstring
         rule_description = description or (
             func.__doc__.split("\n")[0] if func.__doc__ else None
         )
@@ -97,7 +106,7 @@ def rule(
             """Wrap func to add `self`."""
             return func(*args, **kwargs)
 
-        # Create the rule class inheriting from Rule.
+        # Create the rule class inheriting from Rule
         rule_class = type(
             func.__name__,
             (Rule,),
@@ -105,6 +114,9 @@ def rule(
                 "description": rule_description,
                 "severity": severity,
                 "evaluate": wrapped_func,
+                # Forward origin of the decorated function
+                "__qualname__": func.__qualname__,  # https://peps.python.org/pep-3155/
+                "__module__": func.__module__,
             },
         )
 
