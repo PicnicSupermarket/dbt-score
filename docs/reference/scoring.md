@@ -1,3 +1,3 @@
-# CLI
+# Scoring
 
 ::: dbt_score.scoring

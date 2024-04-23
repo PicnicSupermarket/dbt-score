@@ -49,7 +49,7 @@ class RuleRegistry:
             module = importlib.import_module(module_name)
             for obj_name in dir(module):
                 obj = module.__dict__[obj_name]
-                if type(obj) is type and issubclass(obj, Rule):
+                if type(obj) is type and issubclass(obj, Rule) and obj is not Rule:
                     self._add_rule(obj_name, obj)
 
     def _add_rule(self, name: str, rule: Type[Rule]) -> None:
