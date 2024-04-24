@@ -55,13 +55,13 @@ dbt-score = {call = "dbt_score.cli:cli"}
 
 [tool.mypy]
 strict = true
+warn_no_return = false
 
 [[tool.mypy.overrides]]
 module = "tests.*"
 disallow_untyped_defs = false
 disallow_incomplete_defs = false
 disallow_untyped_calls = false
-warn_no_return = false
 
 ### Ruff ###
 
@@ -80,6 +80,7 @@ extend-select = [
     "E", # pycodestyle errors
     "W", # pycodestyle warnings
 ]
+ignore-init-module-imports = true
 
 [tool.ruff.lint.mccabe]
 max-complexity = 10

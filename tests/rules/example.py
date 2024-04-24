@@ -1,7 +1,6 @@
 """Example rules."""
 
-from dbt_score.models import Model
-from dbt_score.rule import RuleViolation, rule
+from dbt_score import Model, RuleViolation, rule
 
 
 @rule()

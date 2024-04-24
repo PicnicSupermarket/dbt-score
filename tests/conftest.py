@@ -4,8 +4,7 @@ import json
 from pathlib import Path
 from typing import Any, Type
 
-from dbt_score.models import Model
-from dbt_score.rule import Rule, RuleViolation, Severity, rule
+from dbt_score import Model, Rule, RuleViolation, Severity, rule
 from pytest import fixture
 
 # Manifest
