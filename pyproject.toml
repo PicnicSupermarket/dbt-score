@@ -80,7 +80,6 @@ extend-select = [
     "E", # pycodestyle errors
     "W", # pycodestyle warnings
 ]
-ignore-init-module-imports = true
 
 [tool.ruff.lint.mccabe]
 max-complexity = 10
