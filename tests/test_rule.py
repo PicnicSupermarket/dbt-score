@@ -1,8 +1,7 @@
 """Test rule."""
 
 import pytest
-from dbt_score.models import Model
-from dbt_score.rule import Rule, RuleViolation, Severity, rule
+from dbt_score import Model, Rule, RuleViolation, Severity, rule
 
 
 def test_rule_decorator_and_class(
