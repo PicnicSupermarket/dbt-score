@@ -8,44 +8,44 @@ from dbt_score.scoring import Scorer
 def test_scorer_model_no_results():
     """Test scorer with a model without any result."""
     scorer = Scorer()
-    assert scorer.score_model({}) == 1.0
+    assert scorer.score_model({}) == 10.0
 
 
 def test_scorer_model_severity_low(rule_severity_low):
     """Test scorer with a model and one low severity rule."""
     scorer = Scorer()
-    assert scorer.score_model({rule_severity_low: None}) == 1.0
-    assert scorer.score_model({rule_severity_low: Exception()}) == 1.0
+    assert scorer.score_model({rule_severity_low: None}) == 10.0
+    assert scorer.score_model({rule_severity_low: Exception()}) == 10.0
     assert (
         round(scorer.score_model({rule_severity_low: RuleViolation("error")}), 2)
-        == 0.67
+        == 6.67
     )
 
 
 def test_scorer_model_severity_medium(rule_severity_medium):
     """Test scorer with a model and one medium severity rule."""
     scorer = Scorer()
-    assert scorer.score_model({rule_severity_medium: None}) == 1.0
-    assert scorer.score_model({rule_severity_medium: Exception()}) == 1.0
+    assert scorer.score_model({rule_severity_medium: None}) == 10.0
+    assert scorer.score_model({rule_severity_medium: Exception()}) == 10.0
     assert (
         round(scorer.score_model({rule_severity_medium: RuleViolation("error")}), 2)
-        == 0.33
+        == 3.33
     )
 
 
 def test_scorer_model_severity_high(rule_severity_high):
     """Test scorer with a model and one high severity rule."""
     scorer = Scorer()
-    assert scorer.score_model({rule_severity_high: None}) == 1.0
-    assert scorer.score_model({rule_severity_high: Exception()}) == 1.0
+    assert scorer.score_model({rule_severity_high: None}) == 10.0
+    assert scorer.score_model({rule_severity_high: Exception()}) == 10.0
     assert scorer.score_model({rule_severity_high: RuleViolation("error")}) == 0.0
 
 
 def test_scorer_model_severity_critical(rule_severity_critical):
     """Test scorer with a model and one critical severity rule."""
     scorer = Scorer()
-    assert scorer.score_model({rule_severity_critical: None}) == 1.0
-    assert scorer.score_model({rule_severity_critical: Exception()}) == 1.0
+    assert scorer.score_model({rule_severity_critical: None}) == 10.0
+    assert scorer.score_model({rule_severity_critical: Exception()}) == 10.0
     assert scorer.score_model({rule_severity_critical: RuleViolation("error")}) == 0.0
 
 
@@ -78,7 +78,7 @@ def test_scorer_model_multiple_rules(
             ),
             2,
         )
-        == 0.67
+        == 6.67
     )
 
     assert (
@@ -92,7 +92,7 @@ def test_scorer_model_multiple_rules(
             ),
             2,
         )
-        == 0.78
+        == 7.78
     )
 
     assert (
@@ -106,14 +106,14 @@ def test_scorer_model_multiple_rules(
             ),
             2,
         )
-        == 0.89
+        == 8.89
     )
 
 
 def test_scorer_aggregate_empty():
     """Test scorer aggregation with no results."""
     scorer = Scorer()
-    assert scorer.score_aggregate_models([]) == 1.0
+    assert scorer.score_aggregate_models([]) == 10.0
 
 
 def test_scorer_aggregate_with_0():
@@ -125,12 +125,12 @@ def test_scorer_aggregate_with_0():
 def test_scorer_aggregate_single():
     """Test scorer aggregation with a single results."""
     scorer = Scorer()
-    assert scorer.score_aggregate_models([0.42]) == 0.42
+    assert scorer.score_aggregate_models([0.42]) == 4.2
 
 
 def test_scorer_aggregate_multiple():
     """Test scorer aggregation with multiple results."""
     scorer = Scorer()
-    assert scorer.score_aggregate_models([1.0, 1.0, 1.0]) == 1.0
+    assert scorer.score_aggregate_models([1.0, 1.0, 1.0]) == 10.0
     assert scorer.score_aggregate_models([0.0, 0.0, 0.0]) == 0.0
-    assert scorer.score_aggregate_models([0.1, 0.74, 0.42]) == 0.42
+    assert scorer.score_aggregate_models([0.1, 0.74, 0.42]) == 4.2
