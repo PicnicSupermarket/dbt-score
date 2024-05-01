@@ -35,9 +35,9 @@ class Rule:
     severity: Severity = Severity.MEDIUM
     default_params: typing.ClassVar[dict[str, Any]] = {}
 
-    def __init__(self, rule_config: RuleConfig) -> None:
+    def __init__(self, rule_config: RuleConfig | None = None) -> None:
         """Initialize the rule."""
-        self.params = self.process_config(rule_config)
+        self.params = self.process_config(rule_config) if rule_config else {}
 
     def __init_subclass__(cls, **kwargs) -> None:  # type: ignore
         """Initializes the subclass."""

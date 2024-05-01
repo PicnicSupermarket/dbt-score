@@ -12,13 +12,12 @@ def test_rule_decorator_and_class(
     class_rule,
     model1,
     model2,
-    default_rule_config,
 ):
     """Test rule creation with the rule decorator and class."""
-    decorator_rule_instance = decorator_rule(default_rule_config)
-    decorator_rule_no_parens_instance = decorator_rule_no_parens(default_rule_config)
-    decorator_rule_args_instance = decorator_rule_args(default_rule_config)
-    class_rule_instance = class_rule(default_rule_config)
+    decorator_rule_instance = decorator_rule()
+    decorator_rule_no_parens_instance = decorator_rule_no_parens()
+    decorator_rule_args_instance = decorator_rule_args()
+    class_rule_instance = class_rule()
 
     def assertions(rule_instance):
         assert isinstance(rule_instance, Rule)
@@ -56,7 +55,7 @@ def test_missing_description_rule_class():
                 return None
 
 
-def test_missing_evaluate_rule_class(model1, default_rule_config):
+def test_missing_evaluate_rule_class(model1):
     """Test missing evaluate implementation in rule class."""
 
     class BadRule(Rule):
@@ -64,7 +63,7 @@ def test_missing_evaluate_rule_class(model1, default_rule_config):
 
         description = "Description of the rule."
 
-    rule = BadRule(rule_config=default_rule_config)
+    rule = BadRule()
 
     with pytest.raises(NotImplementedError):
         rule.evaluate(model1)
