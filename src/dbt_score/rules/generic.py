@@ -1,9 +1,6 @@
 """All generic rules."""
 
-from dbt_score.models import Model
-from dbt_score.rule import RuleViolation, rule
-
-# mypy: disable-error-code="return"
+from dbt_score import Model, RuleViolation, rule
 
 
 @rule
