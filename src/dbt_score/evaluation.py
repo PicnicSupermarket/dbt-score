@@ -51,15 +51,13 @@ class Evaluation:
 
     def evaluate(self) -> None:
         """Evaluate all rules."""
-        # Instantiate all rules. In case they keep state across calls, this must be
-        # done only once.
-        rules = [rule_class() for rule_class in self._rule_registry.rules.values()]
+        rules = self._rule_registry.rules.values()
 
         for model in self._manifest_loader.models:
             self.results[model] = {}
             for rule in rules:
                 try:
-                    result: RuleViolation | None = rule.evaluate(model)
+                    result: RuleViolation | None = rule.evaluate(model, **rule.params)
                 except Exception as e:
                     self.results[model][rule.__class__] = e
                 else:

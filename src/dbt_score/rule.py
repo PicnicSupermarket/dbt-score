@@ -1,9 +1,10 @@
 """Rule definitions."""
-
+import inspect
 from dataclasses import dataclass
 from enum import Enum
 from typing import Any, Callable, Type, TypeAlias, overload
 
+from dbt_score.config_parser import RuleConfig
 from dbt_score.models import Model
 
 
@@ -31,6 +32,11 @@ class Rule:
 
     description: str
     severity: Severity = Severity.MEDIUM
+    _default_params: dict[str, Any]
+
+    def __init__(self, rule_config: RuleConfig) -> None:
+        """Initialize the rule."""
+        self.params = self.process_config(rule_config)
 
     def __init_subclass__(cls, **kwargs) -> None:  # type: ignore
         """Initializes the subclass."""
@@ -38,9 +44,37 @@ class Rule:
         if not hasattr(cls, "description"):
             raise AttributeError("Subclass must define class attribute `description`.")
 
+    def process_config(self, rule_config: RuleConfig) -> dict[str, Any]:
+        """Process the rule config."""
+        rule_params = self._default_params.copy()
+
+        # Overwrite default rule params
+        for k, v in rule_config.params.items():
+            if k in self._default_params:
+                rule_params[k] = v
+            else:
+                raise AttributeError(f"Unknown rule parameter: {k}.")
+
+        self.set_severity(rule_config.severity or self.severity)
+        self.set_description(rule_config.description or self.description)
+
+        return rule_params
+
     def evaluate(self, model: Model) -> RuleViolation | None:
         """Evaluates the rule."""
         raise NotImplementedError("Subclass must implement method `evaluate`.")
+
+    @classmethod
+    def set_severity(cls, severity: int | Severity) -> None:
+        """Set the severity of the rule."""
+        if isinstance(severity, int):
+            severity = Severity(severity)
+        cls.severity = severity
+
+    @classmethod
+    def set_description(cls, description: str) -> None:
+        """Set the description of the rule."""
+        cls.description = description
 
     @classmethod
     def source(cls) -> str:
@@ -106,6 +140,11 @@ def rule(
             """Wrap func to add `self`."""
             return func(*args, **kwargs)
 
+        # Get default parameters from the rule definition
+        _default_params = {key: val.default for key, val in
+                           inspect.signature(func).parameters.items()
+                           if val.default != inspect.Parameter.empty}
+
         # Create the rule class inheriting from Rule
         rule_class = type(
             func.__name__,
@@ -113,6 +152,7 @@ def rule(
             {
                 "description": rule_description,
                 "severity": severity,
+                "_default_params": _default_params,
                 "evaluate": wrapped_func,
                 # Forward origin of the decorated function
                 "__qualname__": func.__qualname__,  # https://peps.python.org/pep-3155/
