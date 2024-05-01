@@ -7,11 +7,11 @@ from dbt_score.lint import lint_dbt_project
 
 
 @patch("dbt_score.lint.Evaluation")
-def test_lint_dbt_project(mock_evaluation, manifest_path, default_config):
+def test_lint_dbt_project(mock_evaluation, manifest_path):
     """Test linting the dbt project."""
     # Instance of classes are the same Mocks
     mock_evaluation.return_value = mock_evaluation
 
-    lint_dbt_project(manifest_path, default_config)
+    lint_dbt_project(manifest_path)
 
     mock_evaluation.evaluate.assert_called_once()
