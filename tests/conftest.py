@@ -13,6 +13,18 @@ from pytest import fixture
 
 
 @fixture
+def valid_config_path() -> Path:
+    """Return the path of the configuration."""
+    return Path(__file__).parent / "resources" / "pyproject.toml"
+
+
+@fixture
+def invalid_config_path() -> Path:
+    """Return the path of the configuration."""
+    return Path(__file__).parent / "resources" / "invalid_pyproject.toml"
+
+
+@fixture
 def default_config() -> DbtScoreConfig:
     """Return a DbtScoreConfig object."""
     return DbtScoreConfig()
@@ -178,10 +190,12 @@ def rule_with_params() -> Type[Rule]:
     """An example rule with additional input params."""
 
     @rule
-    def rule_with_params(model: Model, foo: str = "bar") -> RuleViolation | None:
-        """Rule with CRITICAL severity."""
-        if model.name != "model1":
-            return RuleViolation(message=foo)
+    def rule_with_params(
+        model: Model, model_name: str = "model1"
+    ) -> RuleViolation | None:
+        """Rule with additional input params."""
+        if model.name != model_name:
+            return RuleViolation(message=model_name)
 
     return rule_with_params
 

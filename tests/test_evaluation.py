@@ -2,6 +2,7 @@
 
 from unittest.mock import Mock
 
+from dbt_score.config_parser import DbtScoreConfig
 from dbt_score.evaluation import Evaluation
 from dbt_score.models import ManifestLoader
 from dbt_score.rule import RuleViolation
@@ -134,3 +135,34 @@ def test_evaluation_no_model_no_rule(manifest_empty_path):
 
     assert len(evaluation.results) == 0
     assert list(evaluation.scores.values()) == []
+
+
+def test_evaluation_rule_with_params(
+    manifest_path, rule_with_params, valid_config_path
+):
+    """Test rule evaluation with parameters."""
+    manifest_loader = ManifestLoader(manifest_path)
+    model1 = manifest_loader.models[0]
+    model2 = manifest_loader.models[1]
+
+    config = DbtScoreConfig()
+    config.load_toml_file(str(valid_config_path))
+
+    rule_registry = RuleRegistry(config)
+    rule_registry._add_rule("rule_with_params", rule_with_params)
+    rule_registry.init_rules()
+
+    evaluation = Evaluation(
+        rule_registry=rule_registry,
+        manifest_loader=manifest_loader,
+        formatter=Mock(),
+        scorer=Mock(),
+    )
+    evaluation.evaluate()
+
+    assert (
+        rule_with_params.default_params
+        != rule_registry.rules["rule_with_params"].params
+    )
+    assert evaluation.results[model1][rule_with_params] is not None
+    assert evaluation.results[model2][rule_with_params] is None

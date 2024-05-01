@@ -1,0 +1,10 @@
+[tool.dbt-score]
+rule_namespaces = ["namespace_foo"]
+disabled_rules = ["foo", "bar"]
+
+
+[tool.dbt-score.rules.foobar]
+severity=4
+
+[tool.dbt-score.rules.rule_with_params]
+model_name="model2"
