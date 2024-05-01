@@ -141,9 +141,11 @@ def rule(
             return func(*args, **kwargs)
 
         # Get default parameters from the rule definition
-        _default_params = {key: val.default for key, val in
-                           inspect.signature(func).parameters.items()
-                           if val.default != inspect.Parameter.empty}
+        _default_params = {
+            key: val.default
+            for key, val in inspect.signature(func).parameters.items()
+            if val.default != inspect.Parameter.empty
+        }
 
         # Create the rule class inheriting from Rule
         rule_class = type(

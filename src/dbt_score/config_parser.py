@@ -14,6 +14,7 @@ CONFIG_FILE = "pyproject.toml"
 @dataclass
 class RuleConfig:
     """Rule config."""
+
     severity: int | None = None
     description: str | None = None
     params: dict[str, Any] = field(default_factory=dict)
@@ -24,8 +25,9 @@ class RuleConfig:
         severity = rule_config.pop("severity", None)
         description = rule_config.pop("description", None)
 
-        return RuleConfig(severity=severity, description=description,
-                          params=rule_config)
+        return RuleConfig(
+            severity=severity, description=description, params=rule_config
+        )
 
 
 class DbtScoreConfig:
@@ -54,19 +56,25 @@ class DbtScoreConfig:
         if config.has_section(self._main_section):
             for option in config.options(self._main_section):
                 if option in self._options:
-                    self.set_option(option,
-                                    json.loads(config.get(self._main_section, option)))
+                    self.set_option(
+                        option, json.loads(config.get(self._main_section, option))
+                    )
                 else:
                     logger.warning(
-                        f"Option {option} in {self._main_section} not supported.")
+                        f"Option {option} in {self._main_section} not supported."
+                    )
 
         # Rule configuration
         rules_sections = list(
-            filter(lambda section: section.startswith(self._rules_section),
-                   config.sections()))
+            filter(
+                lambda section: section.startswith(self._rules_section),
+                config.sections(),
+            )
+        )
 
         for rule_section in rules_sections:
             rule_name = rule_section.replace(f"{self._rules_section}.", "")
-            rule_config = {param: json.loads(val) for param, val in
-                           config.items(rule_section)}
+            rule_config = {
+                param: json.loads(val) for param, val in config.items(rule_section)
+            }
             self.rules_config[rule_name] = RuleConfig.from_dict(rule_config)

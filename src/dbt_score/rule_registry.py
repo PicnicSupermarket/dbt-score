@@ -27,10 +27,8 @@ class RuleRegistry:
     def init_rules(self) -> None:
         """Initialize rules."""
         for rule_name, rule_class in self._rules.items():
-            rule_config = self.config.rules_config.get(rule_name,
-                                                       RuleConfig())
-            self._initialized_rules[rule_name] = rule_class(
-                rule_config=rule_config)
+            rule_config = self.config.rules_config.get(rule_name, RuleConfig())
+            self._initialized_rules[rule_name] = rule_class(rule_config=rule_config)
 
     @property
     def rules(self) -> dict[str, Rule]:
