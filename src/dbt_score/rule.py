@@ -1,5 +1,6 @@
 """Rule definitions."""
 import inspect
+import typing
 from dataclasses import dataclass
 from enum import Enum
 from typing import Any, Callable, Type, TypeAlias, overload
@@ -32,7 +33,7 @@ class Rule:
 
     description: str
     severity: Severity = Severity.MEDIUM
-    _default_params: dict[str, Any]
+    default_params: typing.ClassVar[dict[str, Any]] = {}
 
     def __init__(self, rule_config: RuleConfig) -> None:
         """Initialize the rule."""
@@ -46,11 +47,11 @@ class Rule:
 
     def process_config(self, rule_config: RuleConfig) -> dict[str, Any]:
         """Process the rule config."""
-        rule_params = self._default_params.copy()
+        rule_params = self.default_params.copy()
 
         # Overwrite default rule params
         for k, v in rule_config.params.items():
-            if k in self._default_params:
+            if k in self.default_params:
                 rule_params[k] = v
             else:
                 raise AttributeError(f"Unknown rule parameter: {k}.")
@@ -141,7 +142,7 @@ def rule(
             return func(*args, **kwargs)
 
         # Get default parameters from the rule definition
-        _default_params = {
+        default_params = {
             key: val.default
             for key, val in inspect.signature(func).parameters.items()
             if val.default != inspect.Parameter.empty
@@ -154,7 +155,7 @@ def rule(
             {
                 "description": rule_description,
                 "severity": severity,
-                "_default_params": _default_params,
+                "default_params": default_params,
                 "evaluate": wrapped_func,
                 # Forward origin of the decorated function
                 "__qualname__": func.__qualname__,  # https://peps.python.org/pep-3155/

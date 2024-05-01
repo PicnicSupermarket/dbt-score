@@ -18,9 +18,9 @@ logger = logging.getLogger(__name__)
 class RuleRegistry:
     """A container for configured rules."""
 
-    def __init__(self, config: DbtScoreConfig) -> None:
+    def __init__(self, config: DbtScoreConfig | None = None) -> None:
         """Instantiate a rule registry."""
-        self.config = config
+        self.config = config or DbtScoreConfig()
         self._rules: dict[str, Type[Rule]] = {}
         self._initialized_rules: dict[str, Rule] = {}
 

@@ -92,7 +92,8 @@ max-args = 6
 
 [tool.ruff.lint.per-file-ignores]
 "tests/**/*.py" = [
-    "PLR2004",  # magic value comparisons
+    "PLR2004",  # Magic value comparisons
+    "PLR0913"   # Too many arguments in function definition
 ]
 
 ### Coverage ###

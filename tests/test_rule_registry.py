@@ -9,7 +9,10 @@ def test_rule_registry_discovery():
     """Ensure rules can be found in a given namespace recursively."""
     r = RuleRegistry()
     r._load("tests.rules")
-    assert sorted(r.rules.keys()) == ["rule_test_example", "rule_test_nested_example"]
+    assert sorted(r._rules.keys()) == [
+        "tests.rules.example.rule_test_example",
+        "tests.rules.nested.example.rule_test_nested_example",
+    ]
 
 
 def test_rule_registry_no_duplicates():

@@ -4,9 +4,25 @@ import json
 from pathlib import Path
 from typing import Any, Type
 
+from dbt_score.config_parser import DbtScoreConfig, RuleConfig
 from dbt_score.models import Model
 from dbt_score.rule import Rule, RuleViolation, Severity, rule
 from pytest import fixture
+
+# Configuration
+
+
+@fixture
+def default_config() -> DbtScoreConfig:
+    """Return a DbtScoreConfig object."""
+    return DbtScoreConfig()
+
+
+@fixture
+def default_rule_config() -> RuleConfig:
+    """Return an empty RuleConfig object."""
+    return RuleConfig()
+
 
 # Manifest
 
@@ -155,6 +171,19 @@ def rule_severity_critical() -> Type[Rule]:
             return RuleViolation(message="Linting error")
 
     return rule_severity_critical
+
+
+@fixture
+def rule_with_params() -> Type[Rule]:
+    """An example rule with additional input params."""
+
+    @rule
+    def rule_with_params(model: Model, foo: str = "bar") -> RuleViolation | None:
+        """Rule with CRITICAL severity."""
+        if model.name != "model1":
+            return RuleViolation(message=foo)
+
+    return rule_with_params
 
 
 @fixture
