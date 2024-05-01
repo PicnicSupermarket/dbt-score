@@ -8,7 +8,7 @@ from typing import Any, ClassVar
 
 logger = logging.getLogger(__name__)
 
-CONFIG_FILE = "pyproject.toml"
+DEFAULT_CONFIG_FILE = "pyproject.toml"
 
 
 @dataclass
@@ -47,7 +47,7 @@ class DbtScoreConfig:
         """Set an option in the config."""
         setattr(self, option, value)
 
-    def load_toml_file(self, file: str = CONFIG_FILE) -> None:
+    def load_toml_file(self, file: str) -> None:
         """Load the options from a TOML file."""
         config = configparser.ConfigParser()
         config.read(file)
