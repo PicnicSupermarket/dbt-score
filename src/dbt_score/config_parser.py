@@ -1,4 +1,4 @@
-"""This module is responsible for parsing the config file."""
+"""This module is responsible for parsing configuration."""
 
 import configparser
 import json
@@ -13,7 +13,7 @@ DEFAULT_CONFIG_FILE = "pyproject.toml"
 
 @dataclass
 class RuleConfig:
-    """Rule config."""
+    """Configuration for a rule."""
 
     severity: int | None = None
     description: str | None = None
@@ -31,7 +31,7 @@ class RuleConfig:
 
 
 class DbtScoreConfig:
-    """Dbt score config."""
+    """Configuration for dbt-score."""
 
     _main_section = "tool.dbt-score"
     _options: ClassVar[list[str]] = ["rule_namespaces", "disabled_rules"]
