@@ -1,6 +1,7 @@
 """Unit tests for the rule registry."""
 
 import pytest
+from dbt_score.config_parser import DbtScoreConfig
 from dbt_score.exceptions import DuplicatedRuleException
 from dbt_score.rule_registry import RuleRegistry
 
@@ -12,6 +13,17 @@ def test_rule_registry_discovery():
     assert sorted(r._rules.keys()) == [
         "tests.rules.example.rule_test_example",
         "tests.rules.nested.example.rule_test_nested_example",
+    ]
+
+
+def test_disabled_rule_registry_discovery():
+    """Ensure disabled rules are not discovered."""
+    config = DbtScoreConfig()
+    config.disabled_rules = ["tests.rules.nested.example.rule_test_nested_example"]
+    r = RuleRegistry(config)
+    r._load("tests.rules")
+    assert sorted(r._rules.keys()) == [
+        "tests.rules.example.rule_test_example",
     ]
 
 
