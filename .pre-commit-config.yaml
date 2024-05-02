@@ -5,6 +5,7 @@ repos:
       - id: check-added-large-files
       - id: check-toml
       - id: end-of-file-fixer
+        exclude: docs/CNAME
       - id: trailing-whitespace
   - repo: https://github.com/charliermarsh/ruff-pre-commit
     rev: v0.2.2
