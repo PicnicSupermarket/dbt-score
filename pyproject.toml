@@ -26,6 +26,9 @@ requires-python = ">=3.10"
 readme = "README.md"
 license = {text = "MIT"}
 
+[project.scripts]
+dbt-score = "dbt_score.cli:cli"
+
 [tool.pdm]
 [tool.pdm.dev-dependencies]
 dev = [
