@@ -119,18 +119,18 @@ def test_scorer_aggregate_empty():
 def test_scorer_aggregate_with_0():
     """Test scorer aggregation with one result that is 0.0."""
     scorer = Scorer()
-    assert scorer.score_aggregate_models([1.0, 0.5, 0.0]) == 0.0
+    assert scorer.score_aggregate_models([1.0, 5.0, 0.0]) == 0.0
 
 
 def test_scorer_aggregate_single():
     """Test scorer aggregation with a single results."""
     scorer = Scorer()
-    assert scorer.score_aggregate_models([0.42]) == 4.2
+    assert scorer.score_aggregate_models([4.2]) == 4.2
 
 
 def test_scorer_aggregate_multiple():
     """Test scorer aggregation with multiple results."""
     scorer = Scorer()
-    assert scorer.score_aggregate_models([1.0, 1.0, 1.0]) == 10.0
+    assert scorer.score_aggregate_models([1.0, 1.0, 1.0]) == 1.0
     assert scorer.score_aggregate_models([0.0, 0.0, 0.0]) == 0.0
-    assert scorer.score_aggregate_models([0.1, 0.74, 0.42]) == 4.2
+    assert scorer.score_aggregate_models([1.0, 7.4, 4.2]) == 4.2

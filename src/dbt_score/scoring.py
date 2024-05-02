@@ -52,4 +52,4 @@ class Scorer:
             return self.min_score
         if len(scores) == 0:
             return self.max_score
-        return sum(scores) / len(scores) * self.max_score
+        return sum(scores) / len(scores)
