@@ -20,7 +20,7 @@ class Scorer:
     score_cardinality = 3
 
     min_score = 0.0
-    max_score = 1.0
+    max_score = 10.0
 
     def score_model(self, model_results: ModelResultsType) -> float:
         """Compute the score of a given model."""
@@ -43,7 +43,7 @@ class Scorer:
                     else self.score_cardinality  # 3/3
                     for rule, result in model_results.items()
                 ]
-            ) / (self.score_cardinality * len(model_results))
+            ) / (self.score_cardinality * len(model_results)) * self.max_score
 
     def score_aggregate_models(self, scores: list[float]) -> float:
         """Compute the score of a list of models."""

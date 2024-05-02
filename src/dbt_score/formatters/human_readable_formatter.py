@@ -35,9 +35,9 @@ class HumanReadableFormatter(Formatter):
                 )
             else:
                 print(f"{self.indent}{self.label_error} {rule.source()}: {result!s}")
-        print(f"Score: {self.bold(str(round(score * 10, 1)))}")
+        print(f"Score: {self.bold(str(round(score, 1)))}")
         print()
 
     def project_evaluated(self, score: float) -> None:
         """Callback when a project has been evaluated."""
-        print(f"Project score: {self.bold(str(round(score * 10, 1)))}")
+        print(f"Project score: {self.bold(str(round(score, 1)))}")
