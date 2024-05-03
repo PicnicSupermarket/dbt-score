@@ -31,7 +31,7 @@ def test_disabled_rule_registry_discovery():
 def test_configured_rule_registry_discovery(valid_config_path):
     """Ensure rules are discovered and configured correctly."""
     config = Config()
-    config.load_toml_file(str(valid_config_path))
+    config._load_toml_file(str(valid_config_path))
     r = RuleRegistry(config)
     r._load("tests.rules")
     r.init_rules()

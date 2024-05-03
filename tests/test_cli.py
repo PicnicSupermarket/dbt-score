@@ -9,7 +9,7 @@ from dbt_score.cli import lint
 def test_invalid_options():
     """Test invalid cli options."""
     runner = CliRunner()
-    with patch("dbt_score.cli.Config.load_toml_file"):
+    with patch("dbt_score.cli.Config._load_toml_file"):
         result = runner.invoke(
             lint, ["--manifest", "fake_manifest.json", "--run-dbt-parse"]
         )
@@ -18,7 +18,7 @@ def test_invalid_options():
 
 def test_lint_existing_manifest(manifest_path):
     """Test lint with an existing manifest."""
-    with patch("dbt_score.cli.Config.load_toml_file"):
+    with patch("dbt_score.cli.Config._load_toml_file"):
         runner = CliRunner()
         result = runner.invoke(lint, ["--manifest", manifest_path])
         assert result.exit_code == 0
@@ -30,12 +30,12 @@ def test_lint_non_existing_manifest():
 
     # Provide manifest in command line
     with pytest.raises(FileNotFoundError):
-        with patch("dbt_score.cli.Config.load_toml_file"):
+        with patch("dbt_score.cli.Config._load_toml_file"):
             runner.invoke(
                 lint, ["--manifest", "fake_manifest.json"], catch_exceptions=False
             )
 
     # Use default manifest path
     with pytest.raises(FileNotFoundError):
-        with patch("dbt_score.cli.Config.load_toml_file"):
+        with patch("dbt_score.cli.Config._load_toml_file"):
             runner.invoke(lint, catch_exceptions=False)

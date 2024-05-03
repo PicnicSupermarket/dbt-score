@@ -7,7 +7,7 @@ import click
 from click.core import ParameterSource
 from dbt.cli.options import MultiOption
 
-from dbt_score.config import DEFAULT_CONFIG_FILE, Config
+from dbt_score.config import Config
 from dbt_score.lint import lint_dbt_project
 from dbt_score.parse import dbt_parse, get_default_manifest_path
 
@@ -59,8 +59,7 @@ def lint(select: tuple[str], manifest: Path, run_dbt_parse: bool) -> None:
         raise click.UsageError("--run-dbt-parse cannot be used with --manifest.")
 
     config = Config()
-    if Path(DEFAULT_CONFIG_FILE).exists():
-        config.load_toml_file(DEFAULT_CONFIG_FILE)
+    config.load()
 
     if run_dbt_parse:
         dbt_parse()

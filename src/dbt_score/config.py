@@ -3,6 +3,7 @@
 import logging
 import tomllib
 from dataclasses import dataclass, field
+from pathlib import Path
 from typing import Any, Final
 
 logger = logging.getLogger(__name__)
@@ -28,7 +29,7 @@ class Config:
     """Configuration for dbt-score."""
 
     _main_section: Final[str] = "tool.dbt-score"
-    _options: Final[tuple[str, ...]] = ("rule_namespaces", "disabled_rules")
+    _options: Final[list[str]] = ["rule_namespaces", "disabled_rules"]
     _rules_section: Final[str] = f"{_main_section}.rules"
 
     def __init__(self) -> None:
@@ -36,12 +37,13 @@ class Config:
         self.rule_namespaces: list[str] = ["dbt_score_rules"]
         self.disabled_rules: list[str] = []
         self.rules_config: dict[str, RuleConfig] = {}
+        self.config_file: Path | None = None
 
     def set_option(self, option: str, value: Any) -> None:
         """Set an option in the config."""
         setattr(self, option, value)
 
-    def load_toml_file(self, file: str) -> None:
+    def _load_toml_file(self, file: str) -> None:
         """Load the options from a TOML file."""
         with open(file, "rb") as f:
             toml_data = tomllib.load(f)
@@ -51,10 +53,11 @@ class Config:
 
             # Main configuration
             for option, value in dbt_score_config.items():
-                # If value is a dictionary, it's another section
-                if option in self._options and not isinstance(value, dict):
+                if option in self._options:
                     self.set_option(option, value)
-                else:
+                elif not isinstance(
+                    value, dict
+                ):  # If value is a dictionary, it's another section
                     logger.warning(
                         f"Option {option} in {self._main_section} not supported."
                     )
@@ -64,3 +67,19 @@ class Config:
                 name: RuleConfig.from_dict(config)
                 for name, config in rules_config.items()
             }
+
+    def get_config_file(self, directory: Path) -> None:
+        """Get the config file."""
+        candidates = [directory]
+        candidates.extend(directory.parents)
+        for path in candidates:
+            config_file = path / DEFAULT_CONFIG_FILE
+            if config_file.exists():
+                self.config_file = config_file
+                break
+
+    def load(self) -> None:
+        """Load the config."""
+        self.get_config_file(Path.cwd())
+        if self.config_file:
+            self._load_toml_file(str(self.config_file))

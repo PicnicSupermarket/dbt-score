@@ -146,7 +146,7 @@ def test_evaluation_rule_with_params(
     model2 = manifest_loader.models[1]
 
     config = Config()
-    config.load_toml_file(str(valid_config_path))
+    config._load_toml_file(str(valid_config_path))
 
     rule_registry = RuleRegistry(config)
     rule_registry._add_rule("rule_with_params", rule_with_params)

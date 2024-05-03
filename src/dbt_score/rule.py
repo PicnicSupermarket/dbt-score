@@ -38,7 +38,9 @@ class Rule:
 
     def __init__(self, rule_config: RuleConfig | None = None) -> None:
         """Initialize the rule."""
-        self.params = self.process_config(rule_config) if rule_config else {}
+        self.params: dict[str, Any] = {}
+        if rule_config:
+            self.process_config(rule_config)
 
     def __init_subclass__(cls, **kwargs) -> None:  # type: ignore
         """Initializes the subclass."""
@@ -46,7 +48,7 @@ class Rule:
         if not hasattr(cls, "description"):
             raise AttributeError("Subclass must define class attribute `description`.")
 
-    def process_config(self, rule_config: RuleConfig) -> dict[str, Any]:
+    def process_config(self, rule_config: RuleConfig) -> None:
         """Process the rule config."""
         rule_params = self.default_params.copy()
 
@@ -62,8 +64,7 @@ class Rule:
         self.set_severity(
             rule_config.severity
         ) if rule_config.severity else rule_config.severity
-
-        return rule_params
+        self.params = rule_params
 
     def evaluate(self, model: Model) -> RuleViolation | None:
         """Evaluates the rule."""
