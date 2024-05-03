@@ -2,7 +2,7 @@
 
 from unittest.mock import Mock
 
-from dbt_score.config_parser import DbtScoreConfig
+from dbt_score.config import Config
 from dbt_score.evaluation import Evaluation
 from dbt_score.models import ManifestLoader
 from dbt_score.rule import RuleViolation
@@ -145,7 +145,7 @@ def test_evaluation_rule_with_params(
     model1 = manifest_loader.models[0]
     model2 = manifest_loader.models[1]
 
-    config = DbtScoreConfig()
+    config = Config()
     config.load_toml_file(str(valid_config_path))
 
     rule_registry = RuleRegistry(config)

@@ -6,7 +6,7 @@ from dataclasses import dataclass
 from enum import Enum
 from typing import Any, Callable, Type, TypeAlias, overload
 
-from dbt_score.config_parser import RuleConfig
+from dbt_score.config import RuleConfig
 from dbt_score.models import Model
 
 
@@ -57,8 +57,9 @@ class Rule:
             else:
                 raise AttributeError(f"Unknown rule parameter: {k}.")
 
-        self.set_severity(rule_config.severity or self.severity)
-        self.set_description(rule_config.description or self.description)
+        self.set_severity(
+            rule_config.severity
+        ) if rule_config.severity else rule_config.severity
 
         return rule_params
 
@@ -72,11 +73,6 @@ class Rule:
         if isinstance(severity, int):
             severity = Severity(severity)
         cls.severity = severity
-
-    @classmethod
-    def set_description(cls, description: str) -> None:
-        """Set the description of the rule."""
-        cls.description = description
 
     @classmethod
     def source(cls) -> str:

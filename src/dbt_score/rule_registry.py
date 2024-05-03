@@ -8,7 +8,7 @@ import logging
 import pkgutil
 from typing import Iterator, Type
 
-from dbt_score.config_parser import DbtScoreConfig, RuleConfig
+from dbt_score.config import Config, RuleConfig
 from dbt_score.exceptions import DuplicatedRuleException
 from dbt_score.rule import Rule
 
@@ -18,9 +18,9 @@ logger = logging.getLogger(__name__)
 class RuleRegistry:
     """A container for configured rules."""
 
-    def __init__(self, config: DbtScoreConfig | None = None) -> None:
+    def __init__(self, config: Config | None = None) -> None:
         """Instantiate a rule registry."""
-        self.config = config or DbtScoreConfig()
+        self.config = config or Config()
         self._rules: dict[str, Type[Rule]] = {}
         self._initialized_rules: dict[str, Rule] = {}
 

@@ -8,3 +8,6 @@ severity=4
 
 [tool.dbt-score.rules.rule_with_params]
 model_name="model2"
+
+[tool.dbt-score.rules."tests.rules.example.rule_test_example"]
+severity=4

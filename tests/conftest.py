@@ -5,7 +5,7 @@ from pathlib import Path
 from typing import Any, Type
 
 from dbt_score import Model, Rule, RuleViolation, Severity, rule
-from dbt_score.config_parser import DbtScoreConfig, RuleConfig
+from dbt_score.config import Config, RuleConfig
 from pytest import fixture
 
 # Configuration
@@ -24,9 +24,9 @@ def invalid_config_path() -> Path:
 
 
 @fixture
-def default_config() -> DbtScoreConfig:
-    """Return a DbtScoreConfig object."""
-    return DbtScoreConfig()
+def default_config() -> Config:
+    """Return a Config object."""
+    return Config()
 
 
 @fixture
