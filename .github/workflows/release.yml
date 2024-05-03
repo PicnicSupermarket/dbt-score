@@ -1,0 +1,26 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "*"
+
+jobs:
+  release:
+    name: release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up PDM
+        uses: pdm-project/setup-pdm@v4
+        with:
+          python-version: "3.10"
+      - name: Install dependencies
+        run: |
+          pdm sync -G docs
+      - name: Deploy docs
+        run: |
+          pdm run mkdocs gh-deploy --force
