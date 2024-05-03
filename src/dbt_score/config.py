@@ -27,9 +27,9 @@ class RuleConfig:
 class Config:
     """Configuration for dbt-score."""
 
-    _main_section: Final = "tool.dbt-score"
-    _options: Final = ["rule_namespaces", "disabled_rules"]
-    _rules_section: Final = f"{_main_section}.rules"
+    _main_section: Final[str] = "tool.dbt-score"
+    _options: Final[tuple[str, ...]] = ("rule_namespaces", "disabled_rules")
+    _rules_section: Final[str] = f"{_main_section}.rules"
 
     def __init__(self) -> None:
         """Initialize the Config object."""
