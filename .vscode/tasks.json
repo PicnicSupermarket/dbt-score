@@ -1,0 +1,23 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "mypy",
+      "type": "shell",
+      "command": "pdm run mypy .",
+      "problemMatcher": ["$go"]
+    },
+    {
+      "label": "ruff",
+      "type": "shell",
+      "command": "pdm run ruff check --fix .",
+      "problemMatcher": ["$go"]
+    },
+    {
+      "label": "mkdocs serve",
+      "type": "shell",
+      "command": "pdm run mkdocs serve",
+      "problemMatcher": []
+    }
+  ]
+}

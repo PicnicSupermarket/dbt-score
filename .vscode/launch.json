@@ -1,0 +1,12 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Lint: test data",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "dbt_score",
+      "args": ["lint", "-m", "./tests/resources/manifest.json"]
+    }
+  ]
+}
