@@ -8,7 +8,7 @@ Linter for dbt model metadata.
 
 You'll need the following prerequisites:
 
-- Any Python version starting from 3.10
+- Any Python version starting from 3.11
 - [pre-commit](https://pre-commit.com/)
 - [PDM](https://pdm-project.org/2.12/)
 
