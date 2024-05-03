@@ -20,7 +20,11 @@ BANNER: Final[str] = r"""
 
 
 @click.version_option(message="%(version)s")
-@click.group(help=f"\b{BANNER}", invoke_without_command=False)
+@click.group(
+    help=f"\b{BANNER}",
+    invoke_without_command=False,
+    context_settings={"help_option_names": ["-h", "--help"]},
+)
 def cli() -> None:
     """CLI entrypoint."""
 
