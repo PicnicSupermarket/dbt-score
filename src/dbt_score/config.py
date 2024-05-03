@@ -1,10 +1,9 @@
 """This module is responsible for loading configuration."""
 
 import logging
+import tomllib
 from dataclasses import dataclass, field
 from typing import Any, Final
-
-import tomllib
 
 logger = logging.getLogger(__name__)
 
