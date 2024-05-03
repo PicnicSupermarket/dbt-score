@@ -55,7 +55,9 @@ class Rule:
             if k in self.default_params:
                 rule_params[k] = v
             else:
-                raise AttributeError(f"Unknown rule parameter: {k}.")
+                raise AttributeError(
+                    f"Unknown rule parameter: {k} for rule {self.source()}."
+                )
 
         self.set_severity(
             rule_config.severity

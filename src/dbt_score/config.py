@@ -47,6 +47,7 @@ class Config:
             toml_data = tomllib.load(f)
             tools = toml_data.get("tool", {})
             dbt_score_config = tools.get("dbt-score", {})
+            rules_config = dbt_score_config.pop("rules", {})
 
             # Main configuration
             for option, value in dbt_score_config.items():
@@ -61,5 +62,5 @@ class Config:
             # Rule configuration
             self.rules_config = {
                 name: RuleConfig.from_dict(config)
-                for name, config in dbt_score_config.get("rules", {}).items()
+                for name, config in rules_config.items()
             }
