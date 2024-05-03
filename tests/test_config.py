@@ -25,7 +25,11 @@ def test_load_invalid_toml_file(caplog, invalid_config_path):
 def test_invalid_rule_config(rule_severity_low):
     """Test that an invalid rule config raises an exception."""
     config = RuleConfig(params={"foo": "bar"})
-    with pytest.raises(AttributeError, match="Unknown rule parameter: foo."):
+    with pytest.raises(
+        AttributeError,
+        match="Unknown rule parameter: foo for rule "
+        "tests.conftest.rule_severity_low.",
+    ):
         rule_severity_low(config)
 
 
