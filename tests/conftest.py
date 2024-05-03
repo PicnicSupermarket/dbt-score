@@ -5,7 +5,6 @@ from pathlib import Path
 from typing import Any, Type
 
 from dbt_score import Model, Rule, RuleViolation, Severity, rule
-from dbt_score.config import Config, RuleConfig
 from pytest import fixture
 
 # Configuration
@@ -21,18 +20,6 @@ def valid_config_path() -> Path:
 def invalid_config_path() -> Path:
     """Return the path of the configuration."""
     return Path(__file__).parent / "resources" / "invalid_pyproject.toml"
-
-
-@fixture
-def default_config() -> Config:
-    """Return a Config object."""
-    return Config()
-
-
-@fixture
-def default_rule_config() -> RuleConfig:
-    """Return an empty RuleConfig object."""
-    return RuleConfig()
 
 
 # Manifest
