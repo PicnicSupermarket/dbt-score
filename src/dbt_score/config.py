@@ -2,7 +2,7 @@
 
 import logging
 from dataclasses import dataclass, field
-from typing import Any, ClassVar
+from typing import Any, Final
 
 import tomllib
 
@@ -29,9 +29,9 @@ class RuleConfig:
 class Config:
     """Configuration for dbt-score."""
 
-    _main_section = "tool.dbt-score"
-    _options: ClassVar[list[str]] = ["rule_namespaces", "disabled_rules"]
-    _rules_section = f"{_main_section}.rules"
+    _main_section: Final = "tool.dbt-score"
+    _options: Final = ["rule_namespaces", "disabled_rules"]
+    _rules_section: Final = f"{_main_section}.rules"
 
     def __init__(self) -> None:
         """Initialize the Config object."""
