@@ -20,9 +20,8 @@ class RuleConfig:
     @staticmethod
     def from_dict(rule_config: dict[str, Any]) -> "RuleConfig":
         """Create a RuleConfig from a dictionary."""
-        copy = rule_config.copy()
-        severity = copy.pop("severity", None)
-        return RuleConfig(severity=severity, params=copy)
+        severity = rule_config.pop("severity", None)
+        return RuleConfig(severity=severity, params=rule_config)
 
 
 class Config:
