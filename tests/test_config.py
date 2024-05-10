@@ -2,8 +2,8 @@
 from pathlib import Path
 
 import pytest
-from dbt_score.config import Config, RuleConfig
-from dbt_score.rule import Severity
+from dbt_score.config import Config
+from dbt_score.rule import RuleConfig, Severity
 
 
 def test_load_valid_toml_file(valid_config_path):
@@ -12,8 +12,11 @@ def test_load_valid_toml_file(valid_config_path):
     config._load_toml_file(str(valid_config_path))
     assert config.rule_namespaces == ["namespace_foo"]
     assert config.disabled_rules == ["foo", "bar"]
-    assert config.rules_config["foobar"].severity == 4
-    assert config.rules_config["tests.rules.example.rule_test_example"].severity == 4
+    assert config.rules_config["foobar"].severity == Severity.CRITICAL
+    assert (
+        config.rules_config["tests.rules.example.rule_test_example"].severity
+        == Severity.CRITICAL
+    )
 
 
 def test_load_invalid_toml_file(caplog, invalid_config_path):
@@ -36,7 +39,7 @@ def test_invalid_rule_config(rule_severity_low):
 
 def test_valid_rule_config(valid_config_path, rule_with_params):
     """Test that a valid rule config can be loaded."""
-    config = RuleConfig(severity=4, params={"model_name": "baz"})
+    config = RuleConfig(severity=Severity(4), params={"model_name": "baz"})
     rule_with_params = rule_with_params(config)
     assert rule_with_params.severity == Severity.CRITICAL
     assert rule_with_params.default_params == {"model_name": "model1"}

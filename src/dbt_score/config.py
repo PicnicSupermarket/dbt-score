@@ -2,27 +2,14 @@
 
 import logging
 import tomllib
-from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Final
+
+from dbt_score.rule import RuleConfig
 
 logger = logging.getLogger(__name__)
 
 DEFAULT_CONFIG_FILE = "pyproject.toml"
-
-
-@dataclass
-class RuleConfig:
-    """Configuration for a rule."""
-
-    severity: int | None = None
-    params: dict[str, Any] = field(default_factory=dict)
-
-    @staticmethod
-    def from_dict(rule_config: dict[str, Any]) -> "RuleConfig":
-        """Create a RuleConfig from a dictionary."""
-        severity = rule_config.pop("severity", None)
-        return RuleConfig(severity=severity, params=rule_config)
 
 
 class Config:
@@ -47,26 +34,26 @@ class Config:
         """Load the options from a TOML file."""
         with open(file, "rb") as f:
             toml_data = tomllib.load(f)
-            tools = toml_data.get("tool", {})
-            dbt_score_config = tools.get("dbt-score", {})
-            rules_config = dbt_score_config.pop("rules", {})
 
-            # Main configuration
-            for option, value in dbt_score_config.items():
-                if option in self._options:
-                    self.set_option(option, value)
-                elif not isinstance(
-                    value, dict
-                ):  # If value is a dictionary, it's another section
-                    logger.warning(
-                        f"Option {option} in {self._main_section} not supported."
-                    )
+        tools = toml_data.get("tool", {})
+        dbt_score_config = tools.get("dbt-score", {})
+        rules_config = dbt_score_config.pop("rules", {})
 
-            # Rule configuration
-            self.rules_config = {
-                name: RuleConfig.from_dict(config)
-                for name, config in rules_config.items()
-            }
+        # Main configuration
+        for option, value in dbt_score_config.items():
+            if option in self._options:
+                self.set_option(option, value)
+            elif not isinstance(
+                value, dict
+            ):  # If value is a dictionary, it's another section
+                logger.warning(
+                    f"Option {option} in {self._main_section} not supported."
+                )
+
+        # Rule configuration
+        self.rules_config = {
+            name: RuleConfig.from_dict(config) for name, config in rules_config.items()
+        }
 
     def get_config_file(self, directory: Path) -> None:
         """Get the config file."""

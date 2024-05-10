@@ -2,11 +2,10 @@
 
 import inspect
 import typing
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from enum import Enum
 from typing import Any, Callable, Type, TypeAlias, overload
 
-from dbt_score.config import RuleConfig
 from dbt_score.models import Model
 
 
@@ -17,6 +16,26 @@ class Severity(Enum):
     MEDIUM = 2
     HIGH = 3
     CRITICAL = 4
+
+
+@dataclass
+class RuleConfig:
+    """Configuration for a rule."""
+
+    severity: Severity | None = None
+    params: dict[str, Any] = field(default_factory=dict)
+
+    @staticmethod
+    def from_dict(rule_config: dict[str, Any]) -> "RuleConfig":
+        """Create a RuleConfig from a dictionary."""
+        rule_config = rule_config.copy()
+        severity = (
+            Severity(rule_config.pop("severity", None))
+            if "severity" in rule_config
+            else None
+        )
+
+        return RuleConfig(severity=severity, params=rule_config)
 
 
 @dataclass
@@ -71,10 +90,8 @@ class Rule:
         raise NotImplementedError("Subclass must implement method `evaluate`.")
 
     @classmethod
-    def set_severity(cls, severity: int | Severity) -> None:
+    def set_severity(cls, severity: Severity) -> None:
         """Set the severity of the rule."""
-        if isinstance(severity, int):
-            severity = Severity(severity)
         cls.severity = severity
 
     @classmethod

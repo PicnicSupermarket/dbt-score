@@ -8,9 +8,9 @@ import logging
 import pkgutil
 from typing import Iterator, Type
 
-from dbt_score.config import Config, RuleConfig
+from dbt_score.config import Config
 from dbt_score.exceptions import DuplicatedRuleException
-from dbt_score.rule import Rule
+from dbt_score.rule import Rule, RuleConfig
 
 logger = logging.getLogger(__name__)
 
