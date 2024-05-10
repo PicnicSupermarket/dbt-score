@@ -5,9 +5,16 @@ from pathlib import Path
 from typing import Any, Type
 
 from dbt_score import Model, Rule, RuleViolation, Severity, rule
+from dbt_score.config import Config
 from pytest import fixture
 
 # Configuration
+
+
+@fixture()
+def default_config() -> Config:
+    """Return a default Config object."""
+    return Config()
 
 
 @fixture

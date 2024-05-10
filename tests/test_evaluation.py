@@ -15,13 +15,14 @@ def test_evaluation_low_medium_high(
     rule_severity_medium,
     rule_severity_high,
     rule_error,
+    default_config,
 ):
     """Test rule evaluation with a combination of LOW, MEDIUM and HIGH severity."""
     manifest_loader = ManifestLoader(manifest_path)
     mock_formatter = Mock()
     mock_scorer = Mock()
 
-    rule_registry = RuleRegistry()
+    rule_registry = RuleRegistry(default_config)
     rule_registry._add_rule("rule_severity_low", rule_severity_low)
     rule_registry._add_rule("rule_severity_medium", rule_severity_medium)
     rule_registry._add_rule("rule_severity_high", rule_severity_high)
@@ -57,14 +58,12 @@ def test_evaluation_low_medium_high(
 
 
 def test_evaluation_critical(
-    manifest_path,
-    rule_severity_low,
-    rule_severity_critical,
+    manifest_path, rule_severity_low, rule_severity_critical, default_config
 ):
     """Test rule evaluation with a CRITICAL severity."""
     manifest_loader = ManifestLoader(manifest_path)
 
-    rule_registry = RuleRegistry()
+    rule_registry = RuleRegistry(default_config)
     rule_registry._add_rule("rule_severity_low", rule_severity_low)
     rule_registry._add_rule("rule_severity_critical", rule_severity_critical)
     rule_registry.init_rules()
@@ -82,11 +81,11 @@ def test_evaluation_critical(
     assert isinstance(evaluation.results[model2][rule_severity_critical], RuleViolation)
 
 
-def test_evaluation_no_rule(manifest_path):
+def test_evaluation_no_rule(manifest_path, default_config):
     """Test rule evaluation when no rule exists."""
     manifest_loader = ManifestLoader(manifest_path)
 
-    rule_registry = RuleRegistry()
+    rule_registry = RuleRegistry(default_config)
 
     evaluation = Evaluation(
         rule_registry=rule_registry,
@@ -100,11 +99,11 @@ def test_evaluation_no_rule(manifest_path):
         assert len(results) == 0
 
 
-def test_evaluation_no_model(manifest_empty_path, rule_severity_low):
+def test_evaluation_no_model(manifest_empty_path, rule_severity_low, default_config):
     """Test rule evaluation when no model exists."""
     manifest_loader = ManifestLoader(manifest_empty_path)
 
-    rule_registry = RuleRegistry()
+    rule_registry = RuleRegistry(default_config)
     rule_registry._add_rule("rule_severity_low", rule_severity_low)
 
     evaluation = Evaluation(
@@ -119,11 +118,11 @@ def test_evaluation_no_model(manifest_empty_path, rule_severity_low):
     assert list(evaluation.scores.values()) == []
 
 
-def test_evaluation_no_model_no_rule(manifest_empty_path):
+def test_evaluation_no_model_no_rule(manifest_empty_path, default_config):
     """Test rule evaluation when no rule and no model exists."""
     manifest_loader = ManifestLoader(manifest_empty_path)
 
-    rule_registry = RuleRegistry()
+    rule_registry = RuleRegistry(default_config)
 
     evaluation = Evaluation(
         rule_registry=rule_registry,

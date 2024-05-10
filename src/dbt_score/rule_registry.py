@@ -18,9 +18,9 @@ logger = logging.getLogger(__name__)
 class RuleRegistry:
     """A container for configured rules."""
 
-    def __init__(self, config: Config | None = None) -> None:
+    def __init__(self, config: Config) -> None:
         """Instantiate a rule registry."""
-        self.config = config or Config()
+        self.config = config
         self._rules: dict[str, Type[Rule]] = {}
         self._initialized_rules: dict[str, Rule] = {}
 
