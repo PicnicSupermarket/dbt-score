@@ -179,18 +179,18 @@ def rule_severity_critical() -> Type[Rule]:
 
 
 @fixture
-def rule_with_params() -> Type[Rule]:
-    """An example rule with additional input params."""
+def rule_with_config() -> Type[Rule]:
+    """An example rule with additional configuration."""
 
     @rule
-    def rule_with_params(
+    def rule_with_config(
         model: Model, model_name: str = "model1"
     ) -> RuleViolation | None:
-        """Rule with additional input params."""
+        """Rule with additional configuration."""
         if model.name != model_name:
             return RuleViolation(message=model_name)
 
-    return rule_with_params
+    return rule_with_config
 
 
 @fixture

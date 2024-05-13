@@ -28,7 +28,7 @@ def test_load_invalid_toml_file(caplog, invalid_config_path):
 
 def test_invalid_rule_config(rule_severity_low):
     """Test that an invalid rule config raises an exception."""
-    config = RuleConfig(params={"foo": "bar"})
+    config = RuleConfig(config={"foo": "bar"})
     with pytest.raises(
         AttributeError,
         match="Unknown rule parameter: foo for rule "
@@ -37,26 +37,26 @@ def test_invalid_rule_config(rule_severity_low):
         rule_severity_low(config)
 
 
-def test_valid_rule_config(valid_config_path, rule_with_params):
+def test_valid_rule_config(valid_config_path, rule_with_config):
     """Test that a valid rule config can be loaded."""
-    config = RuleConfig(severity=Severity(4), params={"model_name": "baz"})
-    rule_with_params = rule_with_params(config)
-    assert rule_with_params.severity == Severity.CRITICAL
-    assert rule_with_params.default_params == {"model_name": "model1"}
-    assert rule_with_params.params == {"model_name": "baz"}
+    config = RuleConfig(severity=Severity(4), config={"model_name": "baz"})
+    rule_with_config = rule_with_config(config)
+    assert rule_with_config.severity == Severity.CRITICAL
+    assert rule_with_config.default_config == {"model_name": "model1"}
+    assert rule_with_config.config == {"model_name": "baz"}
 
 
 def test_get_config_file():
     """Test that the config file is found in the current directory."""
     directory = Path(__file__).parent / "resources"
     config = Config()
-    config.get_config_file(directory)
-    assert config.config_file == directory / "pyproject.toml"
+    config_file = config.get_config_file(directory)
+    assert config_file == directory / "pyproject.toml"
 
 
 def test_get_parent_config_file():
     """Test that the config file is found in the parent directory."""
     directory = Path(__file__).parent / "resources" / "sub_dir"
     config = Config()
-    config.get_config_file(directory)
-    assert config.config_file == directory.parent / "pyproject.toml"
+    config_file = config.get_config_file(directory)
+    assert config_file == directory.parent / "pyproject.toml"

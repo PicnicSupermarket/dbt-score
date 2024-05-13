@@ -136,8 +136,8 @@ def test_evaluation_no_model_no_rule(manifest_empty_path, default_config):
     assert list(evaluation.scores.values()) == []
 
 
-def test_evaluation_rule_with_params(
-    manifest_path, rule_with_params, valid_config_path
+def test_evaluation_rule_with_config(
+    manifest_path, rule_with_config, valid_config_path
 ):
     """Test rule evaluation with parameters."""
     manifest_loader = ManifestLoader(manifest_path)
@@ -148,7 +148,7 @@ def test_evaluation_rule_with_params(
     config._load_toml_file(str(valid_config_path))
 
     rule_registry = RuleRegistry(config)
-    rule_registry._add_rule("rule_with_params", rule_with_params)
+    rule_registry._add_rule("rule_with_config", rule_with_config)
     rule_registry.init_rules()
 
     evaluation = Evaluation(
@@ -160,8 +160,8 @@ def test_evaluation_rule_with_params(
     evaluation.evaluate()
 
     assert (
-        rule_with_params.default_params
-        != rule_registry.rules["rule_with_params"].params
+        rule_with_config.default_config
+        != rule_registry.rules["rule_with_config"].config
     )
-    assert evaluation.results[model1][rule_with_params] is not None
-    assert evaluation.results[model2][rule_with_params] is None
+    assert evaluation.results[model1][rule_with_config] is not None
+    assert evaluation.results[model2][rule_with_config] is None

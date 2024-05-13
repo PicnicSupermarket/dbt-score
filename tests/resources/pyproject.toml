@@ -6,7 +6,7 @@ disabled_rules = ["foo", "bar"]
 [tool.dbt-score.rules.foobar]
 severity=4
 
-[tool.dbt-score.rules.rule_with_params]
+[tool.dbt-score.rules.rule_with_config]
 model_name="model2"
 
 [tool.dbt-score.rules."tests.rules.example.rule_test_example"]

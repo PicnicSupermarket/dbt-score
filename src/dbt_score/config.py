@@ -55,18 +55,18 @@ class Config:
             name: RuleConfig.from_dict(config) for name, config in rules_config.items()
         }
 
-    def get_config_file(self, directory: Path) -> None:
+    @staticmethod
+    def get_config_file(directory: Path) -> Path | None:
         """Get the config file."""
         candidates = [directory]
         candidates.extend(directory.parents)
         for path in candidates:
             config_file = path / DEFAULT_CONFIG_FILE
             if config_file.exists():
-                self.config_file = config_file
-                break
+                return config_file
 
     def load(self) -> None:
         """Load the config."""
-        self.get_config_file(Path.cwd())
-        if self.config_file:
-            self._load_toml_file(str(self.config_file))
+        config_file = self.get_config_file(Path.cwd())
+        if config_file:
+            self._load_toml_file(str(config_file))

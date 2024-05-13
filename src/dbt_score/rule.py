@@ -23,19 +23,19 @@ class RuleConfig:
     """Configuration for a rule."""
 
     severity: Severity | None = None
-    params: dict[str, Any] = field(default_factory=dict)
+    config: dict[str, Any] = field(default_factory=dict)
 
     @staticmethod
     def from_dict(rule_config: dict[str, Any]) -> "RuleConfig":
         """Create a RuleConfig from a dictionary."""
-        rule_config = rule_config.copy()
+        config = rule_config.copy()
         severity = (
-            Severity(rule_config.pop("severity", None))
+            Severity(config.pop("severity", None))
             if "severity" in rule_config
             else None
         )
 
-        return RuleConfig(severity=severity, params=rule_config)
+        return RuleConfig(severity=severity, config=config)
 
 
 @dataclass
@@ -53,11 +53,11 @@ class Rule:
 
     description: str
     severity: Severity = Severity.MEDIUM
-    default_params: typing.ClassVar[dict[str, Any]] = {}
+    default_config: typing.ClassVar[dict[str, Any]] = {}
 
     def __init__(self, rule_config: RuleConfig | None = None) -> None:
         """Initialize the rule."""
-        self.params: dict[str, Any] = {}
+        self.config: dict[str, Any] = {}
         if rule_config:
             self.process_config(rule_config)
 
@@ -69,12 +69,12 @@ class Rule:
 
     def process_config(self, rule_config: RuleConfig) -> None:
         """Process the rule config."""
-        rule_params = self.default_params.copy()
+        config = self.default_config.copy()
 
-        # Overwrite default rule params
-        for k, v in rule_config.params.items():
-            if k in self.default_params:
-                rule_params[k] = v
+        # Overwrite default rule configuration
+        for k, v in rule_config.config.items():
+            if k in self.default_config:
+                config[k] = v
             else:
                 raise AttributeError(
                     f"Unknown rule parameter: {k} for rule {self.source()}."
@@ -83,7 +83,7 @@ class Rule:
         self.set_severity(
             rule_config.severity
         ) if rule_config.severity else rule_config.severity
-        self.params = rule_params
+        self.config = config
 
     def evaluate(self, model: Model) -> RuleViolation | None:
         """Evaluates the rule."""
@@ -159,7 +159,7 @@ def rule(
             return func(*args, **kwargs)
 
         # Get default parameters from the rule definition
-        default_params = {
+        default_config = {
             key: val.default
             for key, val in inspect.signature(func).parameters.items()
             if val.default != inspect.Parameter.empty
@@ -172,7 +172,7 @@ def rule(
             {
                 "description": rule_description,
                 "severity": severity,
-                "default_params": default_params,
+                "default_config": default_config,
                 "evaluate": wrapped_func,
                 # Forward origin of the decorated function
                 "__qualname__": func.__qualname__,  # https://peps.python.org/pep-3155/
