@@ -2,6 +2,7 @@
 
 from unittest.mock import Mock
 
+from dbt_score.config import Config
 from dbt_score.evaluation import Evaluation
 from dbt_score.models import ManifestLoader
 from dbt_score.rule import RuleViolation
@@ -14,17 +15,19 @@ def test_evaluation_low_medium_high(
     rule_severity_medium,
     rule_severity_high,
     rule_error,
+    default_config,
 ):
     """Test rule evaluation with a combination of LOW, MEDIUM and HIGH severity."""
     manifest_loader = ManifestLoader(manifest_path)
     mock_formatter = Mock()
     mock_scorer = Mock()
 
-    rule_registry = RuleRegistry()
-    rule_registry._add_rule("rule_severity_low", rule_severity_low)
-    rule_registry._add_rule("rule_severity_medium", rule_severity_medium)
-    rule_registry._add_rule("rule_severity_high", rule_severity_high)
-    rule_registry._add_rule("rule_error", rule_error)
+    rule_registry = RuleRegistry(default_config)
+    rule_registry._add_rule(rule_severity_low)
+    rule_registry._add_rule(rule_severity_medium)
+    rule_registry._add_rule(rule_severity_high)
+    rule_registry._add_rule(rule_error)
+    rule_registry.init_rules()
 
     evaluation = Evaluation(
         rule_registry=rule_registry,
@@ -55,16 +58,15 @@ def test_evaluation_low_medium_high(
 
 
 def test_evaluation_critical(
-    manifest_path,
-    rule_severity_low,
-    rule_severity_critical,
+    manifest_path, rule_severity_low, rule_severity_critical, default_config
 ):
     """Test rule evaluation with a CRITICAL severity."""
     manifest_loader = ManifestLoader(manifest_path)
 
-    rule_registry = RuleRegistry()
-    rule_registry._add_rule("rule_severity_low", rule_severity_low)
-    rule_registry._add_rule("rule_severity_critical", rule_severity_critical)
+    rule_registry = RuleRegistry(default_config)
+    rule_registry._add_rule(rule_severity_low)
+    rule_registry._add_rule(rule_severity_critical)
+    rule_registry.init_rules()
 
     evaluation = Evaluation(
         rule_registry=rule_registry,
@@ -79,11 +81,11 @@ def test_evaluation_critical(
     assert isinstance(evaluation.results[model2][rule_severity_critical], RuleViolation)
 
 
-def test_evaluation_no_rule(manifest_path):
+def test_evaluation_no_rule(manifest_path, default_config):
     """Test rule evaluation when no rule exists."""
     manifest_loader = ManifestLoader(manifest_path)
 
-    rule_registry = RuleRegistry()
+    rule_registry = RuleRegistry(default_config)
 
     evaluation = Evaluation(
         rule_registry=rule_registry,
@@ -97,12 +99,12 @@ def test_evaluation_no_rule(manifest_path):
         assert len(results) == 0
 
 
-def test_evaluation_no_model(manifest_empty_path, rule_severity_low):
+def test_evaluation_no_model(manifest_empty_path, rule_severity_low, default_config):
     """Test rule evaluation when no model exists."""
     manifest_loader = ManifestLoader(manifest_empty_path)
 
-    rule_registry = RuleRegistry()
-    rule_registry._add_rule("rule_severity_low", rule_severity_low)
+    rule_registry = RuleRegistry(default_config)
+    rule_registry._add_rule(rule_severity_low)
 
     evaluation = Evaluation(
         rule_registry=rule_registry,
@@ -116,11 +118,11 @@ def test_evaluation_no_model(manifest_empty_path, rule_severity_low):
     assert list(evaluation.scores.values()) == []
 
 
-def test_evaluation_no_model_no_rule(manifest_empty_path):
+def test_evaluation_no_model_no_rule(manifest_empty_path, default_config):
     """Test rule evaluation when no rule and no model exists."""
     manifest_loader = ManifestLoader(manifest_empty_path)
 
-    rule_registry = RuleRegistry()
+    rule_registry = RuleRegistry(default_config)
 
     evaluation = Evaluation(
         rule_registry=rule_registry,
@@ -132,3 +134,34 @@ def test_evaluation_no_model_no_rule(manifest_empty_path):
 
     assert len(evaluation.results) == 0
     assert list(evaluation.scores.values()) == []
+
+
+def test_evaluation_rule_with_config(
+    manifest_path, rule_with_config, valid_config_path
+):
+    """Test rule evaluation with parameters."""
+    manifest_loader = ManifestLoader(manifest_path)
+    model1 = manifest_loader.models[0]
+    model2 = manifest_loader.models[1]
+
+    config = Config()
+    config._load_toml_file(str(valid_config_path))
+
+    rule_registry = RuleRegistry(config)
+    rule_registry._add_rule(rule_with_config)
+    rule_registry.init_rules()
+
+    evaluation = Evaluation(
+        rule_registry=rule_registry,
+        manifest_loader=manifest_loader,
+        formatter=Mock(),
+        scorer=Mock(),
+    )
+    evaluation.evaluate()
+
+    assert (
+        rule_with_config.default_config
+        != rule_registry.rules["tests.conftest.rule_with_config"].config
+    )
+    assert evaluation.results[model1][rule_with_config] is not None
+    assert evaluation.results[model2][rule_with_config] is None

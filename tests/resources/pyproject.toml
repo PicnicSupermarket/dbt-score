@@ -1,0 +1,13 @@
+[tool.dbt-score]
+rule_namespaces = ["foo", "tests"]
+disabled_rules = ["foo.foo", "tests.bar"]
+
+
+[tool.dbt-score.rules."foo.bar"]
+severity=4
+
+[tool.dbt-score.rules."tests.conftest.rule_with_config"]
+model_name="model2"
+
+[tool.dbt-score.rules."tests.rules.example.rule_test_example"]
+severity=4

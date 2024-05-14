@@ -22,7 +22,7 @@ dependencies = [
     "dbt-core>=1.5",
     "click>=7.1.1, <9.0.0",
 ]
-requires-python = ">=3.10"
+requires-python = ">=3.11"
 readme = "README.md"
 license = {text = "MIT"}
 
@@ -95,7 +95,7 @@ max-args = 6
 
 [tool.ruff.lint.per-file-ignores]
 "tests/**/*.py" = [
-    "PLR2004",  # magic value comparisons
+    "PLR2004",  # Magic value comparisons
 ]
 
 ### Coverage ###

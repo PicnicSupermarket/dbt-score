@@ -8,6 +8,7 @@ nav:
   - Home: index.md
   - Reference:
       - reference/cli.md
+      - reference/config.md
       - reference/exceptions.md
       - reference/evaluation.md
       - reference/models.md
