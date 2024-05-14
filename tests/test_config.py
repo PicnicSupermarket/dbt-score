@@ -12,7 +12,7 @@ def test_load_valid_toml_file(valid_config_path):
     config._load_toml_file(str(valid_config_path))
     assert config.rule_namespaces == ["namespace_foo"]
     assert config.disabled_rules == ["foo", "bar"]
-    assert config.rules_config["foobar"].severity == Severity.CRITICAL
+    assert config.rules_config["foo.bar"].severity == Severity.CRITICAL
     assert (
         config.rules_config["tests.rules.example.rule_test_example"].severity
         == Severity.CRITICAL

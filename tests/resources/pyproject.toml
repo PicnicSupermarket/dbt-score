@@ -3,10 +3,10 @@ rule_namespaces = ["namespace_foo"]
 disabled_rules = ["foo", "bar"]
 
 
-[tool.dbt-score.rules.foobar]
+[tool.dbt-score.rules."foo.bar"]
 severity=4
 
-[tool.dbt-score.rules.rule_with_config]
+[tool.dbt-score.rules."tests.conftest.rule_with_config"]
 model_name="model2"
 
 [tool.dbt-score.rules."tests.rules.example.rule_test_example"]

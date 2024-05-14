@@ -23,10 +23,10 @@ def test_evaluation_low_medium_high(
     mock_scorer = Mock()
 
     rule_registry = RuleRegistry(default_config)
-    rule_registry._add_rule("rule_severity_low", rule_severity_low)
-    rule_registry._add_rule("rule_severity_medium", rule_severity_medium)
-    rule_registry._add_rule("rule_severity_high", rule_severity_high)
-    rule_registry._add_rule("rule_error", rule_error)
+    rule_registry._add_rule(rule_severity_low)
+    rule_registry._add_rule(rule_severity_medium)
+    rule_registry._add_rule(rule_severity_high)
+    rule_registry._add_rule(rule_error)
     rule_registry.init_rules()
 
     evaluation = Evaluation(
@@ -64,8 +64,8 @@ def test_evaluation_critical(
     manifest_loader = ManifestLoader(manifest_path)
 
     rule_registry = RuleRegistry(default_config)
-    rule_registry._add_rule("rule_severity_low", rule_severity_low)
-    rule_registry._add_rule("rule_severity_critical", rule_severity_critical)
+    rule_registry._add_rule(rule_severity_low)
+    rule_registry._add_rule(rule_severity_critical)
     rule_registry.init_rules()
 
     evaluation = Evaluation(
@@ -104,7 +104,7 @@ def test_evaluation_no_model(manifest_empty_path, rule_severity_low, default_con
     manifest_loader = ManifestLoader(manifest_empty_path)
 
     rule_registry = RuleRegistry(default_config)
-    rule_registry._add_rule("rule_severity_low", rule_severity_low)
+    rule_registry._add_rule(rule_severity_low)
 
     evaluation = Evaluation(
         rule_registry=rule_registry,
@@ -148,7 +148,7 @@ def test_evaluation_rule_with_config(
     config._load_toml_file(str(valid_config_path))
 
     rule_registry = RuleRegistry(config)
-    rule_registry._add_rule("rule_with_config", rule_with_config)
+    rule_registry._add_rule(rule_with_config)
     rule_registry.init_rules()
 
     evaluation = Evaluation(
@@ -161,7 +161,7 @@ def test_evaluation_rule_with_config(
 
     assert (
         rule_with_config.default_config
-        != rule_registry.rules["rule_with_config"].config
+        != rule_registry.rules["tests.conftest.rule_with_config"].config
     )
     assert evaluation.results[model1][rule_with_config] is not None
     assert evaluation.results[model2][rule_with_config] is None

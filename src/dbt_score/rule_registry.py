@@ -57,14 +57,14 @@ class RuleRegistry:
             for obj_name in dir(module):
                 obj = module.__dict__[obj_name]
                 if type(obj) is type and issubclass(obj, Rule) and obj is not Rule:
-                    self._add_rule(f"{module_name}.{obj_name}", obj)
+                    self._add_rule(obj)
 
-    def _add_rule(self, name: str, rule: Type[Rule]) -> None:
+    def _add_rule(self, rule: Type[Rule]) -> None:
         """Add a rule."""
-        if name in self._rules:
-            raise DuplicatedRuleException(name)
-        if name not in self.config.disabled_rules:
-            self._rules[name] = rule
+        if rule.source() in self._rules:
+            raise DuplicatedRuleException(rule.source())
+        if rule.source() not in self.config.disabled_rules:
+            self._rules[rule.source()] = rule
 
     def load_all(self) -> None:
         """Load all rules, core and third-party."""
