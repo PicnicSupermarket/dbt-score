@@ -5,7 +5,29 @@ from pathlib import Path
 from typing import Any, Type
 
 from dbt_score import Model, Rule, RuleViolation, Severity, rule
+from dbt_score.config import Config
 from pytest import fixture
+
+# Configuration
+
+
+@fixture()
+def default_config() -> Config:
+    """Return a default Config object."""
+    return Config()
+
+
+@fixture
+def valid_config_path() -> Path:
+    """Return the path of the configuration."""
+    return Path(__file__).parent / "resources" / "pyproject.toml"
+
+
+@fixture
+def invalid_config_path() -> Path:
+    """Return the path of the configuration."""
+    return Path(__file__).parent / "resources" / "invalid_pyproject.toml"
+
 
 # Manifest
 
@@ -154,6 +176,21 @@ def rule_severity_critical() -> Type[Rule]:
             return RuleViolation(message="Linting error")
 
     return rule_severity_critical
+
+
+@fixture
+def rule_with_config() -> Type[Rule]:
+    """An example rule with additional configuration."""
+
+    @rule
+    def rule_with_config(
+        model: Model, model_name: str = "model1"
+    ) -> RuleViolation | None:
+        """Rule with additional configuration."""
+        if model.name != model_name:
+            return RuleViolation(message=model_name)
+
+    return rule_with_config
 
 
 @fixture

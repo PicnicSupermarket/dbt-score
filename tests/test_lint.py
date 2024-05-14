@@ -3,6 +3,7 @@
 
 from unittest.mock import patch
 
+from dbt_score.config import Config
 from dbt_score.lint import lint_dbt_project
 
 
@@ -12,6 +13,6 @@ def test_lint_dbt_project(mock_evaluation, manifest_path):
     # Instance of classes are the same Mocks
     mock_evaluation.return_value = mock_evaluation
 
-    lint_dbt_project(manifest_path)
+    lint_dbt_project(manifest_path, Config())
 
     mock_evaluation.evaluate.assert_called_once()
