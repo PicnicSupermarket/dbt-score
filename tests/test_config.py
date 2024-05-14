@@ -10,8 +10,8 @@ def test_load_valid_toml_file(valid_config_path):
     """Test that a valid config file loads correctly."""
     config = Config()
     config._load_toml_file(str(valid_config_path))
-    assert config.rule_namespaces == ["namespace_foo"]
-    assert config.disabled_rules == ["foo", "bar"]
+    assert config.rule_namespaces == ["foo", "tests"]
+    assert config.disabled_rules == ["foo.foo", "tests.bar"]
     assert config.rules_config["foo.bar"].severity == Severity.CRITICAL
     assert (
         config.rules_config["tests.rules.example.rule_test_example"].severity
