@@ -21,3 +21,10 @@ def columns_have_description(model: Model) -> RuleViolation | None:
             message=f"The following columns lack a description: "
             f"{', '.join(invalid_column_names)}."
         )
+
+
+@rule
+def has_owner(model: Model) -> RuleViolation | None:
+    """A model should have an owner."""
+    if not model.meta.get("owner"):
+        return RuleViolation(message="Model lacks an owner.")
