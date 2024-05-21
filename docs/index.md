@@ -52,4 +52,3 @@ Picnic Technologies in Amsterdam, Netherlands. Source code is
 
 All contributions, in the form of bug reports, pull requests, feedback or
 discussion are welcome. See the **contribution guide** for more information.#
-Welcome to dbt-score
