@@ -51,4 +51,4 @@ Picnic Technologies in Amsterdam, Netherlands. Source code is
 [available on Github](https://github.com/PicnicSupermarket/dbt-score).
 
 All contributions, in the form of bug reports, pull requests, feedback or
-discussion are welcome. See the **contribution guide** for more information.#
+discussion are welcome. See the **contribution guide** for more information.
