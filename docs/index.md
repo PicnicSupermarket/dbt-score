@@ -1,1 +1,55 @@
 # Welcome to dbt-score
+
+`dbt-score` is a linter for [dbt](https://www.getdbt.com/) metadata.
+
+dbt allows data practitioners to organize their data in to _models_. Those
+models have metadata associated with them: documentation, tests, types, etc.
+
+`dbt-score` allows to lint and score this metadata, in order to enforce (or
+encourage) good practices.
+
+## Example
+
+```shell
+$ dbt-score lint
+Model customers
+    OK   dbt_score.rules.generic.has_description
+    WARN (medium) dbt_score.rules.generic.has_owner: Model lacks an owner.
+    OK   dbt_score.rules.generic.sql_has_reasonable_size
+Score: 6.7
+```
+
+In this example, `dbt-score` reports a warning: the model `customers` does not
+declare an owner. Hence, it doesn't score the maximum value of `10`.
+
+## Philosophy
+
+dbt models are often used as metadata containers: either in YAML files or
+through the use of `{{ config() }}` blocks, they are associated with a lot of
+information. At scale, it becomes tedious to enforce good practices in large
+data teams dealing with many models.
+
+To that end, `dbt-score` has 2 main features:
+
+- It runs rules on models, and displays rule violations. Those can be used in
+  interactive environments or in CI.
+- Using those run results, it scores models, as to give them a measure of their
+  maturity. This score can help gamify model metadata improvements, and be
+  reflected in data catalogs.
+
+`dbt-score` aims to:
+
+- Provide a predefined set of good practices (the core rules).
+- Allow teams to easily add their own rules.
+- Allow rule sets to be packaged and distributed.
+- Be configurable to adapt to different data stacks and practices.
+
+## About
+
+`dbt-score` is free software, released under the MIT license. It originated at
+Picnic Technologies in Amsterdam, Netherlands. Source code is
+[available on Github](https://github.com/PicnicSupermarket/dbt-score).
+
+All contributions, in the form of bug reports, pull requests, feedback or
+discussion are welcome. See the **contribution guide** for more information.#
+Welcome to dbt-score
