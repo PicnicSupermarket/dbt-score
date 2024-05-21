@@ -17,10 +17,11 @@ def columns_have_description(model: Model) -> RuleViolation | None:
         column.name for column in model.columns if not column.description
     ]
     if invalid_column_names:
-        return RuleViolation(
-            message=f"The following columns lack a description: "
-            f"{', '.join(invalid_column_names)}."
-        )
+        max_length = 60
+        message = f"Columns lack a description: {', '.join(invalid_column_names)}."
+        if len(message) > max_length:
+            message = f"{message[:60]}…"
+        return RuleViolation(message=message)
 
 
 @rule
