@@ -12,15 +12,16 @@ You'll need the following prerequisites:
 - [pre-commit](https://pre-commit.com/)
 - [PDM](https://pdm-project.org/2.12/)
 
-Configure development environment running these commands from the project's root:
+Configure development environment running these commands from the project's
+root:
 
 ```shell
 pre-commit install
 pdm install --group :all
 ```
 
-The pdm command will install all project's dependency groups, including all the dependencies needed for development
-purposes.
+The pdm command will install all project's dependency groups, including all the
+dependencies needed for development purposes.
 
 ### Lint
 
@@ -45,8 +46,10 @@ pdm run tox -e lint
 `dbt_score` uses:
 
 - [pytest](https://docs.pytest.org/) as a main test framework.
-- [coverage](https://coverage.readthedocs.io/en/latest/index.html) for test coverage.
-- [tox](https://tox.wiki/en/latest/) for testing against multiple Python versions.
+- [coverage](https://coverage.readthedocs.io/en/latest/index.html) for test
+  coverage.
+- [tox](https://tox.wiki/en/latest/) for testing against multiple Python
+  versions.
 
 Cheatsheet:
 
@@ -61,7 +64,8 @@ pdm run coverage run -m pytest
 `dbt_score` uses:
 
 - [mkdocs](https://www.mkdocs.org/) for docs generation.
-- [mkdocstrings](https://mkdocstrings.github.io/) for automatic docs from sources.
+- [mkdocstrings](https://mkdocstrings.github.io/) for automatic docs from
+  sources.
 
 Cheatsheet:
 
