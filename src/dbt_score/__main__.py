@@ -18,6 +18,11 @@ def set_logging() -> None:
         handler.setLevel(logging.WARNING)
 
 
-if __name__ == "__main__":
+def main():
+    """Main entry-point."""
     set_logging()
     cli()
+
+
+if __name__ == "__main__":
+    main()

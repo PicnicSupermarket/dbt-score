@@ -21,7 +21,7 @@ class Config:
 
     def __init__(self) -> None:
         """Initialize the Config object."""
-        self.rule_namespaces: list[str] = ["dbt_score_rules"]
+        self.rule_namespaces: list[str] = ["dbt_score.rules", "dbt_score_rules"]
         self.disabled_rules: list[str] = []
         self.rules_config: dict[str, RuleConfig] = {}
         self.config_file: Path | None = None
@@ -70,3 +70,8 @@ class Config:
         config_file = self.get_config_file(Path.cwd())
         if config_file:
             self._load_toml_file(str(config_file))
+
+    def overload(self, values: dict[str, str]) -> None:
+        """Overload config with additional values."""
+        for key, value in values.items():
+            self.set_option(key, value)
