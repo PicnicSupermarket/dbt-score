@@ -28,3 +28,13 @@ def has_owner(model: Model) -> RuleViolation | None:
     """A model should have an owner."""
     if not model.meta.get("owner"):
         return RuleViolation(message="Model lacks an owner.")
+
+
+@rule
+def sql_has_reasonable_size(model: Model, max_lines: int = 200) -> RuleViolation | None:
+    """The SQL query of a model should not be too long."""
+    count_lines = len(model.raw_code.split("\n"))
+    if count_lines > max_lines:
+        return RuleViolation(
+            message=f"SQL query too long: {count_lines} lines (> {max_lines})."
+        )
