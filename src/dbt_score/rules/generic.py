@@ -21,7 +21,7 @@ def columns_have_description(model: Model) -> RuleViolation | None:
         message = f"Columns lack a description: {', '.join(invalid_column_names)}."
         if len(message) > max_length:
             message = f"{message[:60]}…"
-        return RuleViolation(message=message[:90])
+        return RuleViolation(message=message)
 
 
 @rule
