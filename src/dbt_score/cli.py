@@ -83,7 +83,7 @@ def lint(
     lint_dbt_project(manifest, config)
 
 
-@cli.command()
+@cli.command(name="list")
 @click.option(
     "--namespace",
     "-n",
@@ -103,8 +103,8 @@ def lint(
     type=click.Choice(["terminal", "markdown"]),
     default="terminal",
 )
-def catalog(namespace: list[str], title: str, format: str) -> None:
-    """Display rules catalog."""
+def list_command(namespace: list[str], title: str, format: str) -> None:
+    """Display rules list."""
     config = Config()
     config.load()
     if namespace:

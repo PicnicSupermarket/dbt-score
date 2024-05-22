@@ -19,7 +19,7 @@ def set_logging() -> None:
 
 
 def main() -> None:
-    """Main entry-point."""
+    """Main entrypoint."""
     set_logging()
     cli()
 

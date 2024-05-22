@@ -31,7 +31,7 @@ class Formatter(abc.ABC):
         raise NotImplementedError
 
 
-class TerminalFormatter(Formatter):
+class PlainTextFormatter(Formatter):
     """A terminal formatter."""
 
     @staticmethod
@@ -52,7 +52,7 @@ class TerminalFormatter(Formatter):
     @staticmethod
     def format_rule(rule: Rule) -> str | None:
         """Return text for a given rule."""
-        return f"{TerminalFormatter.bold(rule.source())}:\n    {rule.description}\n"
+        return f"{PlainTextFormatter.bold(rule.source())}:\n    {rule.description}\n"
 
 
 class MarkdownFormatter(Formatter):
@@ -110,7 +110,7 @@ def display_catalog(config: Config, title: str, format: str) -> None:
     """Print rules catalog."""
     formatter: Formatter
     if format == "terminal":
-        formatter = TerminalFormatter()
+        formatter = PlainTextFormatter()
     elif format == "markdown":
         formatter = MarkdownFormatter()
     else:
