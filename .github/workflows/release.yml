@@ -27,5 +27,5 @@ jobs:
           pdm sync -G docs
       - name: Deploy docs
         run: |
-          pdm run dbt-score catalog -f markdown -n dbt_score.rules.generic > docs/rules/generic.md
+          pdm run dbt-score catalog -f markdown -n dbt_score.rules.generic --title Generic > docs/rules/generic.md
           pdm run mkdocs gh-deploy --force
