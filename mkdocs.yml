@@ -6,6 +6,7 @@ plugins:
   - mkdocstrings
 nav:
   - Home: index.md
+  - Getting Started: getting_started.md
   - Reference:
       - reference/cli.md
       - reference/config.md
