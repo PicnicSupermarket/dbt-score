@@ -71,7 +71,7 @@ class Config:
         if config_file:
             self._load_toml_file(str(config_file))
 
-    def overload(self, values: dict[str, str]) -> None:
+    def overload(self, values: dict[str, Any]) -> None:
         """Overload config with additional values."""
         for key, value in values.items():
             self.set_option(key, value)

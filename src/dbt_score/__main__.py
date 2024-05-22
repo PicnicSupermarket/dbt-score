@@ -18,7 +18,7 @@ def set_logging() -> None:
         handler.setLevel(logging.WARNING)
 
 
-def main():
+def main() -> None:
     """Main entry-point."""
     set_logging()
     cli()
