@@ -6,7 +6,7 @@ plugins:
   - mkdocstrings
 nav:
   - Home: index.md
-  - Rules: rules.md
+  - Create rules: create_rules.md
   - Reference:
       - reference/cli.md
       - reference/config.md
