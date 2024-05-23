@@ -20,3 +20,4 @@ nav:
           - reference/formatters/human_readable_formatter.md
       - Rules:
           - reference/rules/generic.md
+  - Changelog: https://github.com/PicnicSupermarket/dbt-score/blob/master/CHANGELOG.md
