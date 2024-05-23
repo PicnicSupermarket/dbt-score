@@ -10,7 +10,7 @@ from dbt_score.rule_registry import RuleRegistry
 
 
 class Formatter(abc.ABC):
-    """A catalog formatter."""
+    """A rule catalog formatter."""
 
     @staticmethod
     @abc.abstractmethod

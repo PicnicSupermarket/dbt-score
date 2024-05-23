@@ -57,9 +57,9 @@ class RuleRegistry:
                     self._add_rule(obj)
 
     def _add_rule(self, rule: Type[Rule]) -> None:
-        """Add a rule."""
+        """Initialize and add a rule."""
         rule_name = rule.source()
-        if rule.source() in self._rules:
+        if rule_name in self._rules:
             raise DuplicatedRuleException(rule.source())
         if rule_name not in self.config.disabled_rules:
             rule_config = self.config.rules_config.get(rule_name, RuleConfig())
