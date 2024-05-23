@@ -3,11 +3,6 @@
 `dbt-score` is a Python library that is easy to install and use. The minimum
 required version of Python is `3.11`.
 
-There are two dependencies:
-
-- `dbt-core`: To parse a dbt project.
-- `click`: To run the CLI.
-
 ## Installation
 
 The easiest way to install `dbt-score` is with `pip`:
