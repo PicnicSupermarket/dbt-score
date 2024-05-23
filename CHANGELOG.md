@@ -11,7 +11,7 @@ and this project adheres to
 ### Added
 
 - CLI based on Click.
-- Ability to parse dbt's `metadata.json` into internal structures.
+- Ability to parse dbt's `manifest.json` into internal structures.
 - Rule registry and rule discovery.
 - Rule API, decorator-based or class-based.
 - Linting and scoring functionality for dbt models.
