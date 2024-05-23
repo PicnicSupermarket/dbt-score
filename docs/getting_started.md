@@ -20,7 +20,8 @@ pip install dbt-score
 
 `dbt-score` uses the output of `dbt parse` (`manifest.json`) as input.
 Therefore, it is recommended to run `dbt-score` from the root of your dbt
-project. By default, it will look for `manifest.json` in the `target` directory.
+project. By default, it will look for `manifest.json` in dbt's `target`
+directory.
 
 `dbt-score` can be executed from the command line:
 
@@ -38,5 +39,5 @@ It's also possible to automatically run `dbt parse`, to generate the
 `manifest.json` file:
 
 ```shell
-dbt-score --run-dbt-parse
+dbt-score lint --run-dbt-parse
 ```
