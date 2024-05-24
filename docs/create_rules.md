@@ -26,7 +26,7 @@ def has_description(model: Model) -> RuleViolation | None:
         return RuleViolation(message="Model lacks a description.")
 ```
 
-Te name of the method is the name of the rule and the docstring of the method is
+The name of the function is the name of the rule and the docstring of the method is
 the description. Therefore, it is important to use a self-explanatory name for
 the method and document it well.
 
