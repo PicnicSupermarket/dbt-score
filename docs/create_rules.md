@@ -19,6 +19,7 @@ The `@rule` decorator can be used to easily create a new rule:
 ```python
 from dbt_score import Model, rule, RuleViolation
 
+
 @rule
 def has_description(model: Model) -> RuleViolation | None:
     """A model should have a description."""
@@ -35,6 +36,7 @@ The severity of a rule can be set using the `severity` argument:
 ```python
 from dbt_score import rule, Severity
 
+
 @rule(severity=Severity.HIGH)
 ```
 
@@ -45,6 +47,7 @@ class:
 
 ```python
 from dbt_score import Model, Rule, RuleViolation
+
 
 class HasDescription(Rule):
     description = "A model should have a description."
@@ -58,6 +61,7 @@ class HasDescription(Rule):
 ### Rules location
 
 By default `dbt-score` will look for rules in the Python namespace
-`dbt_score_rules`. Rules can be stored in a folder, in the root of the project
-where `dbt-score` is executed. In this folder, all rules defined in `.py` files
-will be automatically discovered.
+`dbt_score_rules`. Rules can be stored anywhere in the Python path under the
+`dbt_score_rules` namespace. In many cases, having such a folder in the dbt
+project from where you invoke dbt and dbt-score will work. In this folder, all
+rules defined in `.py` files will be automatically discovered.
