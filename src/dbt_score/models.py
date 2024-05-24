@@ -128,6 +128,8 @@ class Model:
         database: The database name of the model.
         schema: The schema name of the model.
         raw_code: The raw code of the model.
+        language: The language of the model, e.g. sql.
+        access: The access level of the model, e.g. public.
         alias: The alias of the model.
         patch_path: The yml path of the model, e.g. `package://model_dir/dir/file.yml`.
         tags: The list of tags attached to the model.
