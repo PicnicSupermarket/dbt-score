@@ -39,3 +39,13 @@ It's also possible to automatically run `dbt parse`, to generate the
 ```shell
 dbt-score lint --run-dbt-parse
 ```
+
+To get more information on how to run `dbt-score`, `--help` can be used:
+
+```shell
+dbt-score --help
+```
+
+```shell
+dbt-score lint --help
+```
