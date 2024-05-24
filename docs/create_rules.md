@@ -65,3 +65,7 @@ By default `dbt-score` will look for rules in the Python namespace
 `dbt_score_rules` namespace. In many cases, having such a folder in the dbt
 project from where you invoke dbt and dbt-score will work. In this folder, all
 rules defined in `.py` files will be automatically discovered.
+
+If nested folders are used, e.g. `dbt_score_rules/generic_rules/rules.py`, an
+`__init__.py` file needs to be present in the nested folder to make it
+discoverable.
