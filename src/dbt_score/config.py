@@ -16,13 +16,22 @@ class Config:
     """Configuration for dbt-score."""
 
     _main_section: Final[str] = "tool.dbt-score"
-    _options: Final[list[str]] = ["rule_namespaces", "disabled_rules"]
+    _options: Final[list[str]] = [
+        "rule_namespaces",
+        "disabled_rules",
+        "bronze_medal_threshold",
+        "silver_medal_threshold",
+        "gold_medal_threshold",
+    ]
     _rules_section: Final[str] = f"{_main_section}.rules"
 
     def __init__(self) -> None:
         """Initialize the Config object."""
         self.rule_namespaces: list[str] = ["dbt_score.rules", "dbt_score_rules"]
         self.disabled_rules: list[str] = []
+        self.bronze_medal_threshold: float = 7.0
+        self.silver_medal_threshold: float = 8.0
+        self.gold_medal_threshold: float = 9.0
         self.rules_config: dict[str, RuleConfig] = {}
         self.config_file: Path | None = None
 
