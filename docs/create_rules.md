@@ -26,9 +26,9 @@ def has_description(model: Model) -> RuleViolation | None:
         return RuleViolation(message="Model lacks a description.")
 ```
 
-The name of the function is the name of the rule and the docstring of the method is
-the description. Therefore, it is important to use a self-explanatory name for
-the method and document it well.
+The name of the function is the name of the rule and the docstring of the
+function is its description. Therefore, it is important to use a
+self-explanatory name for the function and document it well.
 
 The severity of a rule can be set using the `severity` argument:
 
@@ -57,7 +57,7 @@ class HasDescription(Rule):
 
 ### Rules location
 
-By default `dbt-score` will look for rules in the namespace `dbt_score_rules`.
-Rules can be stored in a folder, in the root of the project where `dbt-score` is
-executed. In this folder, all rules defined in `.py` files will be automatically
-discovered.
+By default `dbt-score` will look for rules in the Python namespace
+`dbt_score_rules`. Rules can be stored in a folder, in the root of the project
+where `dbt-score` is executed. In this folder, all rules defined in `.py` files
+will be automatically discovered.
