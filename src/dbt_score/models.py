@@ -128,6 +128,8 @@ class Model:
         database: The database name of the model.
         schema: The schema name of the model.
         raw_code: The raw code of the model.
+        language: The language of the model, e.g. sql.
+        access: The access level of the model, e.g. public.
         alias: The alias of the model.
         patch_path: The yml path of the model, e.g. `package://model_dir/dir/file.yml`.
         tags: The list of tags attached to the model.
@@ -149,6 +151,8 @@ class Model:
     database: str
     schema: str
     raw_code: str
+    language: str
+    access: str
     alias: str | None = None
     patch_path: str | None = None
     tags: list[str] = field(default_factory=list)
@@ -200,6 +204,8 @@ class Model:
             database=node_values["database"],
             schema=node_values["schema"],
             raw_code=node_values["raw_code"],
+            language=node_values["language"],
+            access=node_values["access"],
             alias=node_values["alias"],
             patch_path=node_values["patch_path"],
             tags=node_values["tags"],
