@@ -1,6 +1,6 @@
 """All generic rules."""
 
-from dbt_score import Model, RuleViolation, rule
+from dbt_score import Model, RuleViolation, Severity, rule
 
 
 @rule
@@ -39,3 +39,13 @@ def sql_has_reasonable_size(model: Model, max_lines: int = 200) -> RuleViolation
         return RuleViolation(
             message=f"SQL query too long: {count_lines} lines (> {max_lines})."
         )
+
+
+@rule(severity=Severity.LOW)
+def public_model_has_example_sql(model: Model) -> RuleViolation | None:
+    """The documentation of a public model should have an example query."""
+    if model.language == "sql" and model.access == "public":
+        if "```sql" not in model.description:
+            return RuleViolation(
+                "The model description does not include an example SQL query."
+            )
