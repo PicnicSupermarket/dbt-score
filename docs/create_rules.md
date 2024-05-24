@@ -1,7 +1,7 @@
 # Create rules
 
 In order to lint and score models, `dbt-score` uses a set of rules that are
-applied to each model. A rule can pass or fail when it is applied to a model.
+applied to each model. A rule can pass or fail when it is run.
 Based on the severity of the rule models are scored. `dbt-score` has a set of
 rules enabled by default, which can be found [here](reference/rules/generic.md).
 
