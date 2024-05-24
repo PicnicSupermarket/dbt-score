@@ -10,6 +10,7 @@ from dbt.cli.options import MultiOption
 from dbt_score.config import Config
 from dbt_score.lint import lint_dbt_project
 from dbt_score.parse import dbt_parse, get_default_manifest_path
+from dbt_score.rule_catalog import display_catalog
 
 BANNER: Final[str] = r"""
           __ __     __
@@ -40,6 +41,19 @@ def cli() -> None:
     multiple=True,
 )
 @click.option(
+    "--namespace",
+    "-n",
+    help="Namespace.",
+    default=None,
+    multiple=True,
+)
+@click.option(
+    "--disabled-rule",
+    help="Rule to disable.",
+    default=None,
+    multiple=True,
+)
+@click.option(
     "--manifest",
     "-m",
     help="Manifest filepath.",
@@ -53,7 +67,13 @@ def cli() -> None:
     is_flag=True,
     default=False,
 )
-def lint(select: tuple[str], manifest: Path, run_dbt_parse: bool) -> None:
+def lint(
+    select: tuple[str],
+    namespace: list[str],
+    disabled_rule: list[str],
+    manifest: Path,
+    run_dbt_parse: bool,
+) -> None:
     """Lint dbt models metadata."""
     manifest_provided = (
         click.get_current_context().get_parameter_source("manifest")
@@ -64,8 +84,52 @@ def lint(select: tuple[str], manifest: Path, run_dbt_parse: bool) -> None:
 
     config = Config()
     config.load()
+    if namespace:
+        config.overload({"rule_namespaces": namespace})
+    if disabled_rule:
+        config.overload({"disabled_rules": disabled_rule})
 
     if run_dbt_parse:
         dbt_parse()
 
     lint_dbt_project(manifest, config)
+
+
+@cli.command(name="list")
+@click.option(
+    "--namespace",
+    "-n",
+    help="Namespace.",
+    default=None,
+    multiple=True,
+)
+@click.option(
+    "--disabled-rule",
+    help="Rule to disable.",
+    default=None,
+    multiple=True,
+)
+@click.option(
+    "--title",
+    help="Page title (Markdown only).",
+    default=None,
+)
+@click.option(
+    "--format",
+    "-f",
+    help="Output format.",
+    type=click.Choice(["terminal", "markdown"]),
+    default="terminal",
+)
+def list_command(
+    namespace: list[str], disabled_rule: list[str], title: str, format: str
+) -> None:
+    """Display rules list."""
+    config = Config()
+    config.load()
+    if namespace:
+        config.overload({"rule_namespaces": namespace})
+    if disabled_rule:
+        config.overload({"disabled_rules": disabled_rule})
+
+    display_catalog(config, title, format)

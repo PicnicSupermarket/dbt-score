@@ -174,6 +174,8 @@ def rule(
                 "severity": severity,
                 "default_config": default_config,
                 "evaluate": wrapped_func,
+                # Save provided evaluate function
+                "_orig_evaluate": func,
                 # Forward origin of the decorated function
                 "__qualname__": func.__qualname__,  # https://peps.python.org/pep-3155/
                 "__module__": func.__module__,

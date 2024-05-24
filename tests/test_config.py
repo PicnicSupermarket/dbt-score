@@ -60,3 +60,12 @@ def test_get_parent_config_file():
     config = Config()
     config_file = config.get_config_file(directory)
     assert config_file == directory.parent / "pyproject.toml"
+
+
+def test_config_overload(valid_config_path):
+    """Test overloading of config values."""
+    config = Config()
+    config._load_toml_file(str(valid_config_path))
+    config.overload({"rule_namespaces": ["x", "y"], "disabled_rules": ["foo"]})
+    assert config.rule_namespaces == ["x", "y"]
+    assert config.disabled_rules == ["foo"]

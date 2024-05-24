@@ -34,7 +34,6 @@ def test_configured_rule_registry_discovery(valid_config_path):
     config._load_toml_file(str(valid_config_path))
     r = RuleRegistry(config)
     r._load("tests.rules")
-    r.init_rules()
     assert (
         r.rules["tests.rules.example.rule_test_example"].severity == Severity.CRITICAL
     )

@@ -27,7 +27,7 @@ readme = "README.md"
 license = {text = "MIT"}
 
 [project.scripts]
-dbt-score = "dbt_score.cli:cli"
+dbt-score = "dbt_score.__main__:main"
 
 [tool.pdm]
 [tool.pdm.dev-dependencies]
@@ -52,7 +52,7 @@ docs = [
 source = "scm"
 
 [tool.pdm.scripts]
-dbt-score = {call = "dbt_score.cli:cli"}
+dbt-score = {call = "dbt_score.__main__:main"}
 
 ### Mypy ###
 
