@@ -1,7 +1,7 @@
 """CLI interface."""
 
 from pathlib import Path
-from typing import Final
+from typing import Final, Literal
 
 import click
 from click.core import ParameterSource
@@ -32,6 +32,14 @@ def cli() -> None:
 
 
 @cli.command()
+@click.option(
+    "--format",
+    "-f",
+    help="Output format. Plain is suitable for terminals, markdown for rich "
+    "documentation.",
+    type=click.Choice(["plain", "manifest"]),
+    default="plain",
+)
 @click.option(
     "--select",
     "-s",
@@ -68,6 +76,7 @@ def cli() -> None:
     default=False,
 )
 def lint(
+    format: Literal["plain", "manifest"],
     select: tuple[str],
     namespace: list[str],
     disabled_rule: list[str],
@@ -92,7 +101,7 @@ def lint(
     if run_dbt_parse:
         dbt_parse()
 
-    lint_dbt_project(manifest, config)
+    lint_dbt_project(manifest_path=manifest, config=config, format=format)
 
 
 @cli.command(name="list")
