@@ -11,6 +11,9 @@ Installation of `dbt-score` is simple:
 pip install dbt-score
 ```
 
+If a virtual environment is used to run dbt, make sure to install `dbt-score` in
+the same environment.
+
 ## Usage
 
 `dbt-score` uses the output of `dbt parse` (`manifest.json`) as input.
