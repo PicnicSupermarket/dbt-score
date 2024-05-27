@@ -1,6 +1,5 @@
 """Formatter for a manifest.json."""
 
-
 import copy
 import json
 from typing import Any
