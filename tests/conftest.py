@@ -6,6 +6,7 @@ from typing import Any, Type
 
 from dbt_score import Model, Rule, RuleViolation, Severity, rule
 from dbt_score.config import Config
+from dbt_score.models import ManifestLoader
 from pytest import fixture
 
 # Configuration
@@ -48,6 +49,12 @@ def manifest_path() -> Path:
 def raw_manifest(manifest_path) -> Any:
     """Return a raw manifest."""
     return json.loads(manifest_path.read_text(encoding="utf-8"))
+
+
+@fixture
+def manifest_loader(manifest_path) -> ManifestLoader:
+    """Return an instantiated and loaded manifest loader."""
+    return ManifestLoader(file_path=manifest_path)
 
 
 # Models

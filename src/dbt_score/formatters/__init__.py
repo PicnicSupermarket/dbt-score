@@ -7,11 +7,15 @@ from abc import ABC, abstractmethod
 
 if typing.TYPE_CHECKING:
     from dbt_score.evaluation import ModelResultsType
-from dbt_score.models import Model
+from dbt_score.models import ManifestLoader, Model
 
 
 class Formatter(ABC):
     """Abstract class to define a formatter."""
+
+    def __init__(self, manifest_loader: ManifestLoader):
+        """Instantiate a formatter."""
+        self._manifest_loader = manifest_loader
 
     @abstractmethod
     def model_evaluated(
