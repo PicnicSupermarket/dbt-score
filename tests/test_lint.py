@@ -13,6 +13,6 @@ def test_lint_dbt_project(mock_evaluation, manifest_path):
     # Instance of classes are the same Mocks
     mock_evaluation.return_value = mock_evaluation
 
-    lint_dbt_project(manifest_path, Config())
+    lint_dbt_project(manifest_path=manifest_path, config=Config(), format="plain")
 
     mock_evaluation.evaluate.assert_called_once()
