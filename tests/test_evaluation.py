@@ -27,7 +27,6 @@ def test_evaluation_low_medium_high(
     rule_registry._add_rule(rule_severity_medium)
     rule_registry._add_rule(rule_severity_high)
     rule_registry._add_rule(rule_error)
-    rule_registry.init_rules()
 
     evaluation = Evaluation(
         rule_registry=rule_registry,
@@ -66,7 +65,6 @@ def test_evaluation_critical(
     rule_registry = RuleRegistry(default_config)
     rule_registry._add_rule(rule_severity_low)
     rule_registry._add_rule(rule_severity_critical)
-    rule_registry.init_rules()
 
     evaluation = Evaluation(
         rule_registry=rule_registry,
@@ -149,7 +147,6 @@ def test_evaluation_rule_with_config(
 
     rule_registry = RuleRegistry(config)
     rule_registry._add_rule(rule_with_config)
-    rule_registry.init_rules()
 
     evaluation = Evaluation(
         rule_registry=rule_registry,

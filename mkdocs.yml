@@ -1,12 +1,25 @@
 site_name: dbt-score
 theme:
   name: material
+  features:
+    - content.code.copy # Copy button for code blocks
 plugins:
   - search
   - mkdocstrings
+markdown_extensions:
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.details
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences
 nav:
   - Home: index.md
   - Get started: get_started.md
+  - Rules:
+      - rules/generic.md
   - Reference:
       - reference/cli.md
       - reference/config.md
@@ -19,5 +32,4 @@ nav:
       - Formatters:
           - reference/formatters/index.md
           - reference/formatters/human_readable_formatter.md
-      - Rules:
-          - reference/rules/generic.md
+  - Changelog: https://github.com/PicnicSupermarket/dbt-score/blob/master/CHANGELOG.md

@@ -21,34 +21,31 @@ class RuleRegistry:
     def __init__(self, config: Config) -> None:
         """Instantiate a rule registry."""
         self.config = config
-        self._rules: dict[str, Type[Rule]] = {}
-        self._initialized_rules: dict[str, Rule] = {}
-
-    def init_rules(self) -> None:
-        """Initialize rules."""
-        for rule_name, rule_class in self._rules.items():
-            rule_config = self.config.rules_config.get(rule_name, RuleConfig())
-            self._initialized_rules[rule_name] = rule_class(rule_config=rule_config)
+        self._rules: dict[str, Rule] = {}
 
     @property
     def rules(self) -> dict[str, Rule]:
         """Get all rules."""
-        return self._initialized_rules
+        return self._rules
 
     def _walk_packages(self, namespace_name: str) -> Iterator[str]:
         """Walk packages and sub-packages recursively."""
         try:
             namespace = importlib.import_module(namespace_name)
         except ImportError:  # no custom rule in Python path
+            if namespace_name != "dbt_score_rules":
+                logger.warning(f"Can't import {namespace_name}.")
             return
 
-        def onerror(module_name: str) -> None:
-            logger.warning(f"Failed to import {module_name}.")
+        if not hasattr(namespace, "__path__"):
+            # When called with a leaf, i.e. a module, don't attempt to iterate
+            yield namespace_name
+            return
 
-        for package in pkgutil.walk_packages(namespace.__path__, onerror=onerror):
-            yield f"{namespace_name}.{package.name}"
-            if package.ispkg:
-                yield from self._walk_packages(f"{namespace_name}.{package.name}")
+        for package in pkgutil.walk_packages(
+            namespace.__path__, namespace.__name__ + "."
+        ):
+            yield package.name
 
     def _load(self, namespace_name: str) -> None:
         """Load rules found in a given namespace."""
@@ -60,15 +57,15 @@ class RuleRegistry:
                     self._add_rule(obj)
 
     def _add_rule(self, rule: Type[Rule]) -> None:
-        """Add a rule."""
-        if rule.source() in self._rules:
+        """Initialize and add a rule."""
+        rule_name = rule.source()
+        if rule_name in self._rules:
             raise DuplicatedRuleException(rule.source())
-        if rule.source() not in self.config.disabled_rules:
-            self._rules[rule.source()] = rule
+        if rule_name not in self.config.disabled_rules:
+            rule_config = self.config.rules_config.get(rule_name, RuleConfig())
+            self._rules[rule_name] = rule(rule_config=rule_config)
 
     def load_all(self) -> None:
         """Load all rules, core and third-party."""
-        self._load("dbt_score.rules")
         for namespace in self.config.rule_namespaces:
             self._load(namespace)
-        self.init_rules()
