@@ -29,14 +29,16 @@
       "alias": "model1_alias",
       "patch_path": "/path/to/model1.yml",
       "tags": [],
-      "depends_on": {}
+      "depends_on": {},
+      "language": "sql",
+      "access": "protected"
     },
     "model.package.model2": {
       "resource_type": "model",
       "unique_id": "model.package.model2",
       "name": "model2",
       "relation_name": "database.schema.model2",
-      "description": "Description2.",
+      "description": "A great model.\nExample use:\n```sql\nselect 1;\n```",
       "original_file_path": "/path/to/model2.sql",
       "config": {},
       "meta": {},
@@ -57,7 +59,9 @@
       "alias": "model2_alias",
       "patch_path": "/path/to/model2.yml",
       "tags": [],
-      "depends_on": {}
+      "depends_on": {},
+      "language": "sql",
+      "access": "public"
     },
     "test.package.test1": {
       "resource_type": "test",

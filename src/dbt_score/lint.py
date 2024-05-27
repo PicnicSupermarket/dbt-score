@@ -1,16 +1,20 @@
 """Lint dbt models metadata."""
 
 from pathlib import Path
+from typing import Literal
 
 from dbt_score.config import Config
 from dbt_score.evaluation import Evaluation
 from dbt_score.formatters.human_readable_formatter import HumanReadableFormatter
+from dbt_score.formatters.manifest_formatter import ManifestFormatter
 from dbt_score.models import ManifestLoader
 from dbt_score.rule_registry import RuleRegistry
 from dbt_score.scoring import Scorer
 
 
-def lint_dbt_project(manifest_path: Path, config: Config) -> None:
+def lint_dbt_project(
+    manifest_path: Path, config: Config, format: Literal["plain", "manifest"]
+) -> None:
     """Lint dbt manifest."""
     if not manifest_path.exists():
         raise FileNotFoundError(f"Manifest not found at {manifest_path}.")
@@ -20,7 +24,8 @@ def lint_dbt_project(manifest_path: Path, config: Config) -> None:
 
     manifest_loader = ManifestLoader(manifest_path)
 
-    formatter = HumanReadableFormatter()
+    formatters = {"plain": HumanReadableFormatter, "manifest": ManifestFormatter}
+    formatter = formatters[format](manifest_loader=manifest_loader)
 
     scorer = Scorer()
 
