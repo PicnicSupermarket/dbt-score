@@ -27,7 +27,7 @@ def test_manifest_formatter_model(
     assert stdout == ""
 
 
-def test_human_readable_formatter_project(  # noqa: PLR0913
+def test_manifest_formatter_project(
     capsys,
     manifest_loader,
     model1,

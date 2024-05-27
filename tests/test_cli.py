@@ -2,7 +2,6 @@
 
 from unittest.mock import patch
 
-import pytest
 from click.testing import CliRunner
 from dbt_score.cli import lint
 
@@ -25,18 +24,21 @@ def test_lint_existing_manifest(manifest_path):
         assert result.exit_code == 0
 
 
-def test_lint_non_existing_manifest():
+def test_lint_non_existing_manifest(caplog):
     """Test lint with a non-existing manifest."""
     runner = CliRunner()
 
     # Provide manifest in command line
-    with pytest.raises(FileNotFoundError):
-        with patch("dbt_score.cli.Config._load_toml_file"):
-            runner.invoke(
-                lint, ["--manifest", "fake_manifest.json"], catch_exceptions=False
-            )
+    with patch("dbt_score.cli.Config._load_toml_file"):
+        result = runner.invoke(
+            lint, ["--manifest", "fake_manifest.json"], catch_exceptions=False
+        )
+        assert result.exit_code == 2
+        assert "dbt's manifest.json could not be found" in caplog.text
 
     # Use default manifest path
-    with pytest.raises(FileNotFoundError):
-        with patch("dbt_score.cli.Config._load_toml_file"):
-            runner.invoke(lint, catch_exceptions=False)
+    with patch("dbt_score.cli.Config._load_toml_file"):
+        result = runner.invoke(lint, catch_exceptions=False)
+
+        assert result.exit_code == 2
+        assert "dbt's manifest.json could not be found" in caplog.text
