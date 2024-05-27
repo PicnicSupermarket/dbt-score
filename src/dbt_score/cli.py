@@ -9,8 +9,8 @@ from click.core import ParameterSource
 from dbt.cli.options import MultiOption
 
 from dbt_score.config import Config
-from dbt_score.lint import lint_dbt_project
 from dbt_score.dbt_utils import dbt_parse, get_default_manifest_path
+from dbt_score.lint import lint_dbt_project
 from dbt_score.rule_catalog import display_catalog
 
 logger = logging.getLogger(__name__)
@@ -89,6 +89,7 @@ def lint(
     run_dbt_parse: bool,
 ) -> None:
     """Lint dbt models metadata."""
+    # ruff: noqa: PLR0913
     manifest_provided = (
         click.get_current_context().get_parameter_source("manifest")
         != ParameterSource.DEFAULT
