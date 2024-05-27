@@ -19,12 +19,12 @@ class Formatter(ABC):
 
     @abstractmethod
     def model_evaluated(
-        self, model: Model, results: ModelResultsType, score: float
+        self, model: Model, results: ModelResultsType, score: float, medal: str
     ) -> None:
         """Callback when a model has been evaluated."""
         raise NotImplementedError
 
     @abstractmethod
-    def project_evaluated(self, score: float) -> None:
+    def project_evaluated(self, score: float, medal: str) -> None:
         """Callback when a project has been evaluated."""
         raise NotImplementedError

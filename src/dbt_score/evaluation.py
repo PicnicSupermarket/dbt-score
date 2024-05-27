@@ -21,11 +21,11 @@ class Evaluation:
     """Evaluate a set of rules on a set of nodes."""
 
     def __init__(
-        self,
-        rule_registry: RuleRegistry,
-        manifest_loader: ManifestLoader,
-        formatter: Formatter,
-        scorer: Scorer,
+            self,
+            rule_registry: RuleRegistry,
+            manifest_loader: ManifestLoader,
+            formatter: Formatter,
+            scorer: Scorer,
     ) -> None:
         """Create an Evaluation object.
 
@@ -64,12 +64,14 @@ class Evaluation:
                     self.results[model][rule.__class__] = result
 
             self.scores[model] = self._scorer.score_model(self.results[model])
+            model_medal = self._scorer.award_medal(self.scores[model])
             self._formatter.model_evaluated(
-                model, self.results[model], self.scores[model]
+                model, self.results[model], self.scores[model], model_medal
             )
 
         # Compute score for project
         self.project_score = self._scorer.score_aggregate_models(
             list(self.scores.values())
         )
-        self._formatter.project_evaluated(self.project_score)
+        project_medal = self._scorer.award_medal(self.project_score)
+        self._formatter.project_evaluated(self.project_score, project_medal)

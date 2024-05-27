@@ -79,6 +79,21 @@ class Config:
         config_file = self.get_config_file(Path.cwd())
         if config_file:
             self._load_toml_file(str(config_file))
+        self.validate()
+
+
+    def validate(self) -> None:
+        """Validate the config."""
+        if self.bronze_medal_threshold >= self.silver_medal_threshold:
+            raise ValueError(
+                "bronze_medal_threshold must be lower than silver_medal_threshold"
+            )
+        if self.silver_medal_threshold >= self.gold_medal_threshold:
+            raise ValueError(
+                "silver_medal_threshold must be lower than gold_medal_threshold"
+            )
+
+
 
     def overload(self, values: dict[str, Any]) -> None:
         """Overload config with additional values."""

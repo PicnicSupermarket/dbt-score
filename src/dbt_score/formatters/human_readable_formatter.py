@@ -21,7 +21,7 @@ class HumanReadableFormatter(Formatter):
         return f"\033[1m{text}\033[0m"
 
     def model_evaluated(
-        self, model: Model, results: ModelResultsType, score: float
+        self, model: Model, results: ModelResultsType, score: float, medal: str
     ) -> None:
         """Callback when a model has been evaluated."""
         print(f"Model {self.bold(model.name)}")
@@ -35,9 +35,9 @@ class HumanReadableFormatter(Formatter):
                 )
             else:
                 print(f"{self.indent}{self.label_error} {rule.source()}: {result!s}")
-        print(f"Score: {self.bold(str(round(score, 1)))}")
+        print(f"Score: {self.bold(str(round(score, 1)))} {medal}")
         print()
 
-    def project_evaluated(self, score: float) -> None:
+    def project_evaluated(self, score: float, medal: str) -> None:
         """Callback when a project has been evaluated."""
-        print(f"Project score: {self.bold(str(round(score, 1)))}")
+        print(f"Project score: {self.bold(str(round(score, 1)))} {medal}")
