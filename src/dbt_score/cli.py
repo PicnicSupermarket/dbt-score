@@ -89,7 +89,6 @@ def lint(
     run_dbt_parse: bool,
 ) -> None:
     """Lint dbt models metadata."""
-    # ruff: noqa: PLR0913 too-many-arguments
     manifest_provided = (
         click.get_current_context().get_parameter_source("manifest")
         != ParameterSource.DEFAULT

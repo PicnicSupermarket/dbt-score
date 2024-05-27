@@ -91,7 +91,7 @@ max-complexity = 10
 convention = "google"
 
 [tool.ruff.lint.pylint]
-max-args = 6
+max-args = 8
 
 [tool.ruff.lint.per-file-ignores]
 "tests/**/*.py" = [
