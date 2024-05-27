@@ -17,6 +17,7 @@ markdown_extensions:
   - pymdownx.superfences
 nav:
   - Home: index.md
+  - Get started: get_started.md
   - Rules:
       - rules/generic.md
   - Reference:
