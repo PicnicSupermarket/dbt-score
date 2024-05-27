@@ -1,5 +1,6 @@
 """CLI interface."""
 
+import logging
 from pathlib import Path
 from typing import Final, Literal
 
@@ -9,8 +10,10 @@ from dbt.cli.options import MultiOption
 
 from dbt_score.config import Config
 from dbt_score.lint import lint_dbt_project
-from dbt_score.parse import dbt_parse, get_default_manifest_path
+from dbt_score.dbt_utils import dbt_parse, get_default_manifest_path
 from dbt_score.rule_catalog import display_catalog
+
+logger = logging.getLogger(__name__)
 
 BANNER: Final[str] = r"""
           __ __     __
@@ -75,8 +78,10 @@ def cli() -> None:
     is_flag=True,
     default=False,
 )
+@click.pass_context
 def lint(
     format: Literal["plain", "manifest"],
+    ctx: click.Context,
     select: tuple[str],
     namespace: list[str],
     disabled_rule: list[str],
@@ -101,7 +106,14 @@ def lint(
     if run_dbt_parse:
         dbt_parse()
 
-    lint_dbt_project(manifest_path=manifest, config=config, format=format)
+    try:
+        lint_dbt_project(manifest_path=manifest, config=config, format=format)
+    except FileNotFoundError:
+        logger.error(
+            "dbt's manifest.json could not be found. If you're in a dbt project, be "
+            "sure to run 'dbt parse' first, or use the option '--run-dbt-parse'."
+        )
+        ctx.exit(2)
 
 
 @cli.command(name="list")
