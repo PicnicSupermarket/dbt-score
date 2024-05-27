@@ -1,0 +1,66 @@
+# Configuration
+
+`dbt-score` can be configured through a `pyproject.toml` file or via the command
+line.
+
+## pyproject.toml
+
+It is recommended to place the file in the root of your dbt project. `dbt-score`
+will look for `pyproject.toml` in the directory from which it is run and it's
+parent directories.
+
+An example of a `pyproject.toml` file to configure `dbt-score` can be found
+below:
+
+```toml
+[tool.dbt-score]
+rule_namespaces = ["dbt_score.rules", "custom_rules"]
+disabled_rules = ["dbt_score.rules.generic.columns_have_description"]
+
+[tool.dbt-score.rules."dbt_score.rules.generic.sql_has_reasonable_size"]
+severity = 1
+max_lines = 300
+```
+
+### Configuration options
+
+The following options can be set in the `pyproject.toml` file:
+
+#### Main configuration
+
+```toml
+[tool.dbt-score]
+```
+
+- `rule_namespaces`: A list of namespaces to search for rules. The default is
+  `["dbt_score.rules", "dbt_score_rules"]`. Be aware when overriding this
+  setting, that the default rules are in `dbt_score.rules` and are disabled if
+  not included here.
+- `disabled_rules`: A list of rules to disable.
+
+#### Rule configuration
+
+```toml
+[tool.dbt-score.rules."rule_namespace.rule_name"]
+```
+
+Every rule can be configured with the following option:
+
+- `severity`: The severity of the rule. An integer with a minimum value of 1 and
+  a maximum value of 4.
+
+Some rules have additional configuration options, e.g.
+[sql_has_reasonable_size](/rules/generic/#sql_has_reasonable_size). Depending on
+the rule, the options will have different names, types and default values. In
+the case of the
+[sql_has_reasonable_size](/rules/generic/#sql_has_reasonable_size), the
+`max_lines` option can be configured.
+
+## Command line
+
+All configuration options can also be set via the command line. To understand
+how to configure `dbt-score` from the command line:
+
+```bash
+dbt score lint --help
+```
