@@ -21,11 +21,11 @@ class Evaluation:
     """Evaluate a set of rules on a set of nodes."""
 
     def __init__(
-            self,
-            rule_registry: RuleRegistry,
-            manifest_loader: ManifestLoader,
-            formatter: Formatter,
-            scorer: Scorer,
+        self,
+        rule_registry: RuleRegistry,
+        manifest_loader: ManifestLoader,
+        formatter: Formatter,
+        scorer: Scorer,
     ) -> None:
         """Create an Evaluation object.
 

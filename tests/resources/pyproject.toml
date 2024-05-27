@@ -1,7 +1,8 @@
 [tool.dbt-score]
 rule_namespaces = ["foo", "tests"]
 disabled_rules = ["foo.foo", "tests.bar"]
-
+bronze_medal_threshold = 6.0
+silver_medal_threshold = 7.0
 
 [tool.dbt-score.rules."foo.bar"]
 severity=4

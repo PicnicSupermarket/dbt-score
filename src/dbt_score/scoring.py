@@ -24,11 +24,15 @@ class Scorer:
     min_score = 0.0
     max_score = 10.0
 
+    # Medals
+    gold_medal = "🥇"
+    silver_medal = "🥈"
+    bronze_medal = "🥉"
+    no_medal = "🤡"
+
     def __init__(self, config: Config) -> None:
         """Create a Scorer object."""
-        self.bronze_medal_threshold = config.bronze_medal_threshold
-        self.silver_medal_threshold = config.silver_medal_threshold
-        self.gold_medal_threshold = config.gold_medal_threshold
+        self.config = config
 
     def score_model(self, model_results: ModelResultsType) -> float:
         """Compute the score of a given model."""
@@ -36,8 +40,8 @@ class Scorer:
             # No rule? No problem
             return self.max_score
         if any(
-                rule.severity == Severity.CRITICAL and isinstance(result, RuleViolation)
-                for rule, result in model_results.items()
+            rule.severity == Severity.CRITICAL and isinstance(result, RuleViolation)
+            for rule, result in model_results.items()
         ):
             # If there's a CRITICAL violation, the score is 0
             return self.min_score
@@ -69,11 +73,11 @@ class Scorer:
     def award_medal(self, score: float) -> str:
         """Award a medal based on a score."""
         rounded_score = round(score, 1)
-        if rounded_score >= self.gold_medal_threshold:
-            return "🥇"
-        elif rounded_score >= self.silver_medal_threshold:
-            return "🥈"
-        elif rounded_score >= self.bronze_medal_threshold:
-            return "🥉"
+        if rounded_score >= self.config.gold_medal_threshold:
+            return self.gold_medal
+        elif rounded_score >= self.config.silver_medal_threshold:
+            return self.silver_medal
+        elif rounded_score >= self.config.bronze_medal_threshold:
+            return self.bronze_medal
         else:
-            return ""
+            return self.no_medal
