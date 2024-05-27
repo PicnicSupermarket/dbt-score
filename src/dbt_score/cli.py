@@ -80,8 +80,8 @@ def cli() -> None:
 )
 @click.pass_context
 def lint(
-    format: Literal["plain", "manifest"],
     ctx: click.Context,
+    format: Literal["plain", "manifest"],
     select: tuple[str],
     namespace: list[str],
     disabled_rule: list[str],
