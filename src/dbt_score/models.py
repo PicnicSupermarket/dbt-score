@@ -1,10 +1,13 @@
 """Objects related to loading the dbt manifest."""
 
 import json
+import re
 from collections import defaultdict
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
+
+from dbt_score.dbt_utils import dbt_ls
 
 
 @dataclass
@@ -256,3 +259,17 @@ class ManifestLoader:
                 attached_node := node_values.get("attached_node")
             ):
                 self.tests[attached_node].append(node_values)
+
+    def select_models(self, select: list[str]) -> None:
+        """Filter models like dbt's --select."""
+        single_model_select = re.compile(r"[a-zA-Z0-9_]+")
+
+        if all(single_model_select.fullmatch(x) for x in select):
+            # Using '--select my_model' is a common case, which can easily be sped up by
+            # not invoking dbt
+            selected = select
+        else:
+            # Use dbt's implementation of --select
+            selected = dbt_ls(select)
+
+        self.models = [x for x in self.models if x.name in selected]

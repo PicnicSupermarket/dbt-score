@@ -13,7 +13,10 @@ from dbt_score.scoring import Scorer
 
 
 def lint_dbt_project(
-    manifest_path: Path, config: Config, format: Literal["plain", "manifest"]
+    manifest_path: Path,
+    config: Config,
+    format: Literal["plain", "manifest"],
+    select: list[str] | None = None,
 ) -> None:
     """Lint dbt manifest."""
     if not manifest_path.exists():
@@ -23,6 +26,8 @@ def lint_dbt_project(
     rule_registry.load_all()
 
     manifest_loader = ManifestLoader(manifest_path)
+    if select:
+        manifest_loader.select_models(select)
 
     formatters = {"plain": HumanReadableFormatter, "manifest": ManifestFormatter}
     formatter = formatters[format](manifest_loader=manifest_loader)

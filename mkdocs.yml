@@ -24,6 +24,7 @@ nav:
   - Reference:
       - reference/cli.md
       - reference/config.md
+      - reference/dbt_utils.md
       - reference/exceptions.md
       - reference/evaluation.md
       - reference/models.md
@@ -33,4 +34,5 @@ nav:
       - Formatters:
           - reference/formatters/index.md
           - reference/formatters/human_readable_formatter.md
+          - reference/formatters/manifest_formatter.md
   - Changelog: https://github.com/PicnicSupermarket/dbt-score/blob/master/CHANGELOG.md

@@ -9,8 +9,8 @@ from click.core import ParameterSource
 from dbt.cli.options import MultiOption
 
 from dbt_score.config import Config
+from dbt_score.dbt_utils import dbt_parse, get_default_manifest_path
 from dbt_score.lint import lint_dbt_project
-from dbt_score.parse import dbt_parse, get_default_manifest_path
 from dbt_score.rule_catalog import display_catalog
 
 logger = logging.getLogger(__name__)
@@ -107,7 +107,9 @@ def lint(
         dbt_parse()
 
     try:
-        lint_dbt_project(manifest_path=manifest, config=config, format=format)
+        lint_dbt_project(
+            manifest_path=manifest, config=config, format=format, select=select
+        )
     except FileNotFoundError:
         logger.error(
             "dbt's manifest.json could not be found. If you're in a dbt project, be "
