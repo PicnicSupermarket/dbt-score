@@ -5,7 +5,7 @@ import re
 from collections import defaultdict
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any
+from typing import Any, Iterable
 
 from dbt_score.dbt_utils import dbt_ls
 
@@ -260,7 +260,7 @@ class ManifestLoader:
             ):
                 self.tests[attached_node].append(node_values)
 
-    def select_models(self, select: list[str]) -> None:
+    def select_models(self, select: Iterable[str]) -> None:
         """Filter models like dbt's --select."""
         single_model_select = re.compile(r"[a-zA-Z0-9_]+")
 

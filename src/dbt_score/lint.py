@@ -1,7 +1,7 @@
 """Lint dbt models metadata."""
 
 from pathlib import Path
-from typing import Literal
+from typing import Iterable, Literal
 
 from dbt_score.config import Config
 from dbt_score.evaluation import Evaluation
@@ -16,7 +16,7 @@ def lint_dbt_project(
     manifest_path: Path,
     config: Config,
     format: Literal["plain", "manifest"],
-    select: list[str] | None = None,
+    select: Iterable[str] | None = None,
 ) -> None:
     """Lint dbt manifest."""
     if not manifest_path.exists():

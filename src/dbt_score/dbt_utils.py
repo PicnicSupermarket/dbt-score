@@ -1,10 +1,9 @@
 """dbt utilities."""
 
 import contextlib
-import logging
 import os
 from pathlib import Path
-from typing import Iterator
+from typing import Iterable, Iterator, cast
 
 from dbt.cli.main import dbtRunner, dbtRunnerResult
 
@@ -41,7 +40,7 @@ def dbt_parse() -> dbtRunnerResult:
     return result
 
 
-def dbt_ls(select: list[str] | None) -> list[str]:
+def dbt_ls(select: Iterable[str] | None) -> Iterable[str]:
     """Run dbt ls."""
     cmd = ["ls", "--resource-type", "model", "--output", "name"]
     if select:
@@ -53,7 +52,8 @@ def dbt_ls(select: list[str] | None) -> list[str]:
     if not result.success:
         raise DbtLsException("dbt ls failed") from result.exception
 
-    return result.result
+    selected = cast(Iterable[str], result.result)  # mypy hint
+    return selected
 
 
 def get_default_manifest_path() -> Path:
