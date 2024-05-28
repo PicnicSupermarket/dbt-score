@@ -56,12 +56,12 @@ class Config:
     """Configuration for dbt-score."""
 
     _main_section: Final[str] = "tool.dbt-score"
-    _main_options: Final[list[str]] = [
+    _options: Final[list[str]] = [
         "rule_namespaces",
         "disabled_rules",
     ]
-    _rules_section: Final[str] = f"{_main_section}.rules"
-    _medal_section: Final[str] = f"{_main_section}.medals"
+    _rules_section: Final[str] = "rules"
+    _medals_section: Final[str] = "medals"
 
     def __init__(self) -> None:
         """Initialize the Config object."""
@@ -82,12 +82,12 @@ class Config:
 
         tools = toml_data.get("tool", {})
         dbt_score_config = tools.get("dbt-score", {})
-        rules_config = dbt_score_config.pop("rules", {})
-        medal_config = dbt_score_config.pop("medals", {})
+        rules_config = dbt_score_config.pop(self._rules_section, {})
+        medal_config = dbt_score_config.pop(self._medals_section, {})
 
         # Main configuration
         for option, value in dbt_score_config.items():
-            if option in self._main_options:
+            if option in self._options:
                 self.set_option(option, value)
             elif not isinstance(
                 value, dict
