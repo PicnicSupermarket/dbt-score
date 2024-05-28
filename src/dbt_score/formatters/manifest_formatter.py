@@ -2,11 +2,12 @@
 
 import copy
 import json
-from typing import Any, TypedDict
+from typing import Any
 
 from dbt_score.evaluation import ModelResultsType
 from dbt_score.formatters import Formatter
 from dbt_score.models import Model
+from dbt_score.scoring import Score
 
 
 class ManifestFormatter(Formatter):
@@ -14,20 +15,19 @@ class ManifestFormatter(Formatter):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         """Instantiate a manifest formatter."""
-        result_dict = TypedDict("result_dict", {"score": float, "medal": str})
-        self._model_results: dict[str, result_dict] = {}
+        self._model_scores: dict[str, Score] = {}
         super().__init__(*args, **kwargs)
 
     def model_evaluated(
-        self, model: Model, results: ModelResultsType, score: float, medal: str
+        self, model: Model, results: ModelResultsType, score: Score
     ) -> None:
         """Callback when a model has been evaluated."""
-        self._model_results[model.unique_id] = {"score": score, "medal": medal}
+        self._model_scores[model.unique_id] = score
 
-    def project_evaluated(self, score: float, medal: str) -> None:
+    def project_evaluated(self, score: Score) -> None:
         """Callback when a project has been evaluated."""
         manifest = copy.copy(self._manifest_loader.raw_manifest)
-        for model_id, results in self._model_results.items():
-            manifest["nodes"][model_id]["meta"]["score"] = round(results["score"], 1)
-            manifest["nodes"][model_id]["meta"]["medal"] = results["medal"]
+        for model_id, model_score in self._model_scores.items():
+            manifest["nodes"][model_id]["meta"]["score"] = model_score.score
+            manifest["nodes"][model_id]["meta"]["medal"] = model_score.medal
         print(json.dumps(manifest, indent=2))

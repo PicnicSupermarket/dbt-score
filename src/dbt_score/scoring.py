@@ -3,12 +3,21 @@
 from __future__ import annotations
 
 import typing
+from dataclasses import dataclass
 
-from dbt_score.config import Config
+from dbt_score.config import MedalConfig
 
 if typing.TYPE_CHECKING:
     from dbt_score.evaluation import ModelResultsType
 from dbt_score.rule import RuleViolation, Severity
+
+
+@dataclass
+class Score:
+    """Class representing a score."""
+
+    score: float
+    medal: str
 
 
 class Scorer:
@@ -24,30 +33,24 @@ class Scorer:
     min_score = 0.0
     max_score = 10.0
 
-    # Medals
-    gold_medal = "🥇"
-    silver_medal = "🥈"
-    bronze_medal = "🥉"
-    no_medal = "🤡"
-
-    def __init__(self, config: Config) -> None:
+    def __init__(self, medal_config: MedalConfig) -> None:
         """Create a Scorer object."""
-        self.config = config
+        self._medal_config = medal_config
 
-    def score_model(self, model_results: ModelResultsType) -> float:
+    def score_model(self, model_results: ModelResultsType) -> Score:
         """Compute the score of a given model."""
         if len(model_results) == 0:
             # No rule? No problem
-            return self.max_score
-        if any(
+            score = self.max_score
+        elif any(
             rule.severity == Severity.CRITICAL and isinstance(result, RuleViolation)
             for rule, result in model_results.items()
         ):
             # If there's a CRITICAL violation, the score is 0
-            return self.min_score
+            score = self.min_score
         else:
             # Otherwise, the score is the weighted average (by severity) of the results
-            return (
+            score = (
                 sum(
                     [
                         # The more severe the violation, the more points are lost
@@ -61,23 +64,27 @@ class Scorer:
                 * self.max_score
             )
 
-    def score_aggregate_models(self, scores: list[float]) -> float:
-        """Compute the score of a list of models."""
-        if 0.0 in scores:
-            # Any model with a CRITICAL violation makes the project score 0
-            return self.min_score
-        if len(scores) == 0:
-            return self.max_score
-        return sum(scores) / len(scores)
+        return Score(score, self._medal(score))
 
-    def award_medal(self, score: float) -> str:
-        """Award a medal based on a score."""
-        rounded_score = round(score, 1)
-        if rounded_score >= self.config.gold_medal_threshold:
-            return self.gold_medal
-        elif rounded_score >= self.config.silver_medal_threshold:
-            return self.silver_medal
-        elif rounded_score >= self.config.bronze_medal_threshold:
-            return self.bronze_medal
+    def score_aggregate_models(self, scores: list[Score]) -> Score:
+        """Compute the score of a list of models."""
+        actual_scores = [s.score for s in scores]
+        if 0.0 in actual_scores:
+            # Any model with a CRITICAL violation makes the project score 0
+            score = Score(self.min_score, self._medal(self.min_score))
+        elif len(actual_scores) == 0:
+            score = Score(self.max_score, self._medal(self.max_score))
         else:
-            return self.no_medal
+            average_score = sum(actual_scores) / len(actual_scores)
+            score = Score(average_score, self._medal(average_score))
+        return score
+
+    def _medal(self, score: float) -> str:
+        """Compute the medal of a given score."""
+        if score >= self._medal_config.gold_threshold:
+            return self._medal_config.gold_icon
+        elif score >= self._medal_config.silver_threshold:
+            return self._medal_config.silver_icon
+        elif score >= self._medal_config.bronze_threshold:
+            return self._medal_config.bronze_icon
+        return self._medal_config.wip_icon

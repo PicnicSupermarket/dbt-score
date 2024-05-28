@@ -4,6 +4,7 @@ from typing import Type
 
 from dbt_score.formatters.human_readable_formatter import HumanReadableFormatter
 from dbt_score.rule import Rule, RuleViolation
+from dbt_score.scoring import Score
 
 
 def test_human_readable_formatter_model(
@@ -21,7 +22,7 @@ def test_human_readable_formatter_model(
         rule_severity_medium: Exception("Oh noes"),
         rule_severity_critical: RuleViolation("Error"),
     }
-    formatter.model_evaluated(model1, results, 10.0, "🥇")
+    formatter.model_evaluated(model1, results, Score(10.0, "🥇"))
     stdout = capsys.readouterr().out
     assert (
         stdout
@@ -38,6 +39,6 @@ Score: \x1B[1m10.0\x1B[0m 🥇
 def test_human_readable_formatter_project(capsys, manifest_loader):
     """Ensure the formatter has the correct output after project evaluation."""
     formatter = HumanReadableFormatter(manifest_loader=manifest_loader)
-    formatter.project_evaluated(10.0, "🥇")
+    formatter.project_evaluated(Score(10.0, "🥇"))
     stdout = capsys.readouterr().out
     assert stdout == "Project score: \x1B[1m10.0\x1B[0m 🥇\n"

@@ -2,7 +2,7 @@
 from pathlib import Path
 
 import pytest
-from dbt_score.config import Config
+from dbt_score.config import Config, MedalConfig
 from dbt_score.rule import RuleConfig, Severity
 
 
@@ -17,9 +17,9 @@ def test_load_valid_toml_file(valid_config_path):
         config.rules_config["tests.rules.example.rule_test_example"].severity
         == Severity.CRITICAL
     )
-    assert config.bronze_medal_threshold == 6.0
-    assert config.silver_medal_threshold == 7.0
-    assert config.gold_medal_threshold == 9.0
+    assert config.medal_config.bronze_threshold == 6.0
+    assert config.medal_config.silver_threshold == 7.0
+    assert config.medal_config.gold_threshold == 10.0
 
 
 def test_load_invalid_toml_file(caplog, invalid_config_path):
@@ -42,19 +42,19 @@ def test_invalid_rule_config(rule_severity_low):
 
 def test_invalid_medal_thresholds():
     """Test that invalid medal thresholds raises an exception."""
-    config = Config()
-    config.bronze_medal_threshold = 9.0
-    config.silver_medal_threshold = 8.0
-    config.gold_medal_threshold = 10.0
-    with pytest.raises(ValueError, match="bronze_medal_threshold must be lower than"):
-        config.validate()
+    medal_config = MedalConfig()
+    medal_config.bronze_threshold = 9.0
+    medal_config.silver_threshold = 8.0
+    medal_config.gold_threshold = 10.0
+    with pytest.raises(ValueError, match="bronze_threshold must be lower than"):
+        medal_config.validate()
 
-    config = Config()
-    config.bronze_medal_threshold = 8.0
-    config.silver_medal_threshold = 9.5
-    config.gold_medal_threshold = 9.5
-    with pytest.raises(ValueError, match="silver_medal_threshold must be lower than"):
-        config.validate()
+    medal_config = MedalConfig()
+    medal_config.bronze_threshold = 8.0
+    medal_config.silver_threshold = 9.5
+    medal_config.gold_threshold = 9.5
+    with pytest.raises(ValueError, match="silver_threshold must be lower than"):
+        medal_config.validate()
 
 
 def test_valid_rule_config(valid_config_path, rule_with_config):

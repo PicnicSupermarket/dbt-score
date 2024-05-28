@@ -5,6 +5,7 @@ from typing import Type
 
 from dbt_score.formatters.manifest_formatter import ManifestFormatter
 from dbt_score.rule import Rule, RuleViolation
+from dbt_score.scoring import Score
 
 
 def test_manifest_formatter_model(
@@ -22,7 +23,7 @@ def test_manifest_formatter_model(
         rule_severity_medium: Exception("Oh noes"),
         rule_severity_critical: RuleViolation("Error"),
     }
-    formatter.model_evaluated(model1, results, 10.0, "🥇")
+    formatter.model_evaluated(model1, results, Score(10.0, "🥇"))
     stdout = capsys.readouterr().out
     assert stdout == ""
 
@@ -49,9 +50,9 @@ def test_manifest_formatter_project(
         rule_severity_critical: None,
     }
 
-    formatter.model_evaluated(model1, result1, 5.0, "🤡")
-    formatter.model_evaluated(model2, result2, 10.0, "🥇")
-    formatter.project_evaluated(7.5, "🥉")
+    formatter.model_evaluated(model1, result1, Score(5.0, "🤡"))
+    formatter.model_evaluated(model2, result2, Score(10.0, "🥇"))
+    formatter.project_evaluated(Score(7.5, "🥉"))
     stdout = capsys.readouterr().out
     new_manifest = json.loads(stdout)
     assert new_manifest["nodes"]["model.package.model1"]["meta"]["score"] == 5.0

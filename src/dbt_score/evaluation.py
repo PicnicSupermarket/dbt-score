@@ -8,7 +8,7 @@ from dbt_score.formatters import Formatter
 from dbt_score.models import ManifestLoader, Model
 from dbt_score.rule import Rule, RuleViolation
 from dbt_score.rule_registry import RuleRegistry
-from dbt_score.scoring import Scorer
+from dbt_score.scoring import Score, Scorer
 
 # The results of a given model are stored in a dictionary, mapping rules to either:
 # - None if there was no issue
@@ -44,10 +44,10 @@ class Evaluation:
         self.results: dict[Model, ModelResultsType] = {}
 
         # For each model, its computed score
-        self.scores: dict[Model, float] = {}
+        self.scores: dict[Model, Score] = {}
 
         # The aggregated project score
-        self.project_score: float
+        self.project_score: Score
 
     def evaluate(self) -> None:
         """Evaluate all rules."""
@@ -64,14 +64,12 @@ class Evaluation:
                     self.results[model][rule.__class__] = result
 
             self.scores[model] = self._scorer.score_model(self.results[model])
-            model_medal = self._scorer.award_medal(self.scores[model])
             self._formatter.model_evaluated(
-                model, self.results[model], self.scores[model], model_medal
+                model, self.results[model], self.scores[model]
             )
 
         # Compute score for project
         self.project_score = self._scorer.score_aggregate_models(
             list(self.scores.values())
         )
-        project_medal = self._scorer.award_medal(self.project_score)
-        self._formatter.project_evaluated(self.project_score, project_medal)
+        self._formatter.project_evaluated(self.project_score)

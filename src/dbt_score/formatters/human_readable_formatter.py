@@ -5,6 +5,7 @@ from dbt_score.evaluation import ModelResultsType
 from dbt_score.formatters import Formatter
 from dbt_score.models import Model
 from dbt_score.rule import RuleViolation
+from dbt_score.scoring import Score
 
 
 class HumanReadableFormatter(Formatter):
@@ -21,7 +22,7 @@ class HumanReadableFormatter(Formatter):
         return f"\033[1m{text}\033[0m"
 
     def model_evaluated(
-        self, model: Model, results: ModelResultsType, score: float, medal: str
+        self, model: Model, results: ModelResultsType, score: Score
     ) -> None:
         """Callback when a model has been evaluated."""
         print(f"Model {self.bold(model.name)}")
@@ -35,9 +36,9 @@ class HumanReadableFormatter(Formatter):
                 )
             else:
                 print(f"{self.indent}{self.label_error} {rule.source()}: {result!s}")
-        print(f"Score: {self.bold(str(round(score, 1)))} {medal}")
+        print(f"Score: {self.bold(str(round(score.score, 1)))} {score.medal}")
         print()
 
-    def project_evaluated(self, score: float, medal: str) -> None:
+    def project_evaluated(self, score: Score) -> None:
         """Callback when a project has been evaluated."""
-        print(f"Project score: {self.bold(str(round(score, 1)))} {medal}")
+        print(f"Project score: {self.bold(str(round(score.score, 1)))} {score.medal}")
