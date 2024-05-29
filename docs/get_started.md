@@ -44,7 +44,7 @@ To lint only a selection of models, the argument `--select` can be used. It
 accepts any
 [dbt node selection syntax](https://docs.getdbt.com/reference/node-selection/syntax):
 
-````shell
+```shell
 dbt-score lint --select +my_model+
 ```
 
@@ -52,7 +52,7 @@ To get more information on how to run `dbt-score`, `--help` can be used:
 
 ```shell
 dbt-score --help
-````
+```
 
 ```shell
 dbt-score lint --help
