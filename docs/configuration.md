@@ -6,7 +6,7 @@ line.
 ## pyproject.toml
 
 It is recommended to place the file in the root of your dbt project. `dbt-score`
-will look for `pyproject.toml` in the directory from which it is run and it's
+will look for `pyproject.toml` in the directory from which it is run and its
 parent directories.
 
 An example of a `pyproject.toml` file to configure `dbt-score` can be found
