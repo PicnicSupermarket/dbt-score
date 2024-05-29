@@ -25,9 +25,7 @@ def lint_dbt_project(
     rule_registry = RuleRegistry(config)
     rule_registry.load_all()
 
-    manifest_loader = ManifestLoader(manifest_path)
-    if select:
-        manifest_loader.select_models(select)
+    manifest_loader = ManifestLoader(manifest_path, select=select)
 
     formatters = {"plain": HumanReadableFormatter, "manifest": ManifestFormatter}
     formatter = formatters[format](manifest_loader=manifest_loader)
