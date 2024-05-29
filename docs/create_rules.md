@@ -83,7 +83,7 @@ which can be configured in the `pyproject.toml` file.
 from dbt_score import Model, rule, RuleViolation
 
 @rule
-def sql_has_reasonable_size(model: Model, max_lines: int = 200) -> RuleViolation | None:
+def sql_has_reasonable_number_of_lines(model: Model, max_lines: int = 200) -> RuleViolation | None:
     """The SQL query of a model should not be too long."""
     count_lines = len(model.raw_code.split("\n"))
     if count_lines > max_lines:

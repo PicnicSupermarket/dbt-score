@@ -17,7 +17,7 @@ below:
 rule_namespaces = ["dbt_score.rules", "dbt_score_rules", "custom_rules"]
 disabled_rules = ["dbt_score.rules.generic.columns_have_description"]
 
-[tool.dbt-score.rules."dbt_score.rules.generic.sql_has_reasonable_size"]
+[tool.dbt-score.rules."dbt_score.rules.generic.sql_has_reasonable_number_of_lines"]
 severity = 1
 max_lines = 300
 ```
@@ -51,11 +51,11 @@ Every rule can be configured with the following option:
   of 4.
 
 Some rules have additional configuration options, e.g.
-[sql_has_reasonable_size](/rules/generic/#sql_has_reasonable_size). Depending on
-the rule, the options will have different names, types and default values. In
-the case of the
-[sql_has_reasonable_size](/rules/generic/#sql_has_reasonable_size), the
-`max_lines` option can be configured.
+[sql_has_reasonable_number_of_lines](/rules/generic/#sql_has_reasonable_number_of_lines).
+Depending on the rule, the options will have different names, types and default
+values. In the case of the
+[sql_has_reasonable_number_of_lines](/rules/generic/#sql_has_reasonable_number_of_lines),
+the `max_lines` option can be configured.
 
 ## Command line
 
