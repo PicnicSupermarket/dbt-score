@@ -73,12 +73,12 @@ discoverable.
 ### Configurable rules
 
 It's possible to create rules that can be
-[configured](configuration.md/#tooldbt-scorerulesrule_namespacerule_name) with
-additional options (apart from the `severity`). In order to create a
-configurable rule, the evaluation function of the rule should have additional
-input parameters with a default value defined. In the example below, the rule
-has a `max_lines` parameter with a default value of 200, which can be configured
-in the `pyproject.toml` file.
+[configured with additional options](configuration.md/#tooldbt-scorerulesrule_namespacerule_name)
+(apart from the `severity`). In order to create a configurable rule, the
+evaluation function of the rule should have additional input parameters with a
+default value defined. In the example below, the rule has a `max_lines`
+parameter with a default value of 200, which can be configured in the
+`pyproject.toml` file.
 
 ```python
 from dbt_score import Model, rule, RuleViolation

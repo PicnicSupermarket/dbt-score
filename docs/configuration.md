@@ -14,7 +14,7 @@ below:
 
 ```toml
 [tool.dbt-score]
-rule_namespaces = ["dbt_score.rules", "custom_rules"]
+rule_namespaces = ["dbt_score.rules", "dbt_score_rules", "custom_rules"]
 disabled_rules = ["dbt_score.rules.generic.columns_have_description"]
 
 [tool.dbt-score.rules."dbt_score.rules.generic.sql_has_reasonable_size"]
@@ -58,7 +58,7 @@ the case of the
 
 ## Command line
 
-All configuration options can also be set via the command line. To understand
+Many configuration options can also be set via the command line. To understand
 how to configure `dbt-score` from the command line:
 
 ```bash
