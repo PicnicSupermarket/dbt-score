@@ -2,7 +2,7 @@
 
 import logging
 import tomllib
-from dataclasses import dataclass
+from dataclasses import asdict, dataclass, field
 from pathlib import Path
 from typing import Any, Final
 
@@ -14,42 +14,47 @@ DEFAULT_CONFIG_FILE = "pyproject.toml"
 
 
 @dataclass
+class Medal:
+    """Medal object."""
+
+    icon: str
+    threshold: float
+
+
+@dataclass
 class MedalConfig:
     """Configuration for medals."""
 
-    bronze_icon: str = "🥉"
-    silver_icon: str = "🥈"
-    gold_icon: str = "🥇"
-    wip_icon: str = "🚧"
-    bronze_threshold: float = 6.0
-    silver_threshold: float = 8.0
-    gold_threshold: float = 10.0
+    bronze: Medal = field(default_factory=lambda: Medal("🥉", 6.0))
+    silver: Medal = field(default_factory=lambda: Medal("🥈", 8.0))
+    gold: Medal = field(default_factory=lambda: Medal("🥇", 10.0))
+    wip: Medal = field(default_factory=lambda: Medal("🚧", 0.0))
 
     @classmethod
     def load_from_dict(cls, medal_config: dict[str, Any]) -> "MedalConfig":
         """Create a MedalConfig from a dictionary."""
         options = {}
+        default_medal_config = cls()
         for medal, medal_options in medal_config.items():
+            if medal not in default_medal_config.__dataclass_fields__:
+                raise AttributeError(f"Unknown medal: {medal}.")
             if isinstance(medal_options, dict):
-                for option, value in medal_options.items():
-                    if not hasattr(cls, f"{medal}_{option}"):
-                        raise AttributeError(
-                            f"Unknown medal option: {option} for medal {medal}."
-                        )
-                    options[f"{medal}_{option}"] = value
+                medal_defaults = asdict(default_medal_config.__getattribute__(medal))
+                medal_defaults.update(medal_options)
+                options[medal] = Medal(**medal_defaults)
             else:
-                logger.warning(
-                    f"Option {medal} in tool.dbt-score.medals not supported."
+                raise AttributeError(
+                    f"Invalid config for medal: {medal}, must be a dictionary."
                 )
 
         return cls(**options)
 
     def validate(self) -> None:
         """Validate the medal configuration."""
-        if self.bronze_threshold >= self.silver_threshold:
-            raise ValueError("bronze_threshold must be lower than silver_threshold")
-        if self.silver_threshold >= self.gold_threshold:
-            raise ValueError("silver_threshold must be lower than gold_threshold")
+        if self.bronze.threshold >= self.silver.threshold:
+            raise ValueError("bronze threshold must be lower than silver threshold")
+        if self.silver.threshold >= self.gold.threshold:
+            raise ValueError("silver threshold must be lower than gold threshold")
 
 
 class Config:

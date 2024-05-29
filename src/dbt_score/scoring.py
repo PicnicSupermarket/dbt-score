@@ -81,10 +81,13 @@ class Scorer:
 
     def _medal(self, score: float) -> str:
         """Compute the medal of a given score."""
-        if score >= self._medal_config.gold_threshold:
-            return self._medal_config.gold_icon
-        elif score >= self._medal_config.silver_threshold:
-            return self._medal_config.silver_icon
-        elif score >= self._medal_config.bronze_threshold:
-            return self._medal_config.bronze_icon
-        return self._medal_config.wip_icon
+        if score >= self._medal_config.gold.threshold:
+            return self._medal_config.gold.icon
+        elif score >= self._medal_config.silver.threshold:
+            return self._medal_config.silver.icon
+        elif score >= self._medal_config.bronze.threshold:
+            return self._medal_config.bronze.icon
+        elif score >= self._medal_config.wip.threshold:
+            return self._medal_config.wip.icon
+        else:
+            return ""

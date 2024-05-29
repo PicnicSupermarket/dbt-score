@@ -160,7 +160,7 @@ def test_scorer_aggregate_multiple(default_config):
 def test_scorer_medal(default_config):
     """Test scorer awarding a medal."""
     scorer = Scorer(medal_config=default_config.medal_config)
-    assert scorer._medal(10.0) == scorer._medal_config.gold_icon
-    assert scorer._medal(8.0) == scorer._medal_config.silver_icon
-    assert scorer._medal(7.0) == scorer._medal_config.bronze_icon
-    assert scorer._medal(4.0) == scorer._medal_config.wip_icon
+    assert scorer._medal(10.0) == scorer._medal_config.gold.icon
+    assert scorer._medal(8.0) == scorer._medal_config.silver.icon
+    assert scorer._medal(7.0) == scorer._medal_config.bronze.icon
+    assert scorer._medal(1.0) == scorer._medal_config.wip.icon
