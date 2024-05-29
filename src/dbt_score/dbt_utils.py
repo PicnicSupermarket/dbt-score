@@ -50,7 +50,7 @@ def dbt_ls(select: Iterable[str] | None) -> Iterable[str]:
         result: dbtRunnerResult = dbtRunner().invoke(cmd)
 
     if not result.success:
-        raise DbtLsException("dbt ls failed") from result.exception
+        raise DbtLsException("dbt ls failed.") from result.exception
 
     selected = cast(Iterable[str], result.result)  # mypy hint
     return selected
