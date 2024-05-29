@@ -32,7 +32,7 @@ The following options can be set in the `pyproject.toml` file:
 [tool.dbt-score]
 ```
 
-- `rule_namespaces`: A list of namespaces to search for rules. The default is
+- `rule_namespaces`: A list of Python namespaces to search for rules. The default is
   `["dbt_score.rules", "dbt_score_rules"]`. Be aware when overriding this
   setting, that the default rules are in `dbt_score.rules` and are disabled if
   not included here.
