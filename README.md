@@ -1,5 +1,12 @@
 # dbt-score
 
+[![CI](https://github.com/PicnicSupermarket/dbt-score/actions/workflows/ci.yml/badge.svg)](https://github.com/PicnicSupermarket/dbt-score/actions)
+[![PyPI version](https://img.shields.io/pypi/v/dbt-score.svg)](https://pypi.python.org/pypi/dbt-score/)
+[![PyPI license](https://img.shields.io/pypi/l/dbt-score.svg)](https://pypi.python.org/pypi/dbt-score/)
+[![Docs](https://img.shields.io/badge/Docs-mkdocs-blue)](https://dbt-score.picnic.tech/)
+[![PyPI - Python Version](https://img.shields.io/pypi/pyversions/dbt-score.svg)](https://pypi.org/project/dbt-score)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](http://makeapullrequest.com)
+
 Linter for dbt model metadata.
 
 ## Development
