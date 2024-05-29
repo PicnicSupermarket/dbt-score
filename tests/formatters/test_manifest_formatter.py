@@ -50,12 +50,12 @@ def test_manifest_formatter_project(
         rule_severity_critical: None,
     }
 
-    formatter.model_evaluated(model1, result1, Score(5.0, "🤡"))
+    formatter.model_evaluated(model1, result1, Score(5.0, "🚧"))
     formatter.model_evaluated(model2, result2, Score(10.0, "🥇"))
     formatter.project_evaluated(Score(7.5, "🥉"))
     stdout = capsys.readouterr().out
     new_manifest = json.loads(stdout)
     assert new_manifest["nodes"]["model.package.model1"]["meta"]["score"] == 5.0
-    assert new_manifest["nodes"]["model.package.model1"]["meta"]["medal"] == "🤡"
+    assert new_manifest["nodes"]["model.package.model1"]["meta"]["medal"] == "🚧"
     assert new_manifest["nodes"]["model.package.model2"]["meta"]["score"] == 10.0
     assert new_manifest["nodes"]["model.package.model2"]["meta"]["medal"] == "🥇"

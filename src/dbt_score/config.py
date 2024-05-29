@@ -47,14 +47,23 @@ class MedalConfig:
                     f"Invalid config for medal: {medal}, must be a dictionary."
                 )
 
-        return cls(**options)
+        config = cls(**options)
+        config.validate()
+
+        return config
 
     def validate(self) -> None:
         """Validate the medal configuration."""
+        if self.wip.threshold >= self.bronze.threshold:
+            raise ValueError("wip threshold must be lower than bronze threshold")
         if self.bronze.threshold >= self.silver.threshold:
             raise ValueError("bronze threshold must be lower than silver threshold")
         if self.silver.threshold >= self.gold.threshold:
             raise ValueError("silver threshold must be lower than gold threshold")
+        if self.gold.threshold > 10.0:  # noqa: PLR2004 [magic-value-comparison]
+            raise ValueError("gold threshold must 10.0 or lower")
+        if self.wip.threshold < 0.0:
+            raise ValueError("wip threshold must be higher than 0.0")
 
 
 class Config:
@@ -104,7 +113,6 @@ class Config:
         # Medal configuration
         if medal_config:
             self.medal_config = self.medal_config.load_from_dict(medal_config)
-            self.medal_config.validate()
 
         # Rule configuration
         self.rules_config = {

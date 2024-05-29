@@ -11,6 +11,9 @@ if typing.TYPE_CHECKING:
     from dbt_score.evaluation import ModelResultsType
 from dbt_score.rule import RuleViolation, Severity
 
+MAX_SCORE = 10.0
+MIN_SCORE = 0.0
+
 
 @dataclass
 class Score:
