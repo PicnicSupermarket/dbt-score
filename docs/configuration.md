@@ -32,10 +32,10 @@ The following options can be set in the `pyproject.toml` file:
 [tool.dbt-score]
 ```
 
-- `rule_namespaces`: A list of Python namespaces to search for rules. The default is
-  `["dbt_score.rules", "dbt_score_rules"]`. Be aware when overriding this
-  setting, that the default rules are in `dbt_score.rules` and are disabled if
-  not included here.
+- `rule_namespaces`: A list of Python namespaces to search for rules. The
+  default is `["dbt_score.rules", "dbt_score_rules"]`. Be aware when overriding
+  this setting, that the default rules are in `dbt_score.rules` and are disabled
+  if not included here.
 - `disabled_rules`: A list of rules to disable.
 
 #### Rule configuration
@@ -46,8 +46,9 @@ The following options can be set in the `pyproject.toml` file:
 
 Every rule can be configured with the following option:
 
-- `severity`: The severity of the rule. An integer with a minimum value of 1 and
-  a maximum value of 4.
+- `severity`: The severity of the rule. Rules have a default severity and can be
+  overridden. It's an integer with a minimum value of 1 and a maximum value
+  of 4.
 
 Some rules have additional configuration options, e.g.
 [sql_has_reasonable_size](/rules/generic/#sql_has_reasonable_size). Depending on
