@@ -25,7 +25,9 @@ class HumanReadableFormatter(Formatter):
         self, model: Model, results: ModelResultsType, score: Score
     ) -> None:
         """Callback when a model has been evaluated."""
-        print(f"Model {self.bold(model.name)}")
+        print(
+            f"{score.medal} {self.bold(model.name)} (score: {round(score.score, 1)!s})"
+        )
         for rule, result in results.items():
             if result is None:
                 print(f"{self.indent}{self.label_ok} {rule.source()}")
@@ -36,7 +38,6 @@ class HumanReadableFormatter(Formatter):
                 )
             else:
                 print(f"{self.indent}{self.label_error} {rule.source()}: {result!s}")
-        print(f"Score: {self.bold(str(round(score.score, 1)))} {score.medal}")
         print()
 
     def project_evaluated(self, score: Score) -> None:

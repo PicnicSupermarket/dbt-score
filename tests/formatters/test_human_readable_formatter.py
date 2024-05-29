@@ -26,11 +26,10 @@ def test_human_readable_formatter_model(
     stdout = capsys.readouterr().out
     assert (
         stdout
-        == """Model \x1B[1mmodel1\x1B[0m
+        == """🥇 \x1B[1mmodel1\x1B[0m (score: 10.0)
     \x1B[1;32mOK  \x1B[0m tests.conftest.rule_severity_low
     \x1B[1;31mERR \x1B[0m tests.conftest.rule_severity_medium: Oh noes
     \x1B[1;33mWARN\x1B[0m (critical) tests.conftest.rule_severity_critical: Error
-Score: \x1B[1m10.0\x1B[0m 🥇
 
 """
     )
