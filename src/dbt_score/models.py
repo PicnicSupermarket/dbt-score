@@ -1,10 +1,16 @@
 """Objects related to loading the dbt manifest."""
 
 import json
+import logging
+import re
 from collections import defaultdict
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any
+from typing import Any, Iterable
+
+from dbt_score.dbt_utils import dbt_ls
+
+logger = logging.getLogger(__name__)
 
 
 @dataclass
@@ -227,11 +233,12 @@ class Model:
 class ManifestLoader:
     """Load the models and tests from the manifest."""
 
-    def __init__(self, file_path: Path):
+    def __init__(self, file_path: Path, select: Iterable[str] | None = None):
         """Initialize the ManifestLoader.
 
         Args:
             file_path: The file path of the JSON manifest.
+            select: An optional dbt selection.
         """
         self.raw_manifest = json.loads(file_path.read_text(encoding="utf-8"))
         self.raw_nodes = self.raw_manifest.get("nodes", {})
@@ -240,6 +247,12 @@ class ManifestLoader:
 
         self._reindex_tests()
         self._load_models()
+
+        if select is not None:
+            self._select_models(select)
+
+        if len(self.models) == 0:
+            logger.warning("No model found.")
 
     def _load_models(self) -> None:
         """Load the models from the manifest."""
@@ -256,3 +269,17 @@ class ManifestLoader:
                 attached_node := node_values.get("attached_node")
             ):
                 self.tests[attached_node].append(node_values)
+
+    def _select_models(self, select: Iterable[str]) -> None:
+        """Filter models like dbt's --select."""
+        single_model_select = re.compile(r"[a-zA-Z0-9_]+")
+
+        if all(single_model_select.fullmatch(x) for x in select):
+            # Using '--select my_model' is a common case, which can easily be sped up by
+            # not invoking dbt
+            selected = select
+        else:
+            # Use dbt's implementation of --select
+            selected = dbt_ls(select)
+
+        self.models = [x for x in self.models if x.name in selected]

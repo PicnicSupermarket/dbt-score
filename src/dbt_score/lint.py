@@ -1,7 +1,7 @@
 """Lint dbt models metadata."""
 
 from pathlib import Path
-from typing import Literal
+from typing import Iterable, Literal
 
 from dbt_score.config import Config
 from dbt_score.evaluation import Evaluation
@@ -13,7 +13,10 @@ from dbt_score.scoring import Scorer
 
 
 def lint_dbt_project(
-    manifest_path: Path, config: Config, format: Literal["plain", "manifest"]
+    manifest_path: Path,
+    config: Config,
+    format: Literal["plain", "manifest"],
+    select: Iterable[str] | None = None,
 ) -> None:
     """Lint dbt manifest."""
     if not manifest_path.exists():
@@ -22,7 +25,7 @@ def lint_dbt_project(
     rule_registry = RuleRegistry(config)
     rule_registry.load_all()
 
-    manifest_loader = ManifestLoader(manifest_path)
+    manifest_loader = ManifestLoader(manifest_path, select=select)
 
     formatters = {"plain": HumanReadableFormatter, "manifest": ManifestFormatter}
     formatter = formatters[format](manifest_loader=manifest_loader)
