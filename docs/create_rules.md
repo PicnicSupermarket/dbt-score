@@ -69,3 +69,25 @@ rules defined in `.py` files will be automatically discovered.
 If nested folders are used, e.g. `dbt_score_rules/generic_rules/rules.py`, an
 `__init__.py` file needs to be present in the nested folder to make it
 discoverable.
+
+### Configurable rules
+
+It's possible to create rules that can be
+[configured with parameters](configuration.md/#tooldbt-scorerulesrule_namespacerule_name)
+. In order to create a configurable rule, the evaluation function of the rule
+should have additional input parameters with a default value defined. In the
+example below, the rule has a `max_lines` parameter with a default value of 200,
+which can be configured in the `pyproject.toml` file.
+
+```python
+from dbt_score import Model, rule, RuleViolation
+
+@rule
+def sql_has_reasonable_number_of_lines(model: Model, max_lines: int = 200) -> RuleViolation | None:
+    """The SQL query of a model should not be too long."""
+    count_lines = len(model.raw_code.split("\n"))
+    if count_lines > max_lines:
+        return RuleViolation(
+            message=f"SQL query too long: {count_lines} lines (> {max_lines})."
+        )
+```
