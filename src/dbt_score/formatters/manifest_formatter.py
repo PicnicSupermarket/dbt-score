@@ -28,6 +28,6 @@ class ManifestFormatter(Formatter):
         """Callback when a project has been evaluated."""
         manifest = copy.copy(self._manifest_loader.raw_manifest)
         for model_id, model_score in self._model_scores.items():
-            manifest["nodes"][model_id]["meta"]["score"] = model_score.score
+            manifest["nodes"][model_id]["meta"]["score"] = model_score.value
             manifest["nodes"][model_id]["meta"]["badge"] = model_score.badge
         print(json.dumps(manifest, indent=2))

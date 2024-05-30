@@ -16,7 +16,7 @@ from dbt_score.rule import RuleViolation, Severity
 class Score:
     """Class representing a score."""
 
-    score: float
+    value: float
     badge: str
 
 
@@ -68,7 +68,7 @@ class Scorer:
 
     def score_aggregate_models(self, scores: list[Score]) -> Score:
         """Compute the score of a list of models."""
-        actual_scores = [s.score for s in scores]
+        actual_scores = [s.value for s in scores]
         if 0.0 in actual_scores:
             # Any model with a CRITICAL violation makes the project score 0
             score = Score(self.min_score, self._badge(self.min_score))
