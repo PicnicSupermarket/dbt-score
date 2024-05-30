@@ -15,7 +15,7 @@ $ dbt-score lint
 Model customers
     OK   dbt_score.rules.generic.has_description
     WARN (medium) dbt_score.rules.generic.has_owner: Model lacks an owner.
-    OK   dbt_score.rules.generic.sql_has_reasonable_size
+    OK   dbt_score.rules.generic.sql_has_reasonable_number_of_lines
 Score: 6.7
 ```
 
