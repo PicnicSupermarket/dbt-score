@@ -163,4 +163,4 @@ def test_scorer_badge(default_config):
     assert scorer._badge(10.0) == scorer._config.badge_config.first.icon
     assert scorer._badge(8.0) == scorer._config.badge_config.second.icon
     assert scorer._badge(7.0) == scorer._config.badge_config.third.icon
-    assert scorer._badge(1.0) == scorer._config.badge_config.wip_icon
+    assert scorer._badge(1.0) == scorer._config.badge_config.wip.icon

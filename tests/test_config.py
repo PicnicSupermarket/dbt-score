@@ -17,10 +17,13 @@ def test_load_valid_toml_file(valid_config_path):
         config.rules_config["tests.rules.example.rule_test_example"].severity
         == Severity.CRITICAL
     )
-    assert config.badge_config.third.threshold == 6.0
-    assert config.badge_config.second.threshold == 7.0
-    assert config.badge_config.first.threshold == 10.0
-    assert config.badge_config.wip_icon == "🏗️"
+    assert config.badge_config.third.threshold == 6.5
+    assert config.badge_config.second.threshold == 7.5
+    assert config.badge_config.first.threshold == 9.5
+    assert config.badge_config.wip.icon == "🏗️"
+    assert config.badge_config.third.icon == "3️⃣"
+    assert config.badge_config.second.icon == "2️⃣"
+    assert config.badge_config.first.icon == "1️⃣"
 
 
 def test_load_invalid_toml_file(caplog, invalid_config_path):

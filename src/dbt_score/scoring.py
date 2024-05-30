@@ -88,4 +88,4 @@ class Scorer:
         elif score >= self._config.badge_config.third.threshold:
             return self._config.badge_config.third.icon
         else:
-            return self._config.badge_config.wip_icon
+            return self._config.badge_config.wip.icon

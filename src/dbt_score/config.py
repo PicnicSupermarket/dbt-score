@@ -28,7 +28,7 @@ class BadgeConfig:
     third: Badge = field(default_factory=lambda: Badge("🥉", 6.0))
     second: Badge = field(default_factory=lambda: Badge("🥈", 8.0))
     first: Badge = field(default_factory=lambda: Badge("🥇", 10.0))
-    wip_icon: str = "🚧"
+    wip: Badge = field(default_factory=lambda: Badge("🚧", 0.0))
 
     @classmethod
     def load_from_dict(cls, badge_config: dict[str, Any]) -> "BadgeConfig":
@@ -42,10 +42,11 @@ class BadgeConfig:
                 badge_defaults = asdict(default_badge_config.__getattribute__(badge))
                 badge_defaults.update(badge_options)
                 options[badge] = Badge(**badge_defaults)
-            # The wip icon is not a dictionary
-            # and is not a Badge object
-            elif badge == "wip_icon":
-                options[badge] = badge_options
+
+                if badge == "wip" and badge_options.get("threshold"):
+                    raise AttributeError(
+                        "wip badge cannot have a threshold configuration."
+                    )
             else:
                 raise AttributeError(
                     f"Invalid config for badge: {badge}, must be a dictionary."

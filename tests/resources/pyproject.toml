@@ -3,12 +3,17 @@ rule_namespaces = ["foo", "tests"]
 disabled_rules = ["foo.foo", "tests.bar"]
 
 [tool.dbt-score.badges]
-wip_icon = "🏗️"
-third.threshold = 6.0
-third.icon = "🥉"
+wip.icon = "🏗️"
+third.threshold = 6.5
+third.icon = "3️⃣"
 
 [tool.dbt-score.badges.second]
-threshold = 7.0
+threshold = 7.5
+icon = "2️⃣"
+
+[tool.dbt-score.badges.first]
+threshold = 9.5
+icon = "1️⃣"
 
 [tool.dbt-score.rules."foo.bar"]
 severity=4
