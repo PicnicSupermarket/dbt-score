@@ -60,6 +60,12 @@ def test_invalid_badge_thresholds():
     with pytest.raises(ValueError, match="second threshold must be lower than"):
         badge_config.validate()
 
+    badge_config = BadgeConfig()
+    with pytest.raises(
+        AttributeError, match="wip badge cannot have a threshold configuration."
+    ):
+        badge_config.load_from_dict({"wip": {"threshold": 10.0}})
+
 
 def test_valid_rule_config(valid_config_path, rule_with_config):
     """Test that a valid rule config can be loaded."""
