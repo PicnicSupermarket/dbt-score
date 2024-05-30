@@ -14,37 +14,41 @@ DEFAULT_CONFIG_FILE = "pyproject.toml"
 
 
 @dataclass
-class Medal:
-    """Medal object."""
+class Badge:
+    """Badge object."""
 
     icon: str
     threshold: float
 
 
 @dataclass
-class MedalConfig:
-    """Configuration for medals."""
+class BadgeConfig:
+    """Configuration for badges."""
 
-    bronze: Medal = field(default_factory=lambda: Medal("🥉", 6.0))
-    silver: Medal = field(default_factory=lambda: Medal("🥈", 8.0))
-    gold: Medal = field(default_factory=lambda: Medal("🥇", 10.0))
-    wip: Medal = field(default_factory=lambda: Medal("🚧", 0.0))
+    third: Badge = field(default_factory=lambda: Badge("🥉", 6.0))
+    second: Badge = field(default_factory=lambda: Badge("🥈", 8.0))
+    first: Badge = field(default_factory=lambda: Badge("🥇", 10.0))
+    wip_icon: str = "🚧"
 
     @classmethod
-    def load_from_dict(cls, medal_config: dict[str, Any]) -> "MedalConfig":
-        """Create a MedalConfig from a dictionary."""
-        options = {}
-        default_medal_config = cls()
-        for medal, medal_options in medal_config.items():
-            if medal not in default_medal_config.__dataclass_fields__:
-                raise AttributeError(f"Unknown medal: {medal}.")
-            if isinstance(medal_options, dict):
-                medal_defaults = asdict(default_medal_config.__getattribute__(medal))
-                medal_defaults.update(medal_options)
-                options[medal] = Medal(**medal_defaults)
+    def load_from_dict(cls, badge_config: dict[str, Any]) -> "BadgeConfig":
+        """Create a BadgeConfig from a dictionary."""
+        options: dict[str, Any] = {}
+        default_badge_config = cls()
+        for badge, badge_options in badge_config.items():
+            if badge not in default_badge_config.__dataclass_fields__:
+                raise AttributeError(f"Unknown badge: {badge}.")
+            if isinstance(badge_options, dict):
+                badge_defaults = asdict(default_badge_config.__getattribute__(badge))
+                badge_defaults.update(badge_options)
+                options[badge] = Badge(**badge_defaults)
+            # The wip icon is not a dictionary
+            # and is not a Badge object
+            elif badge == "wip_icon":
+                options[badge] = badge_options
             else:
                 raise AttributeError(
-                    f"Invalid config for medal: {medal}, must be a dictionary."
+                    f"Invalid config for badge: {badge}, must be a dictionary."
                 )
 
         config = cls(**options)
@@ -53,17 +57,15 @@ class MedalConfig:
         return config
 
     def validate(self) -> None:
-        """Validate the medal configuration."""
-        if self.wip.threshold >= self.bronze.threshold:
-            raise ValueError("wip threshold must be lower than bronze threshold")
-        if self.bronze.threshold >= self.silver.threshold:
-            raise ValueError("bronze threshold must be lower than silver threshold")
-        if self.silver.threshold >= self.gold.threshold:
-            raise ValueError("silver threshold must be lower than gold threshold")
-        if self.gold.threshold > 10.0:  # noqa: PLR2004 [magic-value-comparison]
-            raise ValueError("gold threshold must 10.0 or lower")
-        if self.wip.threshold < 0.0:
-            raise ValueError("wip threshold must be higher than 0.0")
+        """Validate the badge configuration."""
+        if self.third.threshold >= self.second.threshold:
+            raise ValueError("third threshold must be lower than second threshold")
+        if self.second.threshold >= self.first.threshold:
+            raise ValueError("second threshold must be lower than first threshold")
+        if self.first.threshold > 10.0:  # noqa: PLR2004 [magic-value-comparison]
+            raise ValueError("first threshold must 10.0 or lower")
+        if self.third.threshold < 0.0:
+            raise ValueError("third threshold must be 0.0 or higher")
 
 
 class Config:
@@ -75,7 +77,7 @@ class Config:
         "disabled_rules",
     ]
     _rules_section: Final[str] = "rules"
-    _medals_section: Final[str] = "medals"
+    _badges_section: Final[str] = "badges"
 
     def __init__(self) -> None:
         """Initialize the Config object."""
@@ -83,7 +85,7 @@ class Config:
         self.disabled_rules: list[str] = []
         self.rules_config: dict[str, RuleConfig] = {}
         self.config_file: Path | None = None
-        self.medal_config: MedalConfig = MedalConfig()
+        self.badge_config: BadgeConfig = BadgeConfig()
 
     def set_option(self, option: str, value: Any) -> None:
         """Set an option in the config."""
@@ -97,7 +99,7 @@ class Config:
         tools = toml_data.get("tool", {})
         dbt_score_config = tools.get("dbt-score", {})
         rules_config = dbt_score_config.pop(self._rules_section, {})
-        medal_config = dbt_score_config.pop(self._medals_section, {})
+        badge_config = dbt_score_config.pop(self._badges_section, {})
 
         # Main configuration
         for option, value in dbt_score_config.items():
@@ -110,9 +112,9 @@ class Config:
                     f"Option {option} in {self._main_section} not supported."
                 )
 
-        # Medal configuration
-        if medal_config:
-            self.medal_config = self.medal_config.load_from_dict(medal_config)
+        # Badge configuration
+        if badge_config:
+            self.badge_config = self.badge_config.load_from_dict(badge_config)
 
         # Rule configuration
         self.rules_config = {

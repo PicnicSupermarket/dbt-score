@@ -30,7 +30,7 @@ def lint_dbt_project(
     formatters = {"plain": HumanReadableFormatter, "manifest": ManifestFormatter}
     formatter = formatters[format](manifest_loader=manifest_loader)
 
-    scorer = Scorer(config.medal_config)
+    scorer = Scorer(config)
 
     evaluation = Evaluation(
         rule_registry=rule_registry,

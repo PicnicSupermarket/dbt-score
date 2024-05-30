@@ -56,6 +56,6 @@ def test_manifest_formatter_project(
     stdout = capsys.readouterr().out
     new_manifest = json.loads(stdout)
     assert new_manifest["nodes"]["model.package.model1"]["meta"]["score"] == 5.0
-    assert new_manifest["nodes"]["model.package.model1"]["meta"]["medal"] == "🚧"
+    assert new_manifest["nodes"]["model.package.model1"]["meta"]["badge"] == "🚧"
     assert new_manifest["nodes"]["model.package.model2"]["meta"]["score"] == 10.0
-    assert new_manifest["nodes"]["model.package.model2"]["meta"]["medal"] == "🥇"
+    assert new_manifest["nodes"]["model.package.model2"]["meta"]["badge"] == "🥇"

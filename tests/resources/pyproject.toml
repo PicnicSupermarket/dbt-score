@@ -2,10 +2,12 @@
 rule_namespaces = ["foo", "tests"]
 disabled_rules = ["foo.foo", "tests.bar"]
 
-[tool.dbt-score.medals]
-bronze.threshold = 6.0
+[tool.dbt-score.badges]
+wip_icon = "🏗️"
+third.threshold = 6.0
+third.icon = "🥉"
 
-[tool.dbt-score.medals.silver]
+[tool.dbt-score.badges.second]
 threshold = 7.0
 
 [tool.dbt-score.rules."foo.bar"]

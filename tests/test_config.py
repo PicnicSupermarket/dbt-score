@@ -2,7 +2,7 @@
 from pathlib import Path
 
 import pytest
-from dbt_score.config import Config, MedalConfig
+from dbt_score.config import BadgeConfig, Config
 from dbt_score.rule import RuleConfig, Severity
 
 
@@ -17,10 +17,10 @@ def test_load_valid_toml_file(valid_config_path):
         config.rules_config["tests.rules.example.rule_test_example"].severity
         == Severity.CRITICAL
     )
-    assert config.medal_config.bronze.threshold == 6.0
-    assert config.medal_config.silver.threshold == 7.0
-    assert config.medal_config.gold.threshold == 10.0
-    assert config.medal_config.wip.threshold == 0.0
+    assert config.badge_config.third.threshold == 6.0
+    assert config.badge_config.second.threshold == 7.0
+    assert config.badge_config.first.threshold == 10.0
+    assert config.badge_config.wip_icon == "🏗️"
 
 
 def test_load_invalid_toml_file(caplog, invalid_config_path):
@@ -41,21 +41,21 @@ def test_invalid_rule_config(rule_severity_low):
         rule_severity_low(config)
 
 
-def test_invalid_medal_thresholds():
-    """Test that invalid medal thresholds raises an exception."""
-    medal_config = MedalConfig()
-    medal_config.bronze.threshold = 9.0
-    medal_config.silver.threshold = 8.0
-    medal_config.gold.threshold = 10.0
-    with pytest.raises(ValueError, match="bronze threshold must be lower than"):
-        medal_config.validate()
+def test_invalid_badge_thresholds():
+    """Test that invalid badge thresholds raises an exception."""
+    badge_config = BadgeConfig()
+    badge_config.third.threshold = 9.0
+    badge_config.second.threshold = 8.0
+    badge_config.first.threshold = 10.0
+    with pytest.raises(ValueError, match="third threshold must be lower than"):
+        badge_config.validate()
 
-    medal_config = MedalConfig()
-    medal_config.bronze.threshold = 8.0
-    medal_config.silver.threshold = 9.5
-    medal_config.gold.threshold = 9.5
-    with pytest.raises(ValueError, match="silver threshold must be lower than"):
-        medal_config.validate()
+    badge_config = BadgeConfig()
+    badge_config.third.threshold = 8.0
+    badge_config.second.threshold = 9.5
+    badge_config.first.threshold = 9.5
+    with pytest.raises(ValueError, match="second threshold must be lower than"):
+        badge_config.validate()
 
 
 def test_valid_rule_config(valid_config_path, rule_with_config):
