@@ -19,7 +19,7 @@ $ dbt-score lint
 Score: 10.0 🥇
 ```
 
-In this example, the model `customers` score the maximum value of `10.0` as it
+In this example, the model `customers` scores the maximum value of `10.0` as it
 passes all the rules. It also is awarded a golden medal because of the perfect
 score.
 
