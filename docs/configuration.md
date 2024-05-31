@@ -17,18 +17,18 @@ below:
 rule_namespaces = ["dbt_score.rules", "dbt_score_rules", "custom_rules"]
 disabled_rules = ["dbt_score.rules.generic.columns_have_description"]
 
+[tool.dbt-score.badges]
+first.threshold = 10.0
+first.icon = "🥇"
+second.threshold = 8.0
+second.icon = "🥈"
+third.threshold = 6.0
+third.icon = "🥉"
+wip.icon = "🏗️"
+
 [tool.dbt-score.rules."dbt_score.rules.generic.sql_has_reasonable_number_of_lines"]
 severity = 1
 max_lines = 300
-
-[tool.dbt-score.badges]
-first.threshold = 9.5
-first.icon = "1️⃣"
-second.threshold = 7.5
-second.icon = "2️⃣"
-third.threshold = 6.5
-third.icon = "3️⃣"
-wip.icon = "🏗️"
 ```
 
 ### Configuration options
