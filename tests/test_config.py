@@ -50,21 +50,27 @@ def test_invalid_badge_thresholds():
     badge_config.third.threshold = 9.0
     badge_config.second.threshold = 8.0
     badge_config.first.threshold = 10.0
-    with pytest.raises(ValueError, match="third threshold must be lower than"):
+    with pytest.raises(ValueError, match="Bad threshold values"):
         badge_config.validate()
 
     badge_config = BadgeConfig()
     badge_config.third.threshold = 8.0
     badge_config.second.threshold = 9.5
     badge_config.first.threshold = 9.5
-    with pytest.raises(ValueError, match="second threshold must be lower than"):
+    with pytest.raises(ValueError, match="Bad threshold values"):
         badge_config.validate()
 
     badge_config = BadgeConfig()
-    with pytest.raises(
-        AttributeError, match="wip badge cannot have a threshold configuration."
-    ):
-        badge_config.load_from_dict({"wip": {"threshold": 10.0}})
+    badge_config.third.threshold = -1
+    badge_config.second.threshold = 8
+    badge_config.first.threshold = 9.5
+    with pytest.raises(ValueError, match="Threshold must be greater than zero"):
+        badge_config.validate()
+
+    badge_config = BadgeConfig()
+    badge_config.wip.threshold = 10.0
+    with pytest.raises(ValueError, match="WIP threshold must be equal to 0"):
+        badge_config.validate()
 
 
 def test_valid_rule_config(valid_config_path, rule_with_config):
