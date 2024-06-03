@@ -2,7 +2,7 @@
 
 import logging
 import tomllib
-from dataclasses import asdict, dataclass, field
+from dataclasses import dataclass, field, replace
 from pathlib import Path
 from typing import Any, Final
 
@@ -30,43 +30,16 @@ class BadgeConfig:
     first: Badge = field(default_factory=lambda: Badge("🥇", 10.0))
     wip: Badge = field(default_factory=lambda: Badge("🚧", 0.0))
 
-    @classmethod
-    def load_from_dict(cls, badge_config: dict[str, Any]) -> "BadgeConfig":
-        """Create a BadgeConfig from a dictionary."""
-        options: dict[str, Any] = {}
-        default_badge_config = cls()
-        for badge, badge_options in badge_config.items():
-            if badge not in default_badge_config.__dataclass_fields__:
-                raise AttributeError(f"Unknown badge: {badge}.")
-            if isinstance(badge_options, dict):
-                badge_defaults = asdict(default_badge_config.__getattribute__(badge))
-                badge_defaults.update(badge_options)
-                options[badge] = Badge(**badge_defaults)
-
-                if badge == "wip" and badge_options.get("threshold"):
-                    raise AttributeError(
-                        "wip badge cannot have a threshold configuration."
-                    )
-            else:
-                raise AttributeError(
-                    f"Invalid config for badge: {badge}, must be a dictionary."
-                )
-
-        config = cls(**options)
-        config.validate()
-
-        return config
-
     def validate(self) -> None:
         """Validate the badge configuration."""
-        if self.third.threshold >= self.second.threshold:
-            raise ValueError("third threshold must be lower than second threshold")
-        if self.second.threshold >= self.first.threshold:
-            raise ValueError("second threshold must be lower than first threshold")
+        if not (self.first.threshold > self.second.threshold > self.third.threshold):
+            raise ValueError("Invalid badge thresholds.")
         if self.first.threshold > 10.0:  # noqa: PLR2004 [magic-value-comparison]
-            raise ValueError("first threshold must 10.0 or lower")
+            raise ValueError("first threshold must 10.0 or lower.")
         if self.third.threshold < 0.0:
-            raise ValueError("third threshold must be 0.0 or higher")
+            raise ValueError("third threshold must be 0.0 or higher.")
+        if self.wip.threshold != 0.0:
+            raise AttributeError("wip badge cannot have a threshold configuration.")
 
 
 class Config:
@@ -114,8 +87,23 @@ class Config:
                 )
 
         # Badge configuration
-        if badge_config:
-            self.badge_config = self.badge_config.load_from_dict(badge_config)
+        for name, config in badge_config.items():
+            try:
+                default_config = getattr(self.badge_config, name)
+                updated_config = replace(default_config, **config)
+                setattr(self.badge_config, name, updated_config)
+            except AttributeError as e:
+                options = list(BadgeConfig.__annotations__.keys())
+                raise AttributeError(f"Config only accepts badges: {options}.") from e
+            except TypeError as e:
+                options = list(Badge.__annotations__.keys())
+                if name == "wip":
+                    options.remove("threshold")
+                raise AttributeError(
+                    f"Badge {name}: config only accepts {options}."
+                ) from e
+
+        self.badge_config.validate()
 
         # Rule configuration
         self.rules_config = {
