@@ -17,3 +17,4 @@ and this project adheres to
 - Linting and scoring functionality for dbt models.
 - Configuration through `pyproject.toml`.
 - Default rules in `dbt_score.rules.generic`.
+- Badges for project and model evaluation.

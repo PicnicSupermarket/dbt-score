@@ -12,15 +12,16 @@ encourage) good practices.
 
 ```shell
 $ dbt-score lint
-Model customers
+🥇 customers (score: 10.0)
     OK   dbt_score.rules.generic.has_description
-    WARN (medium) dbt_score.rules.generic.has_owner: Model lacks an owner.
+    OK   dbt_score.rules.generic.has_owner: Model lacks an owner.
     OK   dbt_score.rules.generic.sql_has_reasonable_number_of_lines
-Score: 6.7
+Score: 10.0 🥇
 ```
 
-In this example, `dbt-score` reports a warning: the model `customers` does not
-declare an owner. Hence, it doesn't score the maximum value of `10`.
+In this example, the model `customers` scores the maximum value of `10.0` as it
+passes all the rules. It also is awarded a golden medal because of the perfect
+score.
 
 ## Philosophy
 
