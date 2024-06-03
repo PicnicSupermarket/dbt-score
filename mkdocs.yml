@@ -1,6 +1,8 @@
 site_name: dbt-score
 theme:
   name: material
+  logo: assets/medal.svg
+  favicon: assets/medal.svg
   features:
     - content.code.copy # Copy button for code blocks
 plugins:
