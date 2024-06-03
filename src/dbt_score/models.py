@@ -248,7 +248,7 @@ class ManifestLoader:
         self._reindex_tests()
         self._load_models()
 
-        if select is not None:
+        if select:
             self._select_models(select)
 
         if len(self.models) == 0:
