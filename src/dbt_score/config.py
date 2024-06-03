@@ -2,6 +2,7 @@
 
 import logging
 import tomllib
+from dataclasses import dataclass, field, replace
 from pathlib import Path
 from typing import Any, Final
 
@@ -12,12 +13,45 @@ logger = logging.getLogger(__name__)
 DEFAULT_CONFIG_FILE = "pyproject.toml"
 
 
+@dataclass
+class Badge:
+    """Badge object."""
+
+    icon: str
+    threshold: float
+
+
+@dataclass
+class BadgeConfig:
+    """Configuration for badges."""
+
+    third: Badge = field(default_factory=lambda: Badge("🥉", 6.0))
+    second: Badge = field(default_factory=lambda: Badge("🥈", 8.0))
+    first: Badge = field(default_factory=lambda: Badge("🥇", 10.0))
+    wip: Badge = field(default_factory=lambda: Badge("🚧", 0.0))
+
+    def validate(self) -> None:
+        """Validate the badge configuration."""
+        if not (self.first.threshold > self.second.threshold > self.third.threshold):
+            raise ValueError("Invalid badge thresholds.")
+        if self.first.threshold > 10.0:  # noqa: PLR2004 [magic-value-comparison]
+            raise ValueError("first threshold must 10.0 or lower.")
+        if self.third.threshold < 0.0:
+            raise ValueError("third threshold must be 0.0 or higher.")
+        if self.wip.threshold != 0.0:
+            raise AttributeError("wip badge cannot have a threshold configuration.")
+
+
 class Config:
     """Configuration for dbt-score."""
 
     _main_section: Final[str] = "tool.dbt-score"
-    _options: Final[list[str]] = ["rule_namespaces", "disabled_rules"]
-    _rules_section: Final[str] = f"{_main_section}.rules"
+    _options: Final[list[str]] = [
+        "rule_namespaces",
+        "disabled_rules",
+    ]
+    _rules_section: Final[str] = "rules"
+    _badges_section: Final[str] = "badges"
 
     def __init__(self) -> None:
         """Initialize the Config object."""
@@ -25,6 +59,7 @@ class Config:
         self.disabled_rules: list[str] = []
         self.rules_config: dict[str, RuleConfig] = {}
         self.config_file: Path | None = None
+        self.badge_config: BadgeConfig = BadgeConfig()
 
     def set_option(self, option: str, value: Any) -> None:
         """Set an option in the config."""
@@ -37,7 +72,8 @@ class Config:
 
         tools = toml_data.get("tool", {})
         dbt_score_config = tools.get("dbt-score", {})
-        rules_config = dbt_score_config.pop("rules", {})
+        rules_config = dbt_score_config.pop(self._rules_section, {})
+        badge_config = dbt_score_config.pop(self._badges_section, {})
 
         # Main configuration
         for option, value in dbt_score_config.items():
@@ -49,6 +85,25 @@ class Config:
                 logger.warning(
                     f"Option {option} in {self._main_section} not supported."
                 )
+
+        # Badge configuration
+        for name, config in badge_config.items():
+            try:
+                default_config = getattr(self.badge_config, name)
+                updated_config = replace(default_config, **config)
+                setattr(self.badge_config, name, updated_config)
+            except AttributeError as e:
+                options = list(BadgeConfig.__annotations__.keys())
+                raise AttributeError(f"Config only accepts badges: {options}.") from e
+            except TypeError as e:
+                options = list(Badge.__annotations__.keys())
+                if name == "wip":
+                    options.remove("threshold")
+                raise AttributeError(
+                    f"Badge {name}: config only accepts {options}."
+                ) from e
+
+        self.badge_config.validate()
 
         # Rule configuration
         self.rules_config = {

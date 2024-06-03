@@ -17,6 +17,15 @@ below:
 rule_namespaces = ["dbt_score.rules", "dbt_score_rules", "custom_rules"]
 disabled_rules = ["dbt_score.rules.generic.columns_have_description"]
 
+[tool.dbt-score.badges]
+first.threshold = 10.0
+first.icon = "🥇"
+second.threshold = 8.0
+second.icon = "🥈"
+third.threshold = 6.0
+third.icon = "🥉"
+wip.icon = "🏗️"
+
 [tool.dbt-score.rules."dbt_score.rules.generic.sql_has_reasonable_number_of_lines"]
 severity = 1
 max_lines = 300
@@ -37,6 +46,27 @@ The following options can be set in the `pyproject.toml` file:
   this setting, that the default rules are in `dbt_score.rules` and are disabled
   if not included here.
 - `disabled_rules`: A list of rules to disable.
+
+#### Badges configuration
+
+```toml
+[tool.dbt-score.badges]
+```
+
+Four badges can be configured: `first`, `second`, `third` and `wip`. Each badge
+can be configured with the following option:
+
+- `icon`: The icon to use for the badge. A string that will be displayed in the
+  output, e.g. `🥇`.
+
+All badges except `wip` can be configured with the following option:
+
+- `threshold`: The threshold for the badge. A decimal number between `0.0` and
+  `10.0` that will be used to compare to the score. The threshold is the minimum
+  score required for a model to be rewarded with a certain badge.
+
+The default values can be found in the
+[BadgeConfig](/reference/config/#dbt_score.config.BadgeConfig).
 
 #### Rule configuration
 
