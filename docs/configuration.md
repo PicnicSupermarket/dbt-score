@@ -61,9 +61,9 @@ can be configured with the following option:
 
 All badges except `wip` can be configured with the following option:
 
-- `threshold`: The threshold for the badge. A decimal number between `0.0` and `10.0`
-  that will be used to compare to the score. The threshold is the minimum score
-  required for a model to be rewarded with a certain badge.
+- `threshold`: The threshold for the badge. A decimal number between `0.0` and
+  `10.0` that will be used to compare to the score. The threshold is the minimum
+  score required for a model to be rewarded with a certain badge.
 
 The default values can be found in the
 [BadgeConfig](/reference/config/#dbt_score.config.BadgeConfig).
