@@ -8,6 +8,8 @@ and this project adheres to
 
 ## [Unreleased]
 
+## [0.1.1] - 2023-06-03
+
 ### Added
 
 - CLI based on Click.
