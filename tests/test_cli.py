@@ -21,6 +21,9 @@ def test_lint_existing_manifest(manifest_path):
     with patch("dbt_score.cli.Config._load_toml_file"):
         runner = CliRunner()
         result = runner.invoke(lint, ["--manifest", manifest_path])
+
+        assert "model1" in result.output
+        assert "model2" in result.output
         assert result.exit_code == 0
 
 
