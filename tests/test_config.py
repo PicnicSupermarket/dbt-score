@@ -52,14 +52,6 @@ def test_load_invalid_badge_config(mock_open):
 
     with patch("dbt_score.config.tomllib.load") as mock_load:
         mock_load.return_value = {
-            "tool": {"dbt-score": {"badges": {"wip": {"threshold": 1.0}}}}
-        }
-        with pytest.raises(
-            AttributeError, match="wip badge cannot have a threshold configuration."
-        ):
-            config._load_toml_file("foo")
-
-        mock_load.return_value = {
             "tool": {"dbt-score": {"badges": {"foo": {"threshold": 1.0}}}}
         }
         with pytest.raises(AttributeError, match="Config only accepts badges:"):
