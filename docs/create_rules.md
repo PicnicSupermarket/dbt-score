@@ -2,8 +2,9 @@
 
 In order to lint and score models, `dbt-score` uses a set of rules that are
 applied to each model. A rule can pass or fail when it is run. Based on the
-severity of the rule models are scored. `dbt-score` has a set of rules enabled
-by default, which can be found [here](reference/rules/generic.md).
+severity of the rule, models are scored with the weighted average of the rules
+results. Note that `dbt-score` comes bundled with a
+[set of default rules](rules/generic.md).
 
 On top of the generic rules, it's possible to add your own rules. Two ways exist
 to create a new rule:
@@ -18,7 +19,6 @@ The `@rule` decorator can be used to easily create a new rule:
 
 ```python
 from dbt_score import Model, rule, RuleViolation
-
 
 @rule
 def has_description(model: Model) -> RuleViolation | None:
@@ -36,7 +36,6 @@ The severity of a rule can be set using the `severity` argument:
 ```python
 from dbt_score import rule, Severity
 
-
 @rule(severity=Severity.HIGH)
 ```
 
@@ -47,7 +46,6 @@ class:
 
 ```python
 from dbt_score import Model, Rule, RuleViolation
-
 
 class HasDescription(Rule):
     description = "A model should have a description."
