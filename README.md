@@ -7,92 +7,34 @@
 [![PyPI - Python Version](https://img.shields.io/pypi/pyversions/dbt-score.svg)](https://pypi.org/project/dbt-score)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://makeapullrequest.com)
 
-Linter for dbt model metadata.
+## What is `dbt-score`?
 
-## Development
+`dbt-score` is a linter for dbt model metadata.
 
-### Prerequisites
+[dbt](https://getdbt.com/) (Data Build Tool) is a great framework for creating,
+building, organizing, testing and documenting _data models_, i.e. data sets
+living in a database or a data warehouse. Through a declarative approach, it
+allows data practitioners to build data with a methodology inspired by software
+development practices.
 
-You'll need the following prerequisites:
+This leads to data models being bundled with a lot of metadata, such as
+documentation, data tests, access control information, column types and
+constraints, 3rd party integrations... Not to mention any other metadata that
+organizations need, fully supported through the `meta` parameter.
 
-- Any Python version starting from 3.11
-- [pre-commit](https://pre-commit.com/)
-- [PDM](https://pdm-project.org/2.12/)
+At scale, with hundreds or thousands of data models, all this metadata can
+become confusing, disparate, and inconsistent. It's hard to enforce good
+practices and maintain them in continuous integration systems. This is where
+`dbt-score` plays its role: by allowing data teams to programatically define and
+enforce metadata rules, in an easy and scalable manner.
 
-Configure development environment running these commands from the project's
-root:
+## Documentation
 
-```shell
-pre-commit install
-pdm install --group :all
-```
+Everything you need (and more) can be found in
+[`dbt-score` documentation website](https://dbt-score.picnic.tech/).
 
-The pdm command will install all project's dependency groups, including all the
-dependencies needed for development purposes.
+## Contributing
 
-### Lint
-
-`dbt_score` uses:
-
-- [ruff](https://docs.astral.sh/ruff/) for fast linting and formatting.
-- [mypy](https://mypy.readthedocs.io/en/stable/) for type checking.
-- [pre-commit-hooks](https://github.com/pre-commit/pre-commit-hooks).
-- [prettier-hooks](https://github.com/pre-commit/mirrors-prettier).
-
-Cheatsheet:
-
-```shell
-pdm run ruff check .
-pdm run ruff check --fix
-pdm run mypy .
-pdm run tox -e lint
-```
-
-### Test
-
-`dbt_score` uses:
-
-- [pytest](https://docs.pytest.org/) as a main test framework.
-- [coverage](https://coverage.readthedocs.io/en/latest/index.html) for test
-  coverage.
-- [tox](https://tox.wiki/en/latest/) for testing against multiple Python
-  versions.
-
-Cheatsheet:
-
-```shell
-pdm run tox -e py
-pdm run pytest
-pdm run coverage run -m pytest
-```
-
-### Docs
-
-`dbt_score` uses:
-
-- [mkdocs](https://www.mkdocs.org/) for docs generation.
-- [mkdocstrings](https://mkdocstrings.github.io/) for automatic docs from
-  sources.
-
-Cheatsheet:
-
-```shell
-pdm run mkdocs build
-pdm run mkdocs serve
-```
-
-### Pre-commit
-
-Cheatsheet:
-
-Execute hooks manually:
-
-```shell
-pre-commit run --all-files
-```
-
-Create a commit bypassing hooks:
-
-```shell
-git commit --no-verify
-```
+Would you like to contribute to `dbt-score`? That's great news! Please follow
+[the guide on the documentation website](https://dbt-score.picnic.tech/contributors_guide).
+🚀

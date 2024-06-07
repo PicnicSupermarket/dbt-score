@@ -66,7 +66,7 @@ All badges except `wip` can be configured with the following option:
   score required for a model to be rewarded with a certain badge.
 
 The default values can be found in the
-[BadgeConfig](/reference/config/#dbt_score.config.BadgeConfig).
+[BadgeConfig](reference/config.md#dbt_score.config.BadgeConfig).
 
 #### Rule configuration
 
@@ -81,10 +81,10 @@ Every rule can be configured with the following option:
   of 4.
 
 Some rules have additional configuration options, e.g.
-[sql_has_reasonable_number_of_lines](/rules/generic/#sql_has_reasonable_number_of_lines).
+[sql_has_reasonable_number_of_lines](rules/generic.md#sql_has_reasonable_number_of_lines).
 Depending on the rule, the options will have different names, types and default
 values. In the case of the
-[sql_has_reasonable_number_of_lines](/rules/generic/#sql_has_reasonable_number_of_lines),
+[sql_has_reasonable_number_of_lines](rules/generic.md#sql_has_reasonable_number_of_lines),
 the `max_lines` option can be configured.
 
 ## Command line
