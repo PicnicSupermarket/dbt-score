@@ -8,6 +8,8 @@ and this project adheres to
 
 ## [Unreleased]
 
+## [0.1.2] - 2023-06-07
+
 - Create contributors guide for the documentation website.
 - Add Github icon and link to documentation website.
 
