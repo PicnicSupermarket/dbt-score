@@ -10,8 +10,8 @@ encourage) good practices.
 
 ## Example
 
-```shell
-$ dbt-score lint
+```
+> dbt-score lint
 🥇 customers (score: 10.0)
     OK   dbt_score.rules.generic.has_description
     OK   dbt_score.rules.generic.has_owner: Model lacks an owner.
