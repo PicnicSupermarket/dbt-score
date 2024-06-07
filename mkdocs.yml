@@ -5,6 +5,8 @@ theme:
   favicon: assets/medal.svg
   features:
     - content.code.copy # Copy button for code blocks
+    - content.action.edit # Edit button pointing to Github
+repo_url: https://github.com/PicnicSupermarket/dbt-score
 plugins:
   - search
   - mkdocstrings

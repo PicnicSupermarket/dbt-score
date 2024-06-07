@@ -25,8 +25,8 @@ organizations need, fully supported through the `meta` parameter.
 At scale, with hundreds or thousands of data models, all this metadata can
 become confusing, disparate, and inconsistent. It's hard to enforce good
 practices and maintain them in continuous integration systems. This is where
-`dbt-score` plays its role: by allowing data teams to programatically define and
-enforce metadata rules, in an easy and scalable manner.
+`dbt-score` plays its role: by allowing data teams to programmatically define
+and enforce metadata rules, in an easy and scalable manner.
 
 ## Documentation
 
