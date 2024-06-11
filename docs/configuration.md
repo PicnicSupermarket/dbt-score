@@ -16,6 +16,7 @@ below:
 [tool.dbt-score]
 rule_namespaces = ["dbt_score.rules", "dbt_score_rules", "custom_rules"]
 disabled_rules = ["dbt_score.rules.generic.columns_have_description"]
+inject_cwd_in_python_path = true
 
 [tool.dbt-score.badges]
 first.threshold = 10.0
