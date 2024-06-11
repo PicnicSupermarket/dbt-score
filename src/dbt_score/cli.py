@@ -40,7 +40,7 @@ def cli() -> None:
     "-f",
     help="Output format. Plain is suitable for terminals, manifest for rich "
     "documentation.",
-    type=click.Choice(["plain", "manifest"]),
+    type=click.Choice(["plain", "manifest", "ascii"]),
     default="plain",
 )
 @click.option(
@@ -81,7 +81,7 @@ def cli() -> None:
 @click.pass_context
 def lint(
     ctx: click.Context,
-    format: Literal["plain", "manifest"],
+    format: Literal["plain", "manifest", "ascii"],
     select: tuple[str],
     namespace: list[str],
     disabled_rule: list[str],
