@@ -11,22 +11,18 @@
 
 `dbt-score` is a linter for dbt model metadata.
 
-[dbt][dbt] (Data Build Tool) is a great framework for creating,
-building, organizing, testing and documenting _data models_, i.e. data sets
-living in a database or a data warehouse. Through a declarative approach, it
-allows data practitioners to build data with a methodology inspired by software
-development practices.
+[dbt][dbt] (Data Build Tool) is a great framework for creating, building, organizing, testing and documenting _data
+models_, i.e. data sets living in a database or a data warehouse. Through a declarative approach, it allows data
+practitioners to build data with a methodology inspired by software development practices.
 
-This leads to data models being bundled with a lot of metadata, such as
-documentation, data tests, access control information, column types and
-constraints, 3rd party integrations... Not to mention any other metadata that
+This leads to data models being bundled with a lot of metadata, such as documentation, data tests, access control
+information, column types and constraints, 3rd party integrations... Not to mention any other metadata that
 organizations need, fully supported through the `meta` parameter.
 
-At scale, with hundreds or thousands of data models, all this metadata can
-become confusing, disparate, and inconsistent. It's hard to enforce good
-practices and maintain them in continuous integration systems. This is where
-`dbt-score` plays its role: by allowing data teams to programmatically define
-and enforce metadata rules, in an easy and scalable manner.
+At scale, with hundreds or thousands of data models, all this metadata can become confusing, disparate, and
+inconsistent. It's hard to enforce good practices and maintain them in continuous integration systems. This is
+where`dbt-score` plays its role: by allowing data teams to programmatically define and enforce metadata rules, in an
+easy and scalable manner.
 
 ## Documentation
 
