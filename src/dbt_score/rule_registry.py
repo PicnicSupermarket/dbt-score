@@ -25,10 +25,6 @@ class RuleRegistry:
         self.config = config
         self._rules: dict[str, Rule] = {}
 
-        # Add cwd to Python path to load custom rules
-        if config.inject_cwd_in_python_path and os.getcwd() not in sys.path:
-            sys.path.append(os.getcwd())
-
     @property
     def rules(self) -> dict[str, Rule]:
         """Get all rules."""
@@ -73,5 +69,13 @@ class RuleRegistry:
 
     def load_all(self) -> None:
         """Load all rules, core and third-party."""
+        # Add cwd to Python path
+        old_sys_path = sys.path  # Save original values
+        if self.config.inject_cwd_in_python_path and os.getcwd() not in sys.path:
+            sys.path.append(os.getcwd())
+
         for namespace in self.config.rule_namespaces:
             self._load(namespace)
+
+        # Restore original values
+        sys.path = old_sys_path
