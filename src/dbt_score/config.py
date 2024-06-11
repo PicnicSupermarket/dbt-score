@@ -49,6 +49,7 @@ class Config:
     _options: Final[list[str]] = [
         "rule_namespaces",
         "disabled_rules",
+        "inject_cwd_in_python_path",
     ]
     _rules_section: Final[str] = "rules"
     _badges_section: Final[str] = "badges"
@@ -57,6 +58,7 @@ class Config:
         """Initialize the Config object."""
         self.rule_namespaces: list[str] = ["dbt_score.rules", "dbt_score_rules"]
         self.disabled_rules: list[str] = []
+        self.inject_cwd_in_python_path = True
         self.rules_config: dict[str, RuleConfig] = {}
         self.config_file: Path | None = None
         self.badge_config: BadgeConfig = BadgeConfig()
