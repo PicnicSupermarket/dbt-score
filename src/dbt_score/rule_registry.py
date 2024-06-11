@@ -26,7 +26,7 @@ class RuleRegistry:
         self._rules: dict[str, Rule] = {}
 
         # Add cwd to Python path to load custom rules
-        if config.inject_cwd_in_python_path:
+        if config.inject_cwd_in_python_path and os.getcwd() not in sys.path:
             sys.path.append(os.getcwd())
 
     @property
