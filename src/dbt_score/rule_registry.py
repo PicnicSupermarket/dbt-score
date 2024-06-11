@@ -5,7 +5,9 @@ This module implements rule discovery.
 
 import importlib
 import logging
+import os
 import pkgutil
+import sys
 from typing import Iterator, Type
 
 from dbt_score.config import Config
@@ -22,6 +24,10 @@ class RuleRegistry:
         """Instantiate a rule registry."""
         self.config = config
         self._rules: dict[str, Rule] = {}
+
+        # Add cwd to Python path to load custom rules
+        if config.inject_cwd_in_python_path:
+            sys.path.append(os.getcwd())
 
     @property
     def rules(self) -> dict[str, Rule]:
