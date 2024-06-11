@@ -8,6 +8,10 @@ and this project adheres to
 
 ## [Unreleased]
 
+## [0.1.3] - 2023-06-11
+
+- Inject current working directory into python path by default.
+
 ## [0.1.2] - 2023-06-07
 
 - Create contributors guide for the documentation website.
