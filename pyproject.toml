@@ -15,6 +15,7 @@ classifiers = [
     "License :: OSI Approved :: MIT License",
     "Programming Language :: Python",
     "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Intended Audience :: Developers",
@@ -22,10 +23,10 @@ classifiers = [
 ]
 
 dependencies = [
-    "dbt-core>=1.5",
+    "dbt-core>=1.5, <1.8",
     "click>=7.1.1, <9.0.0",
 ]
-requires-python = ">=3.11"
+requires-python = ">=3.10"
 readme = "README.md"
 license = {text = "MIT"}
 

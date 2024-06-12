@@ -58,7 +58,7 @@ documentation website.
 
 You'll need the following:
 
-- Any Python version starting from 3.11
+- Any Python version starting from 3.10
 - [pre-commit](https://pre-commit.com/) (recommended)
 - [PDM](https://pdm-project.org/2.12/)
 

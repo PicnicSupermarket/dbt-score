@@ -1,7 +1,7 @@
 # Get started
 
 `dbt-score` is a Python library that is easy to install and use. The minimum
-required version of Python is `3.11`.
+required version of Python is `3.10`.
 
 ## Installation
 
