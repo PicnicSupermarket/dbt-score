@@ -90,7 +90,7 @@
       "database": "db",
       "schema": "schema",
       "raw_code": "SELECT x FROM y",
-      "alias": "model2_alias",
+      "alias": "model1_alias",
       "patch_path": "/path/to/model1.yml",
       "tags": [],
       "depends_on": {},
