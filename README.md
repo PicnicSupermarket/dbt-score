@@ -7,6 +7,8 @@
 [![PyPI - Python Version](https://img.shields.io/pypi/pyversions/dbt-score.svg)](https://pypi.org/project/dbt-score)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://makeapullrequest.com)
 
+![dbt-score-output](images/dbt-score-output.png)
+
 ## What is `dbt-score`?
 
 `dbt-score` is a linter for dbt model metadata.
