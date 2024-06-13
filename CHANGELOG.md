@@ -8,6 +8,10 @@ and this project adheres to
 
 ## [Unreleased]
 
+## [0.1.4] - 2023-06-13
+
+- Support Python 3.10.
+
 ## [0.1.3] - 2023-06-11
 
 - Inject current working directory into python path by default.
