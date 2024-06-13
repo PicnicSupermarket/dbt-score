@@ -23,7 +23,7 @@ classifiers = [
 ]
 
 dependencies = [
-    "dbt-core>=1.5, <1.8",
+    "dbt-core>=1.5",
     "click>=7.1.1, <9.0.0",
     "tomli>=1.1.0; python_version<'3.11'",
 ]
