@@ -8,6 +8,8 @@ and this project adheres to
 
 ## [Unreleased]
 
+- Lint the current dbt project only, not including the imported models.
+
 ## [0.1.3] - 2023-06-11
 
 - Inject current working directory into python path by default.
