@@ -1,5 +1,5 @@
 """Test the CLI."""
-
+import logging
 from unittest.mock import patch
 
 from click.testing import CliRunner
@@ -20,7 +20,13 @@ def test_lint_existing_manifest(manifest_path):
     """Test lint with an existing manifest."""
     with patch("dbt_score.cli.Config._load_toml_file"):
         runner = CliRunner()
-        result = runner.invoke(lint, ["--manifest", manifest_path])
+        result = runner.invoke(
+            lint,
+            [
+                "--manifest",
+                manifest_path,
+            ],
+        )
 
         assert "model1" in result.output
         assert "model2" in result.output
@@ -45,3 +51,32 @@ def test_lint_non_existing_manifest(caplog):
 
         assert result.exit_code == 2
         assert "dbt's manifest.json could not be found" in caplog.text
+
+
+def test_fail_project_under(manifest_path):
+    """Test `fail_project_under`."""
+    with patch("dbt_score.cli.Config._load_toml_file"):
+        runner = CliRunner()
+        result = runner.invoke(
+            lint, ["--manifest", manifest_path, "--fail_project_under", "10.0"]
+        )
+
+        assert "model1" in result.output
+        assert "model2" in result.output
+        assert result.exit_code == 1
+
+
+def test_fail_any_model_under(manifest_path, caplog):
+    """Test `fail_any_model_under`."""
+    caplog.set_level(logging.ERROR)
+
+    with patch("dbt_score.cli.Config._load_toml_file"):
+        runner = CliRunner()
+        result = runner.invoke(
+            lint, ["--manifest", manifest_path, "--fail_any_model_under", "10.0"]
+        )
+
+        assert "model1" in result.output
+        assert "model2" in result.output
+        assert "Individual model score" in caplog.text
+        assert result.exit_code == 1

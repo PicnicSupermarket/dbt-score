@@ -78,6 +78,20 @@ def cli() -> None:
     is_flag=True,
     default=False,
 )
+@click.option(
+    "--fail_project_under",
+    help="Fail if the project score is under this value",
+    type=float,
+    is_flag=False,
+    default=None,
+)
+@click.option(
+    "--fail_any_model_under",
+    help="Fail if any model is under this value",
+    type=float,
+    is_flag=False,
+    default=None,
+)
 @click.pass_context
 def lint(
     ctx: click.Context,
@@ -87,6 +101,8 @@ def lint(
     disabled_rule: list[str],
     manifest: Path,
     run_dbt_parse: bool,
+    fail_project_under: float,
+    fail_any_model_under: float,
 ) -> None:
     """Lint dbt models metadata."""
     manifest_provided = (
@@ -102,14 +118,33 @@ def lint(
         config.overload({"rule_namespaces": namespace})
     if disabled_rule:
         config.overload({"disabled_rules": disabled_rule})
+    if fail_project_under:
+        config.overload({"fail_project_under": fail_project_under})
+    if fail_any_model_under:
+        config.overload({"fail_any_model_under": fail_any_model_under})
 
     if run_dbt_parse:
         dbt_parse()
 
     try:
-        lint_dbt_project(
+        evaluation = lint_dbt_project(
             manifest_path=manifest, config=config, format=format, select=select
         )
+
+        if evaluation.min_model_score < config.fail_any_model_under:
+            logger.error(
+                f"Individual model score {round(evaluation.min_model_score,1)} is less "
+                f"than `fail_any_model_under` setting of {config.fail_any_model_under}"
+            )
+            ctx.exit(1)
+
+        if evaluation.project_score.value < config.fail_project_under:
+            logger.error(
+                f"Project score {round(evaluation.project_score.value,1)} is less "
+                f"than `fail_project_under` setting of {config.fail_project_under}"
+            )
+            ctx.exit(1)
+
     except FileNotFoundError:
         logger.error(
             "dbt's manifest.json could not be found. If you're in a dbt project, be "

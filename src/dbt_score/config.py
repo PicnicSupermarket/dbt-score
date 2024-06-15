@@ -55,6 +55,8 @@ class Config:
         "rule_namespaces",
         "disabled_rules",
         "inject_cwd_in_python_path",
+        "fail_project_under",
+        "fail_any_model_under",
     ]
     _rules_section: Final[str] = "rules"
     _badges_section: Final[str] = "badges"
@@ -67,6 +69,8 @@ class Config:
         self.rules_config: dict[str, RuleConfig] = {}
         self.config_file: Path | None = None
         self.badge_config: BadgeConfig = BadgeConfig()
+        self.fail_project_under: float = 0.0
+        self.fail_any_model_under: float = 0.0
 
     def set_option(self, option: str, value: Any) -> None:
         """Set an option in the config."""

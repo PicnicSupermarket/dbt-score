@@ -25,6 +25,7 @@ def test_load_valid_toml_file(valid_config_path):
     assert config.badge_config.third.icon == "3️⃣"
     assert config.badge_config.second.icon == "2️⃣"
     assert config.badge_config.first.icon == "1️⃣"
+    assert config.fail_project_under == 7.5
 
 
 def test_load_invalid_toml_file(caplog, invalid_config_path):

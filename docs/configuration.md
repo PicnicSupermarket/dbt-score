@@ -17,6 +17,8 @@ below:
 rule_namespaces = ["dbt_score.rules", "dbt_score_rules", "custom_rules"]
 disabled_rules = ["dbt_score.rules.generic.columns_have_description"]
 inject_cwd_in_python_path = true
+fail_project_under = 7.5
+fail_any_model_under = 8.0
 
 [tool.dbt-score.badges]
 first.threshold = 10.0
@@ -47,6 +49,10 @@ The following options can be set in the `pyproject.toml` file:
   this setting, that the default rules are in `dbt_score.rules` and are disabled
   if not included here.
 - `disabled_rules`: A list of rules to disable.
+- `fail_project_under`: If the project score is below this value the command
+  will fail with return code 1
+- `fail_any_model_under`: If ay model scores below this value the command will
+  fail with return code 1
 
 #### Badges configuration
 
@@ -94,5 +100,5 @@ Many configuration options can also be set via the command line. To understand
 how to configure `dbt-score` from the command line:
 
 ```bash
-dbt score lint --help
+dbt-score lint --help
 ```

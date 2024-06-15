@@ -18,7 +18,7 @@ def lint_dbt_project(
     config: Config,
     format: Literal["plain", "manifest", "ascii"],
     select: Iterable[str] | None = None,
-) -> None:
+) -> Evaluation:
     """Lint dbt manifest."""
     if not manifest_path.exists():
         raise FileNotFoundError(f"Manifest not found at {manifest_path}.")
@@ -44,3 +44,5 @@ def lint_dbt_project(
         scorer=scorer,
     )
     evaluation.evaluate()
+
+    return evaluation
