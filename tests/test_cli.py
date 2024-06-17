@@ -1,4 +1,5 @@
 """Test the CLI."""
+
 import logging
 from unittest.mock import patch
 

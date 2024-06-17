@@ -50,7 +50,7 @@ class Evaluation:
         self.project_score: Score
 
         # The minimum model score, starts at the maximum of 10
-        self.min_model_score: float = 10
+        self.min_model_score: float = 10.0
 
     def evaluate(self) -> None:
         """Evaluate all rules."""
