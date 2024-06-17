@@ -1,7 +1,11 @@
 {
+  "metadata": {
+    "project_name": "package"
+  },
   "nodes": {
     "analysis.package.analysis1": {
-      "resource_type": "analysis"
+      "resource_type": "analysis",
+      "package_name": "package"
     },
     "model.package.model1": {
       "resource_type": "model",
@@ -63,6 +67,36 @@
       "language": "sql",
       "access": "public"
     },
+    "model.package2.model1": {
+      "resource_type": "model",
+      "unique_id": "model.package2.model1",
+      "name": "model1",
+      "relation_name": "database.schema.model1",
+      "description": "A great model.\nExample use:\n```sql\nselect 1;\n```",
+      "original_file_path": "/path/to/model1.sql",
+      "config": {},
+      "meta": {},
+      "columns": {
+        "a": {
+          "name": "column_a",
+          "description": "Column A.",
+          "data_type": "string",
+          "meta": {},
+          "constraints": [],
+          "tags": []
+        }
+      },
+      "package_name": "package2",
+      "database": "db",
+      "schema": "schema",
+      "raw_code": "SELECT x FROM y",
+      "alias": "model1_alias",
+      "patch_path": "/path/to/model1.yml",
+      "tags": [],
+      "depends_on": {},
+      "language": "sql",
+      "access": "public"
+    },
     "test.package.test1": {
       "resource_type": "test",
       "attached_node": "model.package.model1",
@@ -73,6 +107,7 @@
           "column_name": "a"
         }
       },
+      "package_name": "package",
       "tags": []
     },
     "test.package.test2": {
@@ -83,10 +118,12 @@
         "name": "type",
         "kwargs": {}
       },
+      "package_name": "package",
       "tags": []
     },
     "test.package.test3": {
-      "resource_type": "test"
+      "resource_type": "test",
+      "package_name": "package"
     }
   }
 }

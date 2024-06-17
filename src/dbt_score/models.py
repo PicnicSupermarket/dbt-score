@@ -241,7 +241,12 @@ class ManifestLoader:
             select: An optional dbt selection.
         """
         self.raw_manifest = json.loads(file_path.read_text(encoding="utf-8"))
-        self.raw_nodes = self.raw_manifest.get("nodes", {})
+        self.project_name = self.raw_manifest["metadata"]["project_name"]
+        self.raw_nodes = {
+            node_id: node_values
+            for node_id, node_values in self.raw_manifest.get("nodes", {}).items()
+            if node_values["package_name"] == self.project_name
+        }
         self.models: list[Model] = []
         self.tests: dict[str, list[dict[str, Any]]] = defaultdict(list)
 

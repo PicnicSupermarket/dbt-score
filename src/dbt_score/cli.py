@@ -54,7 +54,7 @@ def cli() -> None:
 @click.option(
     "--namespace",
     "-n",
-    help="Namespace.",
+    help="Namespace to look for rules.",
     default=None,
     multiple=True,
 )

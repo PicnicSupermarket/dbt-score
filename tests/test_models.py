@@ -16,6 +16,7 @@ def test_manifest_load(mock_read_text, raw_manifest):
                 node
                 for node in raw_manifest["nodes"].values()
                 if node["resource_type"] == "model"
+                and node["package_name"] == raw_manifest["metadata"]["project_name"]
             ]
         )
         assert loader.models[0].tests[0].name == "test2"

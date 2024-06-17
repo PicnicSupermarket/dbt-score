@@ -8,6 +8,8 @@ and this project adheres to
 
 ## [Unreleased]
 
+- Lint the current dbt project only, not including the imported models.
+
 ## [0.2.0] - 2023-06-14
 
 - Support Python 3.10.
