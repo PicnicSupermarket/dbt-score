@@ -23,6 +23,7 @@ nav:
   - Home: index.md
   - Get started: get_started.md
   - Create rules: create_rules.md
+  - Package rules: package_rules.md
   - Configuration: configuration.md
   - Rules:
       - rules/generic.md
