@@ -10,6 +10,10 @@ and this project adheres to
 
 - Lint the current dbt project only, not including the imported models.
 
+## [0.2.0] - 2023-06-14
+
+- Support Python 3.10.
+
 ## [0.1.3] - 2023-06-11
 
 - Inject current working directory into python path by default.
