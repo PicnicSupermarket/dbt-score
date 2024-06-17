@@ -8,6 +8,8 @@ and this project adheres to
 
 ## [Unreleased]
 
+## [0.2.1] - 2023-06-17
+
 - Lint the current dbt project only, not including the imported models.
 
 ## [0.2.0] - 2023-06-14
