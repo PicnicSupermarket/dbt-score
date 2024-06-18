@@ -42,4 +42,4 @@ Would you like to contribute to `dbt-score`? That's great news! Please follow
 
 [dbt]: https://github.com/dbt-labs/dbt-core
 [dbt-score]: https://dbt-score.picnic.tech/
-[contributors-guide]: https://dbt-score.picnic.tech/contributors_guide
+[contributors-guide]: https://dbt-score.picnic.tech/contributing/

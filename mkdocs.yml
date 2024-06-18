@@ -40,5 +40,5 @@ nav:
           - reference/formatters/index.md
           - reference/formatters/human_readable_formatter.md
           - reference/formatters/manifest_formatter.md
-  - Contributor's guide: CONTRIBUTING.md
+  - Contributor's guide: contributing.md
   - Changelog: https://github.com/PicnicSupermarket/dbt-score/blob/master/CHANGELOG.md
