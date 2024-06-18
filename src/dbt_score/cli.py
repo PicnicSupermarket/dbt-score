@@ -131,18 +131,20 @@ def lint(
             manifest_path=manifest, config=config, format=format, select=select
         )
 
-        if evaluation.min_model_score < config.fail_any_model_under:
-            logger.error(
-                f"Individual model score {round(evaluation.min_model_score,1)} is less "
-                f"than `fail_any_model_under` setting of {config.fail_any_model_under}"
-            )
+        failed_models = {
+            model.unique_id: score.value
+            for model, score in evaluation.scores.items()
+            if (score.value < config.fail_any_model_under)
+        }
+
+        if failed_models:
+            print(f"Error: fail_any_model_under = {config.fail_any_model_under}")
+            for model, value in failed_models.items():
+                print(f"Model {model} scored {round(value,1)}")
             ctx.exit(1)
 
         if evaluation.project_score.value < config.fail_project_under:
-            logger.error(
-                f"Project score {round(evaluation.project_score.value,1)} is less "
-                f"than `fail_project_under` setting of {config.fail_project_under}"
-            )
+            print(f"Error: fail_project_under = {evaluation.project_score.value}")
             ctx.exit(1)
 
     except FileNotFoundError:

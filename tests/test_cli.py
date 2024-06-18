@@ -1,6 +1,5 @@
 """Test the CLI."""
 
-import logging
 from unittest.mock import patch
 
 from click.testing import CliRunner
@@ -64,13 +63,12 @@ def test_fail_project_under(manifest_path):
 
         assert "model1" in result.output
         assert "model2" in result.output
+        assert "Error: fail_project_under" in result.stdout
         assert result.exit_code == 1
 
 
-def test_fail_any_model_under(manifest_path, caplog):
+def test_fail_any_model_under(manifest_path):
     """Test `fail_any_model_under`."""
-    caplog.set_level(logging.ERROR)
-
     with patch("dbt_score.cli.Config._load_toml_file"):
         runner = CliRunner()
         result = runner.invoke(
@@ -79,5 +77,5 @@ def test_fail_any_model_under(manifest_path, caplog):
 
         assert "model1" in result.output
         assert "model2" in result.output
-        assert "Individual model score" in caplog.text
+        assert "Error: fail_any_model_under" in result.stdout
         assert result.exit_code == 1

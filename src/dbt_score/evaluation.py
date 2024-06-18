@@ -49,9 +49,6 @@ class Evaluation:
         # The aggregated project score
         self.project_score: Score
 
-        # The minimum model score, starts at the maximum of 10
-        self.min_model_score: float = 10.0
-
     def evaluate(self) -> None:
         """Evaluate all rules."""
         rules = self._rule_registry.rules.values()
@@ -70,7 +67,6 @@ class Evaluation:
             self._formatter.model_evaluated(
                 model, self.results[model], self.scores[model]
             )
-            self.min_model_score = min(self.min_model_score, self.scores[model].value)
 
         # Compute score for project
         self.project_score = self._scorer.score_aggregate_models(

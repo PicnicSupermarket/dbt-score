@@ -69,8 +69,8 @@ class Config:
         self.rules_config: dict[str, RuleConfig] = {}
         self.config_file: Path | None = None
         self.badge_config: BadgeConfig = BadgeConfig()
-        self.fail_project_under: float = 0.0
-        self.fail_any_model_under: float = 0.0
+        self.fail_project_under: float = 5.0
+        self.fail_any_model_under: float = 5.0
 
     def set_option(self, option: str, value: Any) -> None:
         """Set an option in the config."""

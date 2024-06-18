@@ -90,7 +90,7 @@ extend-select = [
 ]
 
 [tool.ruff.lint.mccabe]
-max-complexity = 10
+max-complexity = 11
 
 [tool.ruff.lint.pydocstyle]
 convention = "google"

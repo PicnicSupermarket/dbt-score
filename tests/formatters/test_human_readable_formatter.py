@@ -40,4 +40,4 @@ def test_human_readable_formatter_project(capsys, manifest_loader):
     formatter = HumanReadableFormatter(manifest_loader=manifest_loader)
     formatter.project_evaluated(Score(10.0, "🥇"))
     stdout = capsys.readouterr().out
-    assert stdout == "Project score: \x1B[1m10.0\x1B[0m 🥇\n"
+    assert stdout == "Project score: \x1B[1m10.0\x1B[0m 🥇\n\n"

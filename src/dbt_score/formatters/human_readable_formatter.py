@@ -43,3 +43,4 @@ class HumanReadableFormatter(Formatter):
     def project_evaluated(self, score: Score) -> None:
         """Callback when a project has been evaluated."""
         print(f"Project score: {self.bold(str(round(score.value, 1)))} {score.badge}")
+        print()
