@@ -80,14 +80,14 @@ def cli() -> None:
 )
 @click.option(
     "--fail_project_under",
-    help="Fail if the project score is under this value",
+    help="Fail if the project score is under this value.",
     type=float,
     is_flag=False,
     default=None,
 )
 @click.option(
     "--fail_any_model_under",
-    help="Fail if any model is under this value",
+    help="Fail if any model is under this value.",
     type=float,
     is_flag=False,
     default=None,

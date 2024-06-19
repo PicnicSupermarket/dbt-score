@@ -50,9 +50,9 @@ The following options can be set in the `pyproject.toml` file:
   if not included here.
 - `disabled_rules`: A list of rules to disable.
 - `fail_project_under`: If the project score is below this value the command
-  will fail with return code 1
+  will fail with return code 1.
 - `fail_any_model_under`: If ay model scores below this value the command will
-  fail with return code 1
+  fail with return code 1.
 
 #### Badges configuration
 
