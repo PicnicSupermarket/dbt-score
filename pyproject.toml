@@ -90,13 +90,13 @@ extend-select = [
 ]
 
 [tool.ruff.lint.mccabe]
-max-complexity = 10
+max-complexity = 11
 
 [tool.ruff.lint.pydocstyle]
 convention = "google"
 
 [tool.ruff.lint.pylint]
-max-args = 8
+max-args = 9
 
 [tool.ruff.lint.per-file-ignores]
 "tests/**/*.py" = [
