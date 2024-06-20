@@ -8,6 +8,8 @@ and this project adheres to
 
 ## [Unreleased]
 
+## [0.3.0] - 2024-06-20
+
 ### Added
 
 - Add `project_fail_under` configuration
@@ -15,24 +17,32 @@ and this project adheres to
 - **Breaking:** - default values of `5.0` for `project_fail_under` and
   `fail_any_model_under` will cause command to exit return code 1
 
-## [0.2.1] - 2023-06-17
+## [0.2.1] - 2024-06-17
+
+### Added
 
 - Lint the current dbt project only, not including the imported models.
 
-## [0.2.0] - 2023-06-14
+## [0.2.0] - 2024-06-14
+
+### Added
 
 - Support Python 3.10.
 
-## [0.1.3] - 2023-06-11
+## [0.1.3] - 2024-06-11
+
+### Added
 
 - Inject current working directory into python path by default.
 
-## [0.1.2] - 2023-06-07
+## [0.1.2] - 2024-06-07
+
+### Added
 
 - Create contributors guide for the documentation website.
 - Add Github icon and link to documentation website.
 
-## [0.1.1] - 2023-06-03
+## [0.1.1] - 2024-06-03
 
 ### Added
 
