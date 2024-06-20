@@ -1,6 +1,8 @@
 [tool.dbt-score]
 rule_namespaces = ["foo", "tests"]
 disabled_rules = ["foo.foo", "tests.bar"]
+fail_project_under = 7.5
+fail_any_model_under = 6.9
 
 [tool.dbt-score.badges]
 wip.icon = "🏗️"

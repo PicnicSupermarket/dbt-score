@@ -10,6 +10,7 @@ from dbt_score.scoring import Score
 
 def test_manifest_formatter_model(
     capsys,
+    default_config,
     manifest_loader,
     model1,
     rule_severity_low,
@@ -17,7 +18,9 @@ def test_manifest_formatter_model(
     rule_severity_critical,
 ):
     """Ensure the formatter has the correct output after model evaluation."""
-    formatter = ManifestFormatter(manifest_loader=manifest_loader)
+    formatter = ManifestFormatter(
+        manifest_loader=manifest_loader, config=default_config
+    )
     results = {
         rule_severity_low: None,
         rule_severity_medium: Exception("Oh noes"),
@@ -30,6 +33,7 @@ def test_manifest_formatter_model(
 
 def test_manifest_formatter_project(
     capsys,
+    default_config,
     manifest_loader,
     model1,
     model2,
@@ -38,7 +42,9 @@ def test_manifest_formatter_project(
     rule_severity_critical,
 ):
     """Ensure the formatter has the correct output after project evaluation."""
-    formatter = ManifestFormatter(manifest_loader=manifest_loader)
+    formatter = ManifestFormatter(
+        manifest_loader=manifest_loader, config=default_config
+    )
     result1: dict[Type[Rule], RuleViolation | Exception | None] = {
         rule_severity_low: None,
         rule_severity_medium: Exception("Oh noes"),

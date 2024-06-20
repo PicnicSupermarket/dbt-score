@@ -7,6 +7,7 @@ from dbt_score.evaluation import Evaluation
 from dbt_score.models import ManifestLoader
 from dbt_score.rule import RuleViolation
 from dbt_score.rule_registry import RuleRegistry
+from dbt_score.scoring import Score
 
 
 def test_evaluation_low_medium_high(
@@ -27,6 +28,9 @@ def test_evaluation_low_medium_high(
     rule_registry._add_rule(rule_severity_medium)
     rule_registry._add_rule(rule_severity_high)
     rule_registry._add_rule(rule_error)
+
+    # Ensure we get a valid Score object from the Mock
+    mock_scorer.score_model.return_value = Score(10, "🥇")
 
     evaluation = Evaluation(
         rule_registry=rule_registry,
@@ -66,12 +70,17 @@ def test_evaluation_critical(
     rule_registry._add_rule(rule_severity_low)
     rule_registry._add_rule(rule_severity_critical)
 
+    mock_formatter = Mock()
+    mock_scorer = Mock()
+    mock_scorer.score_model.return_value = Score(10, "🥇")
+
     evaluation = Evaluation(
         rule_registry=rule_registry,
         manifest_loader=manifest_loader,
-        formatter=Mock(),
-        scorer=Mock(),
+        formatter=mock_formatter,
+        scorer=mock_scorer,
     )
+
     evaluation.evaluate()
 
     model2 = manifest_loader.models[1]
@@ -85,11 +94,15 @@ def test_evaluation_no_rule(manifest_path, default_config):
 
     rule_registry = RuleRegistry(default_config)
 
+    mock_formatter = Mock()
+    mock_scorer = Mock()
+    mock_scorer.score_model.return_value = Score(10, "🥇")
+
     evaluation = Evaluation(
         rule_registry=rule_registry,
         manifest_loader=manifest_loader,
-        formatter=Mock(),
-        scorer=Mock(),
+        formatter=mock_formatter,
+        scorer=mock_scorer,
     )
     evaluation.evaluate()
 
@@ -148,11 +161,15 @@ def test_evaluation_rule_with_config(
     rule_registry = RuleRegistry(config)
     rule_registry._add_rule(rule_with_config)
 
+    mock_formatter = Mock()
+    mock_scorer = Mock()
+    mock_scorer.score_model.return_value = Score(10, "🥇")
+
     evaluation = Evaluation(
         rule_registry=rule_registry,
         manifest_loader=manifest_loader,
-        formatter=Mock(),
-        scorer=Mock(),
+        formatter=mock_formatter,
+        scorer=mock_scorer,
     )
     evaluation.evaluate()
 

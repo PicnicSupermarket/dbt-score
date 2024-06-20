@@ -45,3 +45,31 @@ def test_lint_non_existing_manifest(caplog):
 
         assert result.exit_code == 2
         assert "dbt's manifest.json could not be found" in caplog.text
+
+
+def test_fail_project_under(manifest_path):
+    """Test `fail_project_under`."""
+    with patch("dbt_score.cli.Config._load_toml_file"):
+        runner = CliRunner()
+        result = runner.invoke(
+            lint, ["--manifest", manifest_path, "--fail_project_under", "10.0"]
+        )
+
+        assert "model1" in result.output
+        assert "model2" in result.output
+        assert "Error: project score too low, fail_project_under" in result.stdout
+        assert result.exit_code == 1
+
+
+def test_fail_any_model_under(manifest_path):
+    """Test `fail_any_model_under`."""
+    with patch("dbt_score.cli.Config._load_toml_file"):
+        runner = CliRunner()
+        result = runner.invoke(
+            lint, ["--manifest", manifest_path, "--fail_any_model_under", "10.0"]
+        )
+
+        assert "model1" in result.output
+        assert "model2" in result.output
+        assert "Error: model score too low, fail_any_model_under" in result.stdout
+        assert result.exit_code == 1
