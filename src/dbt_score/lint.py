@@ -33,7 +33,7 @@ def lint_dbt_project(
         "manifest": ManifestFormatter,
         "ascii": ASCIIFormatter,
     }
-    formatter = formatters[format](manifest_loader=manifest_loader)
+    formatter = formatters[format](manifest_loader=manifest_loader, config=config)
 
     scorer = Scorer(config)
 

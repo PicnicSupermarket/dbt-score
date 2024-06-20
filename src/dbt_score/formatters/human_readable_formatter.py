@@ -1,6 +1,8 @@
 """Human readable formatter."""
 
 
+from typing import Any
+
 from dbt_score.evaluation import ModelResultsType
 from dbt_score.formatters import Formatter
 from dbt_score.models import Model
@@ -16,6 +18,11 @@ class HumanReadableFormatter(Formatter):
     label_warning = "\033[1;33mWARN\033[0m"
     label_error = "\033[1;31mERR \033[0m"
 
+    def __init__(self, *args: Any, **kwargs: Any):
+        """Instantiate formatter."""
+        super().__init__(*args, **kwargs)
+        self._failed_models: list[tuple[Model, Score]] = []
+
     @staticmethod
     def bold(text: str) -> str:
         """Return text in bold."""
@@ -25,6 +32,8 @@ class HumanReadableFormatter(Formatter):
         self, model: Model, results: ModelResultsType, score: Score
     ) -> None:
         """Callback when a model has been evaluated."""
+        if score.value < self._config.fail_any_model_under:
+            self._failed_models.append((model, score))
         print(
             f"{score.badge} {self.bold(model.name)} (score: {round(score.value, 1)!s})"
         )
@@ -43,4 +52,19 @@ class HumanReadableFormatter(Formatter):
     def project_evaluated(self, score: Score) -> None:
         """Callback when a project has been evaluated."""
         print(f"Project score: {self.bold(str(round(score.value, 1)))} {score.badge}")
-        print()
+
+        if len(self._failed_models) > 0:
+            print()
+            print(
+                f"Error: model score too low, fail_any_model_under = "
+                f"{self._config.fail_any_model_under}"
+            )
+            for model, score in self._failed_models:
+                print(f"Model {model.name} scored {round(score.value, 1)}")
+
+        elif score.value < self._config.fail_project_under:
+            print()
+            print(
+                f"Error: project score too low, fail_project_under = "
+                f"{self._config.fail_project_under}"
+            )

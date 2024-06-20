@@ -131,28 +131,18 @@ def lint(
             manifest_path=manifest, config=config, format=format, select=select
         )
 
-        failed_models = {
-            model.unique_id: score.value
-            for model, score in evaluation.scores.items()
-            if (score.value < config.fail_any_model_under)
-        }
-
-        if failed_models:
-            print(f"Error: fail_any_model_under = {config.fail_any_model_under}")
-            for model, value in failed_models.items():
-                print(f"Model {model} scored {round(value,1)}")
-            ctx.exit(1)
-
-        if evaluation.project_score.value < config.fail_project_under:
-            print(f"Error: fail_project_under = {evaluation.project_score.value}")
-            ctx.exit(1)
-
     except FileNotFoundError:
         logger.error(
             "dbt's manifest.json could not be found. If you're in a dbt project, be "
             "sure to run 'dbt parse' first, or use the option '--run-dbt-parse'."
         )
         ctx.exit(2)
+
+    if (
+        any(x.value < config.fail_any_model_under for x in evaluation.scores.values())
+        or evaluation.project_score.value < config.fail_project_under
+    ):
+        ctx.exit(1)
 
 
 @cli.command(name="list")
