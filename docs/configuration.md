@@ -49,10 +49,10 @@ The following options can be set in the `pyproject.toml` file:
   this setting, that the default rules are in `dbt_score.rules` and are disabled
   if not included here.
 - `disabled_rules`: A list of rules to disable.
-- `fail_project_under`: If the project score is below this value the command
-  will fail with return code 1.
-- `fail_any_model_under`: If ay model scores below this value the command will
-  fail with return code 1.
+- `fail_project_under` (default: `5.0`): If the project score is below this
+  value the command will fail with return code 1.
+- `fail_any_model_under` (default: `5.0`): If ay model scores below this value
+  the command will fail with return code 1.
 
 #### Badges configuration
 
