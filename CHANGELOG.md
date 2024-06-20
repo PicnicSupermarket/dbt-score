@@ -12,10 +12,10 @@ and this project adheres to
 
 ### Added
 
-- Add `project_fail_under` configuration
-- Add `fail_any_model_under` configuration
-- **Breaking:** - default values of `5.0` for `project_fail_under` and
-  `fail_any_model_under` will cause command to exit return code 1
+- Add `project_fail_under` configuration.
+- Add `fail_any_model_under` configuration.
+- **Breaking:** default values of `5.0` for `project_fail_under` and
+  `fail_any_model_under` will cause command to exit return code 1.
 
 ## [0.2.1] - 2024-06-17
 
