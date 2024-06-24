@@ -8,6 +8,9 @@ and this project adheres to
 
 ## [Unreleased]
 
+- Add null check before calling `project_evaluated` in the `evaluate` method to
+  prevent errors when no models are found. See PR #64.
+
 ## [0.3.0] - 2024-06-20
 
 ### Added
