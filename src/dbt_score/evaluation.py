@@ -72,4 +72,7 @@ class Evaluation:
         self.project_score = self._scorer.score_aggregate_models(
             list(self.scores.values())
         )
-        self._formatter.project_evaluated(self.project_score)
+
+        # Add null check before calling project_evaluated
+        if self._manifest_loader.models:
+            self._formatter.project_evaluated(self.project_score)
