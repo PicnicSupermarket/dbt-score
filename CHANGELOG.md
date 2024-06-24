@@ -16,6 +16,8 @@ and this project adheres to
 - Add `fail_any_model_under` configuration.
 - **Breaking:** default values of `5.0` for `project_fail_under` and
   `fail_any_model_under` will cause command to exit return code 1.
+- Add null check before calling `project_evaluated` in the `evaluate` method to
+  prevent errors when no models are found. See PR #64.
 
 ## [0.2.1] - 2024-06-17
 
