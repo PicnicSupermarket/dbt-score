@@ -3,6 +3,7 @@
 from typing import Type
 
 from dbt_score.formatters.human_readable_formatter import HumanReadableFormatter
+from dbt_score.evaluation import ModelResultsType
 from dbt_score.rule import Rule, RuleViolation
 from dbt_score.scoring import Score
 
@@ -20,7 +21,7 @@ def test_human_readable_formatter_model(
     formatter = HumanReadableFormatter(
         manifest_loader=manifest_loader, config=default_config
     )
-    results: dict[Type[Rule], RuleViolation | Exception | None] = {
+    results: ModelResultsType = {
         rule_severity_low: None,
         rule_severity_medium: Exception("Oh noes"),
         rule_severity_critical: RuleViolation("Error"),
@@ -59,7 +60,7 @@ def test_human_readable_formatter_low_model_score(
     formatter = HumanReadableFormatter(
         manifest_loader=manifest_loader, config=default_config
     )
-    results: dict[Type[Rule], RuleViolation | Exception | None] = {
+    results: ModelResultsType = {
         rule_severity_critical: RuleViolation("Error"),
     }
     formatter.model_evaluated(model1, results, Score(0.0, "🚧"))
@@ -90,7 +91,7 @@ def test_human_readable_formatter_low_project_score(
     formatter = HumanReadableFormatter(
         manifest_loader=manifest_loader, config=default_config
     )
-    results: dict[Type[Rule], RuleViolation | Exception | None] = {
+    results: ModelResultsType = {
         rule_severity_critical: RuleViolation("Error"),
     }
     formatter.model_evaluated(model1, results, Score(10.0, "🥇"))

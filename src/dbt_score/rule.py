@@ -45,7 +45,13 @@ class RuleViolation:
     message: str | None = None
 
 
-RuleEvaluationType: TypeAlias = Callable[[Model], RuleViolation | None]
+@dataclass
+class SkipRule:
+    """This evaluation of the rule should be skipped."""
+    pass
+
+
+RuleEvaluationType: TypeAlias = Callable[[Model], RuleViolation | SkipRule | None]
 
 
 class Rule:
@@ -85,7 +91,7 @@ class Rule:
         ) if rule_config.severity else rule_config.severity
         self.config = config
 
-    def evaluate(self, model: Model) -> RuleViolation | None:
+    def evaluate(self, model: Model) -> RuleViolation | SkipRule | None:
         """Evaluates the rule."""
         raise NotImplementedError("Subclass must implement method `evaluate`.")
 
@@ -154,7 +160,7 @@ def rule(
             func.__doc__.split("\n")[0] if func.__doc__ else None
         )
 
-        def wrapped_func(self: Rule, *args: Any, **kwargs: Any) -> RuleViolation | None:
+        def wrapped_func(self: Rule, *args: Any, **kwargs: Any) -> RuleViolation | SkipRule | None:
             """Wrap func to add `self`."""
             return func(*args, **kwargs)
 

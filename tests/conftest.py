@@ -4,7 +4,7 @@ import json
 from pathlib import Path
 from typing import Any, Type
 
-from dbt_score import Model, Rule, RuleViolation, Severity, rule
+from dbt_score import Model, Rule, RuleViolation, Severity, SkipRule, rule
 from dbt_score.config import Config
 from dbt_score.models import ManifestLoader
 from pytest import fixture
@@ -210,3 +210,16 @@ def rule_error() -> Type[Rule]:
         raise Exception("Oh noes, something went wrong")
 
     return rule_error
+
+
+@fixture
+def rule_skippable() -> Type[Rule]:
+    """An example rule that may skip."""
+
+    @rule
+    def rule_with_skip(model: Model) -> RuleViolation | SkipRule | None:
+        """Skips for model1, passes for model2."""
+        if model.name == "model1":
+            return SkipRule()
+
+    return rule_with_skip
