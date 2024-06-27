@@ -90,3 +90,21 @@ def sql_has_reasonable_number_of_lines(model: Model, max_lines: int = 200) -> Ru
             message=f"SQL query too long: {count_lines} lines (> {max_lines})."
         )
 ```
+
+### Filtering, skipping and expanding
+
+It's possible to modify existing rules, either built-in or custom.
+A possible use case is skipping a default rule for certain models.
+Remember to also disable the original rule (see [Configuration](configuration.md)).
+
+```python
+from dbt_score import Model, rule, RuleViolation, SkipRule
+
+@rule
+def schema_x_has_description(model: Model) -> RuleViolation | SkipRule | None:
+    """Models in schema X should have a description."""
+    from dbt_score.rules.generic import has_description
+    if model.schema.lower() == 'x':
+        return SkipRule()
+    return has_description.evaluate(None, model)
+```

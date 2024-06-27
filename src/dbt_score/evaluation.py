@@ -6,7 +6,7 @@ from typing import Type
 
 from dbt_score.formatters import Formatter
 from dbt_score.models import ManifestLoader, Model
-from dbt_score.rule import Rule, RuleViolation
+from dbt_score.rule import Rule, RuleViolation, SkipRule
 from dbt_score.rule_registry import RuleRegistry
 from dbt_score.scoring import Score, Scorer
 
@@ -14,7 +14,7 @@ from dbt_score.scoring import Score, Scorer
 # - None if there was no issue
 # - A RuleViolation if a linting error was found
 # - An Exception if the rule failed to run
-ModelResultsType = dict[Type[Rule], None | RuleViolation | Exception]
+ModelResultsType = dict[Type[Rule], None | RuleViolation | SkipRule | Exception]
 
 
 class Evaluation:
@@ -57,7 +57,8 @@ class Evaluation:
             self.results[model] = {}
             for rule in rules:
                 try:
-                    result: RuleViolation | None = rule.evaluate(model, **rule.config)
+                    result: RuleViolation | SkipRule | None = \
+                            rule.evaluate(model, **rule.config)
                 except Exception as e:
                     self.results[model][rule.__class__] = e
                 else:
