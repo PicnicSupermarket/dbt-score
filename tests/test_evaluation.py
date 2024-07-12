@@ -206,3 +206,57 @@ def test_evaluation_with_skip(manifest_path, default_config, rule_skippable):
 
     assert isinstance(evaluation.results[model1][rule_skippable], SkipRule)
     assert evaluation.results[model2][rule_skippable] is None
+
+
+def test_evaluation_with_filter(manifest_path, default_config, rule_with_filter):
+    """Test rule with filter."""
+    manifest_loader = ManifestLoader(manifest_path)
+    mock_formatter = Mock()
+    mock_scorer = Mock()
+
+    rule_registry = RuleRegistry(default_config)
+    rule_registry._add_rule(rule_with_filter)
+
+    # Ensure we get a valid Score object from the Mock
+    mock_scorer.score_model.return_value = Score(10, "🥇")
+
+    evaluation = Evaluation(
+        rule_registry=rule_registry,
+        manifest_loader=manifest_loader,
+        formatter=mock_formatter,
+        scorer=mock_scorer,
+    )
+    evaluation.evaluate()
+
+    model1 = manifest_loader.models[0]
+    model2 = manifest_loader.models[1]
+
+    assert isinstance(evaluation.results[model1][rule_with_filter], SkipRule)
+    assert evaluation.results[model2][rule_with_filter] is None
+
+
+def test_evaluation_with_class_filter(manifest_path, default_config, class_rule_with_filter):
+    """Test rule with filters and filtered rules defined by classes."""
+    manifest_loader = ManifestLoader(manifest_path)
+    mock_formatter = Mock()
+    mock_scorer = Mock()
+
+    rule_registry = RuleRegistry(default_config)
+    rule_registry._add_rule(class_rule_with_filter)
+
+    # Ensure we get a valid Score object from the Mock
+    mock_scorer.score_model.return_value = Score(10, "🥇")
+
+    evaluation = Evaluation(
+        rule_registry=rule_registry,
+        manifest_loader=manifest_loader,
+        formatter=mock_formatter,
+        scorer=mock_scorer,
+    )
+    evaluation.evaluate()
+
+    model1 = manifest_loader.models[0]
+    model2 = manifest_loader.models[1]
+
+    assert isinstance(evaluation.results[model1][class_rule_with_filter], SkipRule)
+    assert evaluation.results[model2][class_rule_with_filter] is None

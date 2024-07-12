@@ -18,9 +18,9 @@ class ModelFilterConfig:
     config: dict[str, Any] = field(default_factory=dict)
 
     @staticmethod
-    def from_dict(skip_config: dict[str, Any]) -> "ModelFilterConfig":
+    def from_dict(filter_config: dict[str, Any]) -> "ModelFilterConfig":
         """Create a ModelFilterConfig from a dictionary."""
-        return ModelFilterConfig(config=config)
+        return ModelFilterConfig(filter_config=filter_config)
 
 
 class ModelFilter:
@@ -33,7 +33,7 @@ class ModelFilter:
         """Initialize the skip."""
         self.config: dict[str, Any] = {}
         if filter_config:
-            self.process_config(filterconfig)
+            self.process_config(filter_config)
 
     def __init_subclass__(cls, **kwargs) -> None:  # type: ignore
         """Initializes the subclass."""

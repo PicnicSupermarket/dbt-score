@@ -57,8 +57,11 @@ class Evaluation:
             self.results[model] = {}
             for rule in rules:
                 try:
-                    result: RuleViolation | SkipRule | None = \
-                            rule.evaluate(model, **rule.config)
+                    result: RuleViolation | SkipRule | None = None
+                    if rule.should_evaluate(model):
+                        result = rule.evaluate(model, **rule.config)
+                    else:
+                        result = SkipRule()
                 except Exception as e:
                     self.results[model][rule.__class__] = e
                 else:

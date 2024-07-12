@@ -7,6 +7,7 @@ from enum import Enum
 from typing import Any, Callable, Type, TypeAlias, overload
 
 from dbt_score.models import Model
+from dbt_score.model_filter import ModelFilter
 
 
 class Severity(Enum):
@@ -59,6 +60,7 @@ class Rule:
 
     description: str
     severity: Severity = Severity.MEDIUM
+    model_filters: list[ModelFilter] = []
     default_config: typing.ClassVar[dict[str, Any]] = {}
 
     def __init__(self, rule_config: RuleConfig | None = None) -> None:
@@ -96,6 +98,12 @@ class Rule:
         raise NotImplementedError("Subclass must implement method `evaluate`.")
 
     @classmethod
+    def should_evaluate(self, model: Model) -> bool:
+        if self.model_filters:
+            return all(f.evaluate(f, model) for f in self.model_filters)
+        return True
+
+    @classmethod
     def set_severity(cls, severity: Severity) -> None:
         """Set the severity of the rule."""
         cls.severity = severity
@@ -124,6 +132,7 @@ def rule(
     *,
     description: str | None = None,
     severity: Severity = Severity.MEDIUM,
+    model_filters: list[ModelFilter] | None = None,
 ) -> Callable[[RuleEvaluationType], Type[Rule]]:
     ...
 
@@ -133,6 +142,7 @@ def rule(
     *,
     description: str | None = None,
     severity: Severity = Severity.MEDIUM,
+    model_filters: list[ModelFilter] | None = None,
 ) -> Type[Rule] | Callable[[RuleEvaluationType], Type[Rule]]:
     """Rule decorator.
 
@@ -178,6 +188,7 @@ def rule(
             {
                 "description": rule_description,
                 "severity": severity,
+                "model_filters": model_filters or [],
                 "default_config": default_config,
                 "evaluate": wrapped_func,
                 # Save provided evaluate function

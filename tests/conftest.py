@@ -6,6 +6,7 @@ from typing import Any, Type
 
 from dbt_score import Model, Rule, RuleViolation, Severity, SkipRule, rule
 from dbt_score.config import Config
+from dbt_score.model_filter import ModelFilter, model_filter
 from dbt_score.models import ManifestLoader
 from pytest import fixture
 
@@ -223,3 +224,41 @@ def rule_skippable() -> Type[Rule]:
             return SkipRule()
 
     return rule_with_skip
+
+
+@fixture
+def rule_with_filter() -> Type[Rule]:
+    """An example rule that skips through a filter."""
+
+    @model_filter
+    def skip_model1(model: Model) -> bool:
+        """Skips for model1, passes for model2."""
+        return model.name != "model1"
+
+    @rule(model_filters=[skip_model1])
+    def rule_with_filter(model: Model) -> RuleViolation | SkipRule | None:
+        """Rule that always passes when not filtered."""
+        return None
+
+    return rule_with_filter
+
+
+@fixture
+def class_rule_with_filter() -> Type[Rule]:
+    """Using class definitions for filters and rules."""
+
+    class SkipModel1(ModelFilter):
+        description = "Filter defined by a class."
+
+        def evaluate(self, model: Model) -> bool:
+            """Skips for model1, passes for model2."""
+            return model.name != "model1"
+
+    class RuleWithFilter(Rule):
+        description = "Filter defined by a class."
+        model_filters = [SkipModel1]
+
+        def evaluate(self, model: Model) -> None:
+            return None
+
+    return RuleWithFilter
