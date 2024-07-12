@@ -126,8 +126,8 @@ def test_scorer_skipping_rule(default_config, rule_skippable, rule_severity_medi
         round(
             scorer.score_model(
                 {
-                   rule_skippable: SkipRule(),
-                   rule_severity_medium: RuleViolation("error")
+                    rule_skippable: SkipRule(),
+                    rule_severity_medium: RuleViolation("error"),
                 }
             ).value,
             2,

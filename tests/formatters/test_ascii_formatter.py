@@ -1,10 +1,9 @@
 """Unit tests for the ASCII formatter."""
 
-from typing import Type
 
-from dbt_score.formatters.ascii_formatter import ASCIIFormatter
 from dbt_score.evaluation import ModelResultsType
-from dbt_score.rule import Rule, RuleViolation
+from dbt_score.formatters.ascii_formatter import ASCIIFormatter
+from dbt_score.rule import RuleViolation
 from dbt_score.scoring import Score
 
 

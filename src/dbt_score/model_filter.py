@@ -7,7 +7,6 @@ from typing import Any, Callable, Type, TypeAlias, overload
 
 from dbt_score.models import Model
 
-
 FilterEvaluationType: TypeAlias = Callable[[Model], bool]
 
 
@@ -20,7 +19,7 @@ class ModelFilterConfig:
     @staticmethod
     def from_dict(filter_config: dict[str, Any]) -> "ModelFilterConfig":
         """Create a ModelFilterConfig from a dictionary."""
-        return ModelFilterConfig(filter_config=filter_config)
+        return ModelFilterConfig(config=filter_config)
 
 
 class ModelFilter:
@@ -73,6 +72,7 @@ class ModelFilter:
 # Use @overload to have proper typing for both @model_filter and @model_filter(...)
 # https://mypy.readthedocs.io/en/stable/generics.html#decorator-factories
 
+
 @overload
 def model_filter(__func: FilterEvaluationType) -> Type[ModelFilter]:
     ...
@@ -93,7 +93,8 @@ def model_filter(
 ) -> Type[ModelFilter] | Callable[[FilterEvaluationType], Type[ModelFilter]]:
     """Model-filter decorator.
 
-    The model-filter decorator creates a filter class (subclass of ModelFilter) and returns it.
+    The model-filter decorator creates a filter class (subclass of ModelFilter)
+    and returns it.
 
     Using arguments or not are both supported:
     - ``@model_filter``
@@ -109,7 +110,9 @@ def model_filter(
     ) -> Type[ModelFilter]:
         """Decorator function."""
         if func.__doc__ is None and description is None:
-            raise AttributeError("ModelFilter must define `description` or `func.__doc__`.")
+            raise AttributeError(
+                "ModelFilter must define `description` or `func.__doc__`."
+            )
 
         # Get description parameter, otherwise use the docstring
         filter_description = description or (

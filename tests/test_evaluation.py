@@ -235,7 +235,9 @@ def test_evaluation_with_filter(manifest_path, default_config, rule_with_filter)
     assert evaluation.results[model2][rule_with_filter] is None
 
 
-def test_evaluation_with_class_filter(manifest_path, default_config, class_rule_with_filter):
+def test_evaluation_with_class_filter(
+    manifest_path, default_config, class_rule_with_filter
+):
     """Test rule with filters and filtered rules defined by classes."""
     manifest_loader = ManifestLoader(manifest_path)
     mock_formatter = Mock()

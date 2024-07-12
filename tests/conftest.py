@@ -235,7 +235,7 @@ def rule_with_filter() -> Type[Rule]:
         """Skips for model1, passes for model2."""
         return model.name != "model1"
 
-    @rule(model_filters=[skip_model1])
+    @rule(model_filters={skip_model1})
     def rule_with_filter(model: Model) -> RuleViolation | SkipRule | None:
         """Rule that always passes when not filtered."""
         return None
@@ -256,7 +256,7 @@ def class_rule_with_filter() -> Type[Rule]:
 
     class RuleWithFilter(Rule):
         description = "Filter defined by a class."
-        model_filters = [SkipModel1]
+        model_filters = frozenset({SkipModel1})
 
         def evaluate(self, model: Model) -> None:
             return None

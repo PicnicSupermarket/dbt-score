@@ -6,8 +6,8 @@ from dataclasses import dataclass, field
 from enum import Enum
 from typing import Any, Callable, Type, TypeAlias, overload
 
-from dbt_score.models import Model
 from dbt_score.model_filter import ModelFilter
+from dbt_score.models import Model
 
 
 class Severity(Enum):
@@ -49,6 +49,7 @@ class RuleViolation:
 @dataclass
 class SkipRule:
     """This evaluation of the rule should be skipped."""
+
     pass
 
 
@@ -60,7 +61,7 @@ class Rule:
 
     description: str
     severity: Severity = Severity.MEDIUM
-    model_filters: list[ModelFilter] = []
+    model_filters: frozenset[Type[ModelFilter]] = frozenset()
     default_config: typing.ClassVar[dict[str, Any]] = {}
 
     def __init__(self, rule_config: RuleConfig | None = None) -> None:
@@ -99,8 +100,9 @@ class Rule:
 
     @classmethod
     def should_evaluate(self, model: Model) -> bool:
+        """Checks if all filters in the rule allow evaluation."""
         if self.model_filters:
-            return all(f.evaluate(f, model) for f in self.model_filters)
+            return all(f().evaluate(model) for f in self.model_filters)
         return True
 
     @classmethod
@@ -132,7 +134,7 @@ def rule(
     *,
     description: str | None = None,
     severity: Severity = Severity.MEDIUM,
-    model_filters: list[ModelFilter] | None = None,
+    model_filters: set[Type[ModelFilter]] | None = None,
 ) -> Callable[[RuleEvaluationType], Type[Rule]]:
     ...
 
@@ -142,7 +144,7 @@ def rule(
     *,
     description: str | None = None,
     severity: Severity = Severity.MEDIUM,
-    model_filters: list[ModelFilter] | None = None,
+    model_filters: set[Type[ModelFilter]] | None = None,
 ) -> Type[Rule] | Callable[[RuleEvaluationType], Type[Rule]]:
     """Rule decorator.
 
@@ -156,6 +158,7 @@ def rule(
         __func: The rule evaluation function being decorated.
         description: The description of the rule.
         severity: The severity of the rule.
+        model_filters: Set of ModelFilter that filters the rule.
     """
 
     def decorator_rule(
@@ -170,7 +173,9 @@ def rule(
             func.__doc__.split("\n")[0] if func.__doc__ else None
         )
 
-        def wrapped_func(self: Rule, *args: Any, **kwargs: Any) -> RuleViolation | SkipRule | None:
+        def wrapped_func(
+            self: Rule, *args: Any, **kwargs: Any
+        ) -> RuleViolation | SkipRule | None:
             """Wrap func to add `self`."""
             return func(*args, **kwargs)
 
@@ -188,7 +193,7 @@ def rule(
             {
                 "description": rule_description,
                 "severity": severity,
-                "model_filters": model_filters or [],
+                "model_filters": model_filters or frozenset(),
                 "default_config": default_config,
                 "evaluate": wrapped_func,
                 # Save provided evaluate function

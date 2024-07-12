@@ -93,9 +93,9 @@ def sql_has_reasonable_number_of_lines(model: Model, max_lines: int = 200) -> Ru
 
 ### Filtering, skipping and expanding
 
-It's possible to modify existing rules, either built-in or custom.
-A possible use case is skipping a default rule for certain models.
-Remember to also disable the original rule (see [Configuration](configuration.md)).
+It's possible to modify existing rules, either built-in or custom. A possible
+use case is skipping a default rule for certain models. Remember to also disable
+the original rule (see [Configuration](configuration.md)).
 
 ```python
 from dbt_score import Model, rule, RuleViolation, SkipRule

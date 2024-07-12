@@ -39,9 +39,11 @@ class Scorer:
 
     def score_model(self, model_results: ModelResultsType) -> Score:
         """Compute the score of a given model."""
-        rule_count = sum(1
-                          for rule, result in model_results.items()
-                          if not isinstance(result, SkipRule))
+        rule_count = sum(
+            1
+            for rule, result in model_results.items()
+            if not isinstance(result, SkipRule)
+        )
 
         if rule_count == 0:
             # No rule? No problem

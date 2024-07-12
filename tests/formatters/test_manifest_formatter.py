@@ -1,11 +1,10 @@
 """Unit tests for the manifest formatter."""
 
 import json
-from typing import Type
 
-from dbt_score.formatters.manifest_formatter import ManifestFormatter
 from dbt_score.evaluation import ModelResultsType
-from dbt_score.rule import Rule, RuleViolation
+from dbt_score.formatters.manifest_formatter import ManifestFormatter
+from dbt_score.rule import RuleViolation
 from dbt_score.scoring import Score
 
 
