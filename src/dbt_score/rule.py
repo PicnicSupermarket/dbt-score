@@ -4,7 +4,7 @@ import inspect
 import typing
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Any, Callable, Type, TypeAlias, overload
+from typing import Any, Callable, Iterable, Type, TypeAlias, overload
 
 from dbt_score.model_filter import ModelFilter
 from dbt_score.models import Model
@@ -61,7 +61,7 @@ class Rule:
 
     description: str
     severity: Severity = Severity.MEDIUM
-    model_filters: frozenset[Type[ModelFilter]] = frozenset()
+    model_filters: frozenset[ModelFilter] = frozenset()
     default_config: typing.ClassVar[dict[str, Any]] = {}
 
     def __init__(self, rule_config: RuleConfig | None = None) -> None:
@@ -82,7 +82,7 @@ class Rule:
 
         # Overwrite default rule configuration
         for k, v in rule_config.config.items():
-            if k in self.default_config:
+            if k in self.default_config or k == "model_filter_names":
                 config[k] = v
             else:
                 raise AttributeError(
@@ -99,16 +99,21 @@ class Rule:
         raise NotImplementedError("Subclass must implement method `evaluate`.")
 
     @classmethod
-    def should_evaluate(self, model: Model) -> bool:
+    def should_evaluate(cls, model: Model) -> bool:
         """Checks if all filters in the rule allow evaluation."""
-        if self.model_filters:
-            return all(f().evaluate(model) for f in self.model_filters)
+        if cls.model_filters:
+            return all(f.evaluate(model) for f in cls.model_filters)
         return True
 
     @classmethod
     def set_severity(cls, severity: Severity) -> None:
         """Set the severity of the rule."""
         cls.severity = severity
+
+    @classmethod
+    def set_filters(cls, model_filters: Iterable[ModelFilter]) -> None:
+        """Set the filters of the rule."""
+        cls.model_filters = frozenset(model_filters)
 
     @classmethod
     def source(cls) -> str:
@@ -134,7 +139,7 @@ def rule(
     *,
     description: str | None = None,
     severity: Severity = Severity.MEDIUM,
-    model_filters: set[Type[ModelFilter]] | None = None,
+    model_filters: set[ModelFilter] | None = None,
 ) -> Callable[[RuleEvaluationType], Type[Rule]]:
     ...
 
@@ -144,7 +149,7 @@ def rule(
     *,
     description: str | None = None,
     severity: Severity = Severity.MEDIUM,
-    model_filters: set[Type[ModelFilter]] | None = None,
+    model_filters: set[ModelFilter] | None = None,
 ) -> Type[Rule] | Callable[[RuleEvaluationType], Type[Rule]]:
     """Rule decorator.
 

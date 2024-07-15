@@ -27,6 +27,10 @@ def test_load_valid_toml_file(valid_config_path):
     assert config.badge_config.first.icon == "1️⃣"
     assert config.fail_project_under == 7.5
     assert config.fail_any_model_under == 6.9
+    assert (
+        config.rules_config["tests.rules.example.rule_test_example"].config["model_filter_names"]
+        == ["tests.rules.example.skip_model1"]
+    )
 
 
 def test_load_invalid_toml_file(caplog, invalid_config_path):

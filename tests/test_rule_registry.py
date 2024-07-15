@@ -15,6 +15,9 @@ def test_rule_registry_discovery(default_config):
         "tests.rules.example.rule_test_example",
         "tests.rules.nested.example.rule_test_nested_example",
     ]
+    assert list(r._model_filters.keys()) == [
+        "tests.rules.example.skip_model1"
+    ]
 
 
 def test_disabled_rule_registry_discovery():
@@ -52,3 +55,19 @@ def test_rule_registry_core_rules(default_config):
     r = RuleRegistry(default_config)
     r.load_all()
     assert len(r.rules) > 0
+
+
+def test_rule_registry_model_filters(valid_config_path, model1, model2):
+    """Test config filters are loaded."""
+    config = Config()
+    config._load_toml_file(str(valid_config_path))
+    r = RuleRegistry(config)
+    r._load("tests.rules")
+    r._load_filters_into_rules()
+
+    assert (
+        not r.rules["tests.rules.example.rule_test_example"].should_evaluate(model1)
+    )
+    assert (
+        r.rules["tests.rules.example.rule_test_example"].should_evaluate(model2)
+    )

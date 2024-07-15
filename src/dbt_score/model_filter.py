@@ -1,8 +1,5 @@
 """Model filtering to choose when to apply specific rules."""
 
-import inspect
-import typing
-from dataclasses import dataclass, field
 from typing import Any, Callable, Type, TypeAlias, overload
 
 from dbt_score.models import Model
@@ -10,50 +7,20 @@ from dbt_score.models import Model
 FilterEvaluationType: TypeAlias = Callable[[Model], bool]
 
 
-@dataclass
-class ModelFilterConfig:
-    """Configuration for a filter."""
-
-    config: dict[str, Any] = field(default_factory=dict)
-
-    @staticmethod
-    def from_dict(filter_config: dict[str, Any]) -> "ModelFilterConfig":
-        """Create a ModelFilterConfig from a dictionary."""
-        return ModelFilterConfig(config=filter_config)
-
-
 class ModelFilter:
     """The Filter base class."""
 
     description: str
-    default_config: typing.ClassVar[dict[str, Any]] = {}
 
-    def __init__(self, filter_config: ModelFilterConfig | None = None) -> None:
-        """Initialize the skip."""
-        self.config: dict[str, Any] = {}
-        if filter_config:
-            self.process_config(filter_config)
+    def __init__(self) -> None:
+        """Initialize the filter."""
+        pass
 
     def __init_subclass__(cls, **kwargs) -> None:  # type: ignore
         """Initializes the subclass."""
         super().__init_subclass__(**kwargs)
         if not hasattr(cls, "description"):
             raise AttributeError("Subclass must define class attribute `description`.")
-
-    def process_config(self, filter_config: ModelFilterConfig) -> None:
-        """Process the filter config."""
-        config = self.default_config.copy()
-
-        # Overwrite default filter configuration
-        for k, v in filter_config.config.items():
-            if k in self.default_config:
-                config[k] = v
-            else:
-                raise AttributeError(
-                    f"Unknown filter parameter: {k} for skip {self.source()}."
-                )
-
-        self.config = config
 
     def evaluate(self, model: Model) -> bool:
         """Evaluates the filter."""
@@ -123,20 +90,12 @@ def model_filter(
             """Wrap func to add `self`."""
             return func(*args, **kwargs)
 
-        # Get default parameters from the skip definition
-        default_config = {
-            key: val.default
-            for key, val in inspect.signature(func).parameters.items()
-            if val.default != inspect.Parameter.empty
-        }
-
         # Create the filter class inheriting from Skip
         filter_class = type(
             func.__name__,
             (ModelFilter,),
             {
                 "description": filter_description,
-                "default_config": default_config,
                 "evaluate": wrapped_func,
                 # Save provided evaluate function
                 "_orig_evaluate": func,

@@ -12,6 +12,7 @@ from typing import Iterator, Type
 
 from dbt_score.config import Config
 from dbt_score.exceptions import DuplicatedRuleException
+from dbt_score.model_filter import ModelFilter
 from dbt_score.rule import Rule, RuleConfig
 
 logger = logging.getLogger(__name__)
@@ -24,11 +25,17 @@ class RuleRegistry:
         """Instantiate a rule registry."""
         self.config = config
         self._rules: dict[str, Rule] = {}
+        self._model_filters: dict[str, ModelFilter] = {}
 
     @property
     def rules(self) -> dict[str, Rule]:
         """Get all rules."""
         return self._rules
+
+    @property
+    def model_filters(self) -> dict[str, ModelFilter]:
+        """Get all filters."""
+        return self._model_filters
 
     def _walk_packages(self, namespace_name: str) -> Iterator[str]:
         """Walk packages and sub-packages recursively."""
@@ -50,22 +57,33 @@ class RuleRegistry:
             yield package.name
 
     def _load(self, namespace_name: str) -> None:
-        """Load rules found in a given namespace."""
+        """Load rules and filters found in a given namespace."""
         for module_name in self._walk_packages(namespace_name):
             module = importlib.import_module(module_name)
             for obj_name in dir(module):
                 obj = module.__dict__[obj_name]
                 if type(obj) is type and issubclass(obj, Rule) and obj is not Rule:
                     self._add_rule(obj)
+                if (type(obj) is type
+                        and issubclass(obj, ModelFilter)
+                        and obj is not ModelFilter):
+                    self._add_filter(obj)
 
     def _add_rule(self, rule: Type[Rule]) -> None:
         """Initialize and add a rule."""
         rule_name = rule.source()
         if rule_name in self._rules:
-            raise DuplicatedRuleException(rule.source())
+            raise DuplicatedRuleException(rule_name)
         if rule_name not in self.config.disabled_rules:
             rule_config = self.config.rules_config.get(rule_name, RuleConfig())
             self._rules[rule_name] = rule(rule_config=rule_config)
+
+    def _add_filter(self, model_filter: Type[ModelFilter]) -> None:
+        """Initialize and add a filter."""
+        filter_name = model_filter.source()
+        if filter_name in self._model_filters:
+            raise DuplicatedRuleException(filter_name)
+        self._model_filters[filter_name] = model_filter()
 
     def load_all(self) -> None:
         """Load all rules, core and third-party."""
@@ -79,3 +97,19 @@ class RuleRegistry:
 
         # Restore original values
         sys.path = old_sys_path
+
+        self._load_filters_into_rules()
+
+    def _load_filters_into_rules(self) -> None:
+        """Loads ModelFilters into Rule objects.
+
+        If the config of the rule has filter names in the `model_filter_names` key,
+        load those filters from the rule registry into the actual `model_filters` field.
+        Configuration overwrites any pre-existing filters.
+        """
+        for rule in self._rules.values():
+            filter_names = rule.config.get("model_filter_names", set())
+            if len(filter_names) > 0:
+                rule.set_filters(model_filter
+                                 for name, model_filter in self.model_filters.items()
+                                 if name in filter_names)

@@ -13,6 +13,7 @@ from dbt_score.scoring import Score, Scorer
 # The results of a given model are stored in a dictionary, mapping rules to either:
 # - None if there was no issue
 # - A RuleViolation if a linting error was found
+# - A SkipRule if the rule doesn't apply to the model
 # - An Exception if the rule failed to run
 ModelResultsType = dict[Type[Rule], None | RuleViolation | SkipRule | Exception]
 
@@ -59,7 +60,11 @@ class Evaluation:
                 try:
                     result: RuleViolation | SkipRule | None = None
                     if rule.should_evaluate(model):
-                        result = rule.evaluate(model, **rule.config)
+                        # filter is already used pre-evaluation,
+                        # do not send it to evaluation function.
+                        c = rule.config.copy()
+                        c.pop("model_filter_names", None)
+                        result = rule.evaluate(model, **c)
                     else:
                         result = SkipRule()
                 except Exception as e:
