@@ -64,9 +64,11 @@ class RuleRegistry:
                 obj = module.__dict__[obj_name]
                 if type(obj) is type and issubclass(obj, Rule) and obj is not Rule:
                     self._add_rule(obj)
-                if (type(obj) is type
-                        and issubclass(obj, ModelFilter)
-                        and obj is not ModelFilter):
+                if (
+                    type(obj) is type
+                    and issubclass(obj, ModelFilter)
+                    and obj is not ModelFilter
+                ):
                     self._add_filter(obj)
 
     def _add_rule(self, rule: Type[Rule]) -> None:
@@ -110,6 +112,8 @@ class RuleRegistry:
         for rule in self._rules.values():
             filter_names = rule.config.pop("model_filter_names", set())
             if len(filter_names) > 0:
-                rule.set_filters(model_filter
-                                 for name, model_filter in self.model_filters.items()
-                                 if name in filter_names)
+                rule.set_filters(
+                    model_filter
+                    for name, model_filter in self.model_filters.items()
+                    if name in filter_names
+                )

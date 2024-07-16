@@ -86,9 +86,9 @@ Every rule can be configured with the following option:
 - `severity`: The severity of the rule. Rules have a default severity and can be
   overridden. It's an integer with a minimum value of 1 and a maximum value
   of 4.
-- `model_filter_names`: Filters used by the rule. Takes a list of names
-  that can be found in the same namespace as the rules
-  (see [Package rules](package_rules.md))
+- `model_filter_names`: Filters used by the rule. Takes a list of names that can
+  be found in the same namespace as the rules (see
+  [Package rules](package_rules.md))
 
 Some rules have additional configuration options, e.g.
 [sql_has_reasonable_number_of_lines](rules/generic.md#sql_has_reasonable_number_of_lines).

@@ -93,8 +93,8 @@ def sql_has_reasonable_number_of_lines(model: Model, max_lines: int = 200) -> Ru
 
 ### Filtering
 
-Custom and standard rules can be configured to have model filters.
-Filters allows setting models of the project to be ignored by a given rule.
+Custom and standard rules can be configured to have model filters. Filters
+allows setting models of the project to be ignored by a given rule.
 
 Custom rules can skip models "manually":
 
@@ -109,13 +109,12 @@ def models_in_x_follow_naming_standard(model: Model) -> RuleViolation | SkipRule
         return RuleViolation("Invalid model name.")
 ```
 
-Filters can also be set as a first-class citizen.
-Doing so allow re-use and composability, as well as being used by generic rules.
-First, filters should be created using the same discovery mechanism and interface as custom rules,
-except they do not accept parameters.
-Similar to Python's built-in `filter` function,
-when the filter returns `True` the model should be evaluated,
-otherwise it should be skipped.
+Filters can also be set as a first-class citizen. Doing so allow re-use and
+composability, as well as being used by generic rules. First, filters should be
+created using the same discovery mechanism and interface as custom rules, except
+they do not accept parameters. Similar to Python's built-in `filter` function,
+when the filter returns `True` the model should be evaluated, otherwise it
+should be skipped.
 
 ```python
 from dbt_score import ModelFilter, model_filter
@@ -131,7 +130,8 @@ class SkipSchemaY(ModelFilter):
       return model.schema.lower() != 'y'
 ```
 
-Standard rules can have filters set in the [configuration file](configuration.md/#tooldbt-scorerulesrule_namespacerule_name).
+Standard rules can have filters set in the
+[configuration file](configuration.md/#tooldbt-scorerulesrule_namespacerule_name).
 For custom rules, filters are instantiated at the rule definition:
 
 ```python
