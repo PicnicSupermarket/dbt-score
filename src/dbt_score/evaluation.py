@@ -60,11 +60,7 @@ class Evaluation:
                 try:
                     result: RuleViolation | SkipRule | None = None
                     if rule.should_evaluate(model):
-                        # filter is already used pre-evaluation,
-                        # do not send it to evaluation function.
-                        c = rule.config.copy()
-                        c.pop("model_filter_names", None)
-                        result = rule.evaluate(model, **c)
+                        result = rule.evaluate(model, **rule.config)
                     else:
                         result = SkipRule()
                 except Exception as e:
