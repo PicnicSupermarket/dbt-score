@@ -91,20 +91,59 @@ def sql_has_reasonable_number_of_lines(model: Model, max_lines: int = 200) -> Ru
         )
 ```
 
-### Filtering, skipping and expanding
+### Filtering
 
-It's possible to modify existing rules, either built-in or custom. A possible
-use case is skipping a default rule for certain models. Remember to also disable
-the original rule (see [Configuration](configuration.md)).
+Custom and standard rules can be configured to have model filters.
+Filters allows setting models of the project to be ignored by a given rule.
+
+Custom rules can skip models "manually":
+
+```python
+from dbt_score import rule, RuleViolation, SkipRule
+
+@rule
+def models_in_x_follow_naming_standard(model: Model) -> RuleViolation | SkipRule | None:
+    if model.schema.lower() != 'x':
+        return SkipRule()
+    if some_regex_fails(model.name):
+        return RuleViolation("Invalid model name.")
+```
+
+Filters can also be set as a first-class citizen.
+Doing so allow re-use and composability, as well as being used by generic rules.
+First, filters should be created using the same discovery mechanism and interface as custom rules,
+except they do not accept parameters.
+Similar to Python's built-in `filter` function,
+when the filter returns `True` the model should be evaluated,
+otherwise it should be skipped.
+
+```python
+from dbt_score import ModelFilter, model_filter
+
+@model_filter
+def only_schema_x(model: Model) -> bool:
+    """Only applies a rule to schema X."""
+    return model.schema.lower() == 'x'
+
+class SkipSchemaY(ModelFilter):
+    description = "Only applies a rule to every schema but Y."
+    def evaluate(self, model: Model) -> bool:
+      return model.schema.lower() != 'y'
+```
+
+Standard rules can have filters set in the [configuration file](configuration.md/#tooldbt-scorerulesrule_namespacerule_name).
+For custom rules, filters are instantiated at the rule definition:
 
 ```python
 from dbt_score import Model, rule, RuleViolation, SkipRule
 
-@rule
-def schema_x_has_description(model: Model) -> RuleViolation | SkipRule | None:
-    """Models in schema X should have a description."""
-    from dbt_score.rules.generic import has_description
-    if model.schema.lower() == 'x':
-        return SkipRule()
-    return has_description.evaluate(None, model)
+# the filter must be in the namespace,
+# so either define it in the same file
+# or import it.
+
+@rule(model_filters={only_schema_x()})
+def models_in_x_follow_naming_standard(model: Model) -> RuleViolation | SkipRule | None:
+    """Models in schema X must follow the naming standard."""
+    if some_regex_fails(model.name):
+        return RuleViolation("Invalid model name.")
 ```
