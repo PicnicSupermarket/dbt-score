@@ -110,7 +110,7 @@ class RuleRegistry:
         Configuration overwrites any pre-existing filters.
         """
         for rule in self._rules.values():
-            filter_names = rule.config.pop("model_filter_names", set())
+            filter_names: list[str] = rule.model_filter_names or []
             if len(filter_names) > 0:
                 rule.set_filters(
                     model_filter

@@ -25,6 +25,7 @@ class RuleConfig:
 
     severity: Severity | None = None
     config: dict[str, Any] = field(default_factory=dict)
+    model_filter_names: list[str] = field(default_factory=list)
 
     @staticmethod
     def from_dict(rule_config: dict[str, Any]) -> "RuleConfig":
@@ -35,8 +36,15 @@ class RuleConfig:
             if "severity" in rule_config
             else None
         )
+        filter_names = (
+            config.pop("model_filter_names", None)
+            if "model_filter_names" in rule_config
+            else []
+        )
 
-        return RuleConfig(severity=severity, config=config)
+        return RuleConfig(severity=severity,
+                          config=config,
+                          model_filter_names=filter_names)
 
 
 @dataclass
@@ -61,6 +69,7 @@ class Rule:
 
     description: str
     severity: Severity = Severity.MEDIUM
+    model_filter_names: list[str]
     model_filters: frozenset[ModelFilter] = frozenset()
     default_config: typing.ClassVar[dict[str, Any]] = {}
 
@@ -82,7 +91,7 @@ class Rule:
 
         # Overwrite default rule configuration
         for k, v in rule_config.config.items():
-            if k in self.default_config or k == "model_filter_names":
+            if k in self.default_config:
                 config[k] = v
             else:
                 raise AttributeError(
@@ -92,6 +101,7 @@ class Rule:
         self.set_severity(
             rule_config.severity
         ) if rule_config.severity else rule_config.severity
+        self.model_filter_names = rule_config.model_filter_names
         self.config = config
 
     def evaluate(self, model: Model) -> RuleViolation | SkipRule | None:
