@@ -90,7 +90,7 @@ def model_filter(
             """Wrap func to add `self`."""
             return func(*args, **kwargs)
 
-        # Create the filter class inheriting from Skip
+        # Create the filter class inheriting from ModelFilter
         filter_class = type(
             func.__name__,
             (ModelFilter,),
