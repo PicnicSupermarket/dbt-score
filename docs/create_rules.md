@@ -39,6 +39,24 @@ from dbt_score import rule, Severity
 @rule(severity=Severity.HIGH)
 ```
 
+If a custom rule should be applied to only a subset of the models in the project,
+a special value of type `SkipRule` can be returned.
+Models that were skipped will be ignored in the final score.
+More complex uses of skipping rules can use Model Filters (see below).
+
+
+```python
+from dbt_score import rule, Model, RuleViolation, SkipRule
+
+@rule
+def mart_schema_has_description(model: Model) -> RuleViolation | SkipRule | None:
+    """A model in the DataMart should have a description."""
+    if model.schema != 'mart':
+        return SkipRule()
+    if not model.description:
+        return RuleViolation(message="Model lacks a description.")
+```
+
 ### Using the `Rule` class
 
 For more advanced use cases, a rule can be created by inheriting from the `Rule`
@@ -91,30 +109,16 @@ def sql_has_reasonable_number_of_lines(model: Model, max_lines: int = 200) -> Ru
         )
 ```
 
-### Filtering
+### Filtering models
 
-Custom and standard rules can be configured to have model filters. Filters
-allows setting models of the project to be ignored by a given rule.
+Custom and standard rules can be configured to have model filters.
+Filters allows setting models of the project to be ignored by a given rule.
 
-Custom rules can skip models "manually":
-
-```python
-from dbt_score import rule, RuleViolation, SkipRule
-
-@rule
-def models_in_x_follow_naming_standard(model: Model) -> RuleViolation | SkipRule | None:
-    if model.schema.lower() != 'x':
-        return SkipRule()
-    if some_regex_fails(model.name):
-        return RuleViolation("Invalid model name.")
-```
-
-Filters can also be set as a first-class citizen. Doing so allow re-use and
-composability, as well as being used by generic rules. First, filters should be
-created using the same discovery mechanism and interface as custom rules, except
-they do not accept parameters. Similar to Python's built-in `filter` function,
-when the filter returns `True` the model should be evaluated, otherwise it
-should be skipped.
+Filters are created using the same discovery mechanism and interface as custom rules,
+except they do not accept parameters.
+Similar to Python's built-in `filter` function,
+when the filter evaluation returns `True` the model should be evaluated,
+otherwise it should be skipped.
 
 ```python
 from dbt_score import ModelFilter, model_filter
@@ -125,21 +129,19 @@ def only_schema_x(model: Model) -> bool:
     return model.schema.lower() == 'x'
 
 class SkipSchemaY(ModelFilter):
-    description = "Only applies a rule to every schema but Y."
+    description = "Applies a rule to every schema but Y."
     def evaluate(self, model: Model) -> bool:
       return model.schema.lower() != 'y'
 ```
 
-Standard rules can have filters set in the
-[configuration file](configuration.md/#tooldbt-scorerulesrule_namespacerule_name).
-For custom rules, filters are instantiated at the rule definition:
+Similar to setting a rule severity,
+standard rules can have filters set in the
+[configuration file](configuration.md/#tooldbt-scorerulesrule_namespacerule_name),
+while custom rules accept the configuration file or a decorator parameter.
 
 ```python
 from dbt_score import Model, rule, RuleViolation, SkipRule
-
-# the filter must be in the namespace,
-# so either define it in the same file
-# or import it.
+from my_project import only_schema_x
 
 @rule(model_filters={only_schema_x()})
 def models_in_x_follow_naming_standard(model: Model) -> RuleViolation | SkipRule | None:
