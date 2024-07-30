@@ -42,9 +42,9 @@ class RuleConfig:
             else []
         )
 
-        return RuleConfig(severity=severity,
-                          config=config,
-                          model_filter_names=filter_names)
+        return RuleConfig(
+            severity=severity, config=config, model_filter_names=filter_names
+        )
 
 
 @dataclass
