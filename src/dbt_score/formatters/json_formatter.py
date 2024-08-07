@@ -71,7 +71,7 @@ class JSONFormatter(Formatter):
             if result is None:
                 self._model_results[model.name]["results"][rule.source()] = {
                     "result": "OK",
-                    "severity": None,
+                    "severity": rule.severity.name.lower(),
                     "message": None,
                 }
             elif isinstance(result, RuleViolation):
@@ -83,6 +83,7 @@ class JSONFormatter(Formatter):
             else:
                 self._model_results[model.name]["results"][rule.source()] = {
                     "result": "ERR",
+                    "severity": rule.severity.name.lower(),
                     "message": str(result),
                 }
 

@@ -36,11 +36,12 @@ def test_json_formatter(
       "results": {
         "tests.conftest.rule_severity_low": {
           "result": "OK",
-          "severity": null,
+          "severity": "low",
           "message": null
         },
         "tests.conftest.rule_severity_medium": {
           "result": "ERR",
+          "severity": "medium",
           "message": "Oh noes"
         },
         "tests.conftest.rule_severity_critical": {
