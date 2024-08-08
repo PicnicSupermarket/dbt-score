@@ -7,6 +7,7 @@ from dbt_score.config import Config
 from dbt_score.evaluation import Evaluation
 from dbt_score.formatters.ascii_formatter import ASCIIFormatter
 from dbt_score.formatters.human_readable_formatter import HumanReadableFormatter
+from dbt_score.formatters.json_formatter import JSONFormatter
 from dbt_score.formatters.manifest_formatter import ManifestFormatter
 from dbt_score.models import ManifestLoader
 from dbt_score.rule_registry import RuleRegistry
@@ -32,6 +33,7 @@ def lint_dbt_project(
         "plain": HumanReadableFormatter,
         "manifest": ManifestFormatter,
         "ascii": ASCIIFormatter,
+        "json": JSONFormatter,
     }
     formatter = formatters[format](manifest_loader=manifest_loader, config=config)
 
