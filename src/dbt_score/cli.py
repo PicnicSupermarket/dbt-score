@@ -39,8 +39,8 @@ def cli() -> None:
     "--format",
     "-f",
     help="Output format. Plain is suitable for terminals, manifest for rich "
-    "documentation.",
-    type=click.Choice(["plain", "manifest", "ascii"]),
+    "documentation, json for machine-readable output.",
+    type=click.Choice(["plain", "manifest", "ascii", "json"]),
     default="plain",
 )
 @click.option(

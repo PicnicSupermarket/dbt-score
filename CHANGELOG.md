@@ -9,7 +9,8 @@ and this project adheres to
 ## [Unreleased]
 
 - Add null check before calling `project_evaluated` in the `evaluate` method to
-  prevent errors when no models are found. See PR #64.
+  prevent errors when no models are found. (#64)
+- Add JSON formatter for machine-readable output. (#68)
 
 ## [0.3.0] - 2024-06-20
 
