@@ -8,6 +8,8 @@ and this project adheres to
 
 ## [Unreleased]
 
+## [0.4.0] - 2024-08-08
+
 - Add null check before calling `project_evaluated` in the `evaluate` method to
   prevent errors when no models are found. (#64)
 - Add JSON formatter for machine-readable output. (#68)
