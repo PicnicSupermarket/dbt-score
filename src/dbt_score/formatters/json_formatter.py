@@ -5,7 +5,7 @@ Shape of the JSON output:
 {
     "models": {
         "model_foo": {
-            "score": 0.5,
+            "score": 5.0,
             "badge": "🥈",
             "results": {
                 "rule1": {
@@ -32,7 +32,7 @@ Shape of the JSON output:
         }
     },
     "project": {
-        "score": 0.25,
+        "score": 2.5,
         "badge": "🥉"
     }
 }
