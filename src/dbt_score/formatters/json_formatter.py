@@ -68,22 +68,23 @@ class JSONFormatter(Formatter):
             "results": {},
         }
         for rule, result in results.items():
+            severity = rule.severity.name.lower()
             if result is None:
                 self._model_results[model.name]["results"][rule.source()] = {
                     "result": "OK",
-                    "severity": rule.severity.name.lower(),
+                    "severity": severity,
                     "message": None,
                 }
             elif isinstance(result, RuleViolation):
                 self._model_results[model.name]["results"][rule.source()] = {
                     "result": "WARN",
-                    "severity": rule.severity.name.lower(),
+                    "severity": severity,
                     "message": result.message,
                 }
             else:
                 self._model_results[model.name]["results"][rule.source()] = {
                     "result": "ERR",
-                    "severity": rule.severity.name.lower(),
+                    "severity": severity,
                     "message": str(result),
                 }
 
