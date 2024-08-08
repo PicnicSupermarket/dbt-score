@@ -26,6 +26,7 @@ def test_json_formatter(
     formatter.model_evaluated(model1, results, Score(10.0, "🥇"))
     formatter.project_evaluated(Score(10.0, "🥇"))
     stdout = capsys.readouterr().out
+    print()
     assert (
         stdout
         == """{
@@ -33,6 +34,7 @@ def test_json_formatter(
     "model1": {
       "score": 10.0,
       "badge": "🥇",
+      "pass": true,
       "results": {
         "tests.conftest.rule_severity_low": {
           "result": "OK",
@@ -54,7 +56,8 @@ def test_json_formatter(
   },
   "project": {
     "score": 10.0,
-    "badge": "🥇"
+    "badge": "🥇",
+    "pass": true
   }
 }
 """
