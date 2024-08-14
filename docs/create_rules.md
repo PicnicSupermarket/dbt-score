@@ -39,23 +39,6 @@ from dbt_score import rule, Severity
 @rule(severity=Severity.HIGH)
 ```
 
-If a custom rule should be applied to only a subset of the models in the
-project, a special value of type `SkipRule` can be returned. Models that were
-skipped will be ignored in the final score. More complex uses of skipping rules
-can use Model Filters (see below).
-
-```python
-from dbt_score import rule, Model, RuleViolation, SkipRule
-
-@rule
-def mart_schema_has_description(model: Model) -> RuleViolation | SkipRule | None:
-    """A model in the DataMart should have a description."""
-    if model.schema != 'mart':
-        return SkipRule()
-    if not model.description:
-        return RuleViolation(message="Model lacks a description.")
-```
-
 ### Using the `Rule` class
 
 For more advanced use cases, a rule can be created by inheriting from the `Rule`
@@ -110,13 +93,13 @@ def sql_has_reasonable_number_of_lines(model: Model, max_lines: int = 200) -> Ru
 
 ### Filtering models
 
-Custom and standard rules can be configured to have model filters. Filters
-allows setting models of the project to be ignored by a given rule.
+Custom and standard rules can be configured to have model filters. Filters allow
+models to be ignored by one or multiple rules.
 
 Filters are created using the same discovery mechanism and interface as custom
 rules, except they do not accept parameters. Similar to Python's built-in
 `filter` function, when the filter evaluation returns `True` the model should be
-evaluated, otherwise it should be skipped.
+evaluated, otherwise it should be ignored.
 
 ```python
 from dbt_score import ModelFilter, model_filter
@@ -137,11 +120,11 @@ Similar to setting a rule severity, standard rules can have filters set in the
 while custom rules accept the configuration file or a decorator parameter.
 
 ```python
-from dbt_score import Model, rule, RuleViolation, SkipRule
+from dbt_score import Model, rule, RuleViolation
 from my_project import only_schema_x
 
 @rule(model_filters={only_schema_x()})
-def models_in_x_follow_naming_standard(model: Model) -> RuleViolation | SkipRule | None:
+def models_in_x_follow_naming_standard(model: Model) -> RuleViolation | None:
     """Models in schema X must follow the naming standard."""
     if some_regex_fails(model.name):
         return RuleViolation("Invalid model name.")

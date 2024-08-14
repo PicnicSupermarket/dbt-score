@@ -6,7 +6,7 @@ from typing import Any
 from dbt_score.evaluation import ModelResultsType
 from dbt_score.formatters import Formatter
 from dbt_score.models import Model
-from dbt_score.rule import RuleViolation, SkipRule
+from dbt_score.rule import RuleViolation
 from dbt_score.scoring import Score
 
 
@@ -40,8 +40,6 @@ class HumanReadableFormatter(Formatter):
         for rule, result in results.items():
             if result is None:
                 print(f"{self.indent}{self.label_ok} {rule.source()}")
-            elif isinstance(result, SkipRule):
-                continue
             elif isinstance(result, RuleViolation):
                 print(
                     f"{self.indent}{self.label_warning} "

@@ -9,7 +9,7 @@ from dbt_score.config import Config
 
 if typing.TYPE_CHECKING:
     from dbt_score.evaluation import ModelResultsType
-from dbt_score.rule import RuleViolation, Severity, SkipRule
+from dbt_score.rule import RuleViolation, Severity
 
 
 @dataclass
@@ -39,11 +39,7 @@ class Scorer:
 
     def score_model(self, model_results: ModelResultsType) -> Score:
         """Compute the score of a given model."""
-        rule_count = sum(
-            1
-            for rule, result in model_results.items()
-            if not isinstance(result, SkipRule)
-        )
+        rule_count = len(model_results)
 
         if rule_count == 0:
             # No rule? No problem
@@ -64,7 +60,6 @@ class Scorer:
                         if isinstance(result, RuleViolation)  # Either 0/3, 1/3 or 2/3
                         else self.score_cardinality  # 3/3
                         for rule, result in model_results.items()
-                        if not isinstance(result, SkipRule)
                     ]
                 )
                 / (self.score_cardinality * rule_count)

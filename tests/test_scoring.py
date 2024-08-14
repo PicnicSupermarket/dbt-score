@@ -1,7 +1,7 @@
 """Unit tests for the scoring module."""
 
 
-from dbt_score.rule import RuleViolation, SkipRule
+from dbt_score.rule import RuleViolation
 from dbt_score.scoring import Score, Scorer
 
 
@@ -112,27 +112,6 @@ def test_scorer_model_multiple_rules(
             2,
         )
         == 8.89
-    )
-
-
-def test_scorer_skipping_rule(default_config, rule_skippable, rule_severity_medium):
-    """Test scorer with a model that skips."""
-    scorer = Scorer(config=default_config)
-    scorer.score_model({rule_skippable: SkipRule()})
-
-    assert scorer.score_model({rule_skippable: SkipRule()}).value == 10.0
-
-    assert (
-        round(
-            scorer.score_model(
-                {
-                    rule_skippable: SkipRule(),
-                    rule_severity_medium: RuleViolation("error"),
-                }
-            ).value,
-            2,
-        )
-        == 3.33
     )
 
 

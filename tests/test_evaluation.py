@@ -5,7 +5,7 @@ from unittest.mock import Mock
 from dbt_score.config import Config
 from dbt_score.evaluation import Evaluation
 from dbt_score.models import ManifestLoader
-from dbt_score.rule import RuleViolation, SkipRule
+from dbt_score.rule import RuleViolation
 from dbt_score.rule_registry import RuleRegistry
 from dbt_score.scoring import Score
 
@@ -181,33 +181,6 @@ def test_evaluation_rule_with_config(
     assert evaluation.results[model2][rule_with_config] is None
 
 
-def test_evaluation_with_skip(manifest_path, default_config, rule_skippable):
-    """Test rule set to skip."""
-    manifest_loader = ManifestLoader(manifest_path)
-    mock_formatter = Mock()
-    mock_scorer = Mock()
-
-    rule_registry = RuleRegistry(default_config)
-    rule_registry._add_rule(rule_skippable)
-
-    # Ensure we get a valid Score object from the Mock
-    mock_scorer.score_model.return_value = Score(10, "🥇")
-
-    evaluation = Evaluation(
-        rule_registry=rule_registry,
-        manifest_loader=manifest_loader,
-        formatter=mock_formatter,
-        scorer=mock_scorer,
-    )
-    evaluation.evaluate()
-
-    model1 = manifest_loader.models[0]
-    model2 = manifest_loader.models[1]
-
-    assert isinstance(evaluation.results[model1][rule_skippable], SkipRule)
-    assert evaluation.results[model2][rule_skippable] is None
-
-
 def test_evaluation_with_filter(manifest_path, default_config, rule_with_filter):
     """Test rule with filter."""
     manifest_loader = ManifestLoader(manifest_path)
@@ -231,8 +204,8 @@ def test_evaluation_with_filter(manifest_path, default_config, rule_with_filter)
     model1 = manifest_loader.models[0]
     model2 = manifest_loader.models[1]
 
-    assert isinstance(evaluation.results[model1][rule_with_filter], SkipRule)
-    assert evaluation.results[model2][rule_with_filter] is None
+    assert rule_with_filter not in evaluation.results[model1]
+    assert isinstance(evaluation.results[model2][rule_with_filter], RuleViolation)
 
 
 def test_evaluation_with_class_filter(
@@ -260,5 +233,5 @@ def test_evaluation_with_class_filter(
     model1 = manifest_loader.models[0]
     model2 = manifest_loader.models[1]
 
-    assert isinstance(evaluation.results[model1][class_rule_with_filter], SkipRule)
-    assert evaluation.results[model2][class_rule_with_filter] is None
+    assert class_rule_with_filter not in evaluation.results[model1]
+    assert isinstance(evaluation.results[model2][class_rule_with_filter], RuleViolation)

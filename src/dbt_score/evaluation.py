@@ -6,16 +6,15 @@ from typing import Type
 
 from dbt_score.formatters import Formatter
 from dbt_score.models import ManifestLoader, Model
-from dbt_score.rule import Rule, RuleViolation, SkipRule
+from dbt_score.rule import Rule, RuleViolation
 from dbt_score.rule_registry import RuleRegistry
 from dbt_score.scoring import Score, Scorer
 
 # The results of a given model are stored in a dictionary, mapping rules to either:
 # - None if there was no issue
 # - A RuleViolation if a linting error was found
-# - A SkipRule if the rule doesn't apply to the model
 # - An Exception if the rule failed to run
-ModelResultsType = dict[Type[Rule], None | RuleViolation | SkipRule | Exception]
+ModelResultsType = dict[Type[Rule], None | RuleViolation | Exception]
 
 
 class Evaluation:
@@ -58,15 +57,11 @@ class Evaluation:
             self.results[model] = {}
             for rule in rules:
                 try:
-                    result: RuleViolation | SkipRule | None = None
-                    if rule.should_evaluate(model):
+                    if rule.should_evaluate(model):  #  Consider model filter(s).
                         result = rule.evaluate(model, **rule.config)
-                    else:
-                        result = SkipRule()
+                        self.results[model][rule.__class__] = result
                 except Exception as e:
                     self.results[model][rule.__class__] = e
-                else:
-                    self.results[model][rule.__class__] = result
 
             self.scores[model] = self._scorer.score_model(self.results[model])
             self._formatter.model_evaluated(

@@ -4,7 +4,7 @@ import json
 from pathlib import Path
 from typing import Any, Type
 
-from dbt_score import Model, Rule, RuleViolation, Severity, SkipRule, rule
+from dbt_score import Model, Rule, RuleViolation, Severity, rule
 from dbt_score.config import Config
 from dbt_score.model_filter import ModelFilter, model_filter
 from dbt_score.models import ManifestLoader
@@ -214,19 +214,6 @@ def rule_error() -> Type[Rule]:
 
 
 @fixture
-def rule_skippable() -> Type[Rule]:
-    """An example rule that may skip."""
-
-    @rule
-    def rule_with_skip(model: Model) -> RuleViolation | SkipRule | None:
-        """Skips for model1, passes for model2."""
-        if model.name == "model1":
-            return SkipRule()
-
-    return rule_with_skip
-
-
-@fixture
 def rule_with_filter() -> Type[Rule]:
     """An example rule that skips through a filter."""
 
@@ -236,9 +223,9 @@ def rule_with_filter() -> Type[Rule]:
         return model.name != "model1"
 
     @rule(model_filters={skip_model1()})
-    def rule_with_filter(model: Model) -> RuleViolation | SkipRule | None:
-        """Rule that always passes when not filtered."""
-        return None
+    def rule_with_filter(model: Model) -> RuleViolation | None:
+        """Rule that always fails when not filtered."""
+        return RuleViolation(message="I always fail.")
 
     return rule_with_filter
 
@@ -258,7 +245,7 @@ def class_rule_with_filter() -> Type[Rule]:
         description = "Filter defined by a class."
         model_filters = frozenset({SkipModel1()})
 
-        def evaluate(self, model: Model) -> None:
-            return None
+        def evaluate(self, model: Model) -> RuleViolation | None:
+            return RuleViolation(message="I always fail.")
 
     return RuleWithFilter
