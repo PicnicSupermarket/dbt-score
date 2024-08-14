@@ -10,6 +10,7 @@ and this project adheres to
 
 - Add null check before calling `project_evaluated` in the `evaluate` method to
   prevent errors when no models are found. See PR #64.
+- Add model filters to let models be ignored by certain rules.
 
 ## [0.3.0] - 2024-06-20
 
