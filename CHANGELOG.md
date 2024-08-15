@@ -8,9 +8,13 @@ and this project adheres to
 
 ## [Unreleased]
 
-- Add null check before calling `project_evaluated` in the `evaluate` method to
-  prevent errors when no models are found. See PR #64.
 - Add model filters to let models be ignored by certain rules.
+
+## [0.4.0] - 2024-08-08
+
+- Add null check before calling `project_evaluated` in the `evaluate` method to
+  prevent errors when no models are found. (#64)
+- Add JSON formatter for machine-readable output. (#68)
 
 ## [0.3.0] - 2024-06-20
 
