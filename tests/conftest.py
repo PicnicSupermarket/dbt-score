@@ -6,6 +6,7 @@ from typing import Any, Type
 
 from dbt_score import Model, Rule, RuleViolation, Severity, rule
 from dbt_score.config import Config
+from dbt_score.model_filter import ModelFilter, model_filter
 from dbt_score.models import ManifestLoader
 from pytest import fixture
 
@@ -210,3 +211,41 @@ def rule_error() -> Type[Rule]:
         raise Exception("Oh noes, something went wrong")
 
     return rule_error
+
+
+@fixture
+def rule_with_filter() -> Type[Rule]:
+    """An example rule that skips through a filter."""
+
+    @model_filter
+    def skip_model1(model: Model) -> bool:
+        """Skips for model1, passes for model2."""
+        return model.name != "model1"
+
+    @rule(model_filters={skip_model1()})
+    def rule_with_filter(model: Model) -> RuleViolation | None:
+        """Rule that always fails when not filtered."""
+        return RuleViolation(message="I always fail.")
+
+    return rule_with_filter
+
+
+@fixture
+def class_rule_with_filter() -> Type[Rule]:
+    """Using class definitions for filters and rules."""
+
+    class SkipModel1(ModelFilter):
+        description = "Filter defined by a class."
+
+        def evaluate(self, model: Model) -> bool:
+            """Skips for model1, passes for model2."""
+            return model.name != "model1"
+
+    class RuleWithFilter(Rule):
+        description = "Filter defined by a class."
+        model_filters = frozenset({SkipModel1()})
+
+        def evaluate(self, model: Model) -> RuleViolation | None:
+            return RuleViolation(message="I always fail.")
+
+    return RuleWithFilter

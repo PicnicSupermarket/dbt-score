@@ -39,7 +39,9 @@ class Scorer:
 
     def score_model(self, model_results: ModelResultsType) -> Score:
         """Compute the score of a given model."""
-        if len(model_results) == 0:
+        rule_count = len(model_results)
+
+        if rule_count == 0:
             # No rule? No problem
             score = self.max_score
         elif any(
@@ -60,7 +62,7 @@ class Scorer:
                         for rule, result in model_results.items()
                     ]
                 )
-                / (self.score_cardinality * len(model_results))
+                / (self.score_cardinality * rule_count)
                 * self.max_score
             )
 

@@ -8,6 +8,8 @@ and this project adheres to
 
 ## [Unreleased]
 
+- Add model filters to let models be ignored by certain rules.
+
 ## [0.4.0] - 2024-08-08
 
 - Add null check before calling `project_evaluated` in the `evaluate` method to
