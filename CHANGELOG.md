@@ -8,6 +8,8 @@ and this project adheres to
 
 ## [Unreleased]
 
+## [0.5.0] - 2024-08-15
+
 - Add model filters to let models be ignored by certain rules.
 
 ## [0.4.0] - 2024-08-08
