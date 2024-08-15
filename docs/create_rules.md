@@ -90,3 +90,42 @@ def sql_has_reasonable_number_of_lines(model: Model, max_lines: int = 200) -> Ru
             message=f"SQL query too long: {count_lines} lines (> {max_lines})."
         )
 ```
+
+### Filtering models
+
+Custom and standard rules can be configured to have model filters. Filters allow
+models to be ignored by one or multiple rules.
+
+Filters are created using the same discovery mechanism and interface as custom
+rules, except they do not accept parameters. Similar to Python's built-in
+`filter` function, when the filter evaluation returns `True` the model should be
+evaluated, otherwise it should be ignored.
+
+```python
+from dbt_score import ModelFilter, model_filter
+
+@model_filter
+def only_schema_x(model: Model) -> bool:
+    """Only applies a rule to schema X."""
+    return model.schema.lower() == 'x'
+
+class SkipSchemaY(ModelFilter):
+    description = "Applies a rule to every schema but Y."
+    def evaluate(self, model: Model) -> bool:
+      return model.schema.lower() != 'y'
+```
+
+Similar to setting a rule severity, standard rules can have filters set in the
+[configuration file](configuration.md/#tooldbt-scorerulesrule_namespacerule_name),
+while custom rules accept the configuration file or a decorator parameter.
+
+```python
+from dbt_score import Model, rule, RuleViolation
+from my_project import only_schema_x
+
+@rule(model_filters={only_schema_x()})
+def models_in_x_follow_naming_standard(model: Model) -> RuleViolation | None:
+    """Models in schema X must follow the naming standard."""
+    if some_regex_fails(model.name):
+        return RuleViolation("Invalid model name.")
+```

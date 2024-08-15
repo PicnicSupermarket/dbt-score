@@ -1,9 +1,9 @@
 """Unit tests for the ASCII formatter."""
 
-from typing import Type
 
+from dbt_score.evaluation import ModelResultsType
 from dbt_score.formatters.ascii_formatter import ASCIIFormatter
-from dbt_score.rule import Rule, RuleViolation
+from dbt_score.rule import RuleViolation
 from dbt_score.scoring import Score
 
 
@@ -18,7 +18,7 @@ def test_ascii_formatter_model(
 ):
     """Ensure the formatter doesn't write anything after model evaluation."""
     formatter = ASCIIFormatter(manifest_loader=manifest_loader, config=default_config)
-    results: dict[Type[Rule], RuleViolation | Exception | None] = {
+    results: ModelResultsType = {
         rule_severity_low: None,
         rule_severity_medium: Exception("Oh noes"),
         rule_severity_critical: RuleViolation("Error"),

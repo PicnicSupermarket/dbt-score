@@ -1,10 +1,10 @@
 """Unit tests for the manifest formatter."""
 
 import json
-from typing import Type
 
+from dbt_score.evaluation import ModelResultsType
 from dbt_score.formatters.manifest_formatter import ManifestFormatter
-from dbt_score.rule import Rule, RuleViolation
+from dbt_score.rule import RuleViolation
 from dbt_score.scoring import Score
 
 
@@ -21,7 +21,7 @@ def test_manifest_formatter_model(
     formatter = ManifestFormatter(
         manifest_loader=manifest_loader, config=default_config
     )
-    results = {
+    results: ModelResultsType = {
         rule_severity_low: None,
         rule_severity_medium: Exception("Oh noes"),
         rule_severity_critical: RuleViolation("Error"),
@@ -45,12 +45,12 @@ def test_manifest_formatter_project(
     formatter = ManifestFormatter(
         manifest_loader=manifest_loader, config=default_config
     )
-    result1: dict[Type[Rule], RuleViolation | Exception | None] = {
+    result1: ModelResultsType = {
         rule_severity_low: None,
         rule_severity_medium: Exception("Oh noes"),
         rule_severity_critical: RuleViolation("Error"),
     }
-    result2: dict[Type[Rule], RuleViolation | Exception | None] = {
+    result2: ModelResultsType = {
         rule_severity_low: None,
         rule_severity_medium: None,
         rule_severity_critical: None,
