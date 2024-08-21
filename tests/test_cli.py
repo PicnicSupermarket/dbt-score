@@ -4,6 +4,7 @@ from unittest.mock import patch
 
 from click.testing import CliRunner
 from dbt_score.cli import lint
+from dbt_score.dbt_utils import DbtParseException
 
 
 def test_invalid_options():
@@ -45,6 +46,30 @@ def test_lint_non_existing_manifest(caplog):
 
         assert result.exit_code == 2
         assert "dbt's manifest.json could not be found" in caplog.text
+
+
+def test_lint_dbt_parse_exception(caplog):
+    """Test lint with a dbt parse error."""
+    runner = CliRunner()
+
+    with patch("dbt_score.cli.dbt_parse") as mock_dbt_parse:
+        mock_dbt_parse.side_effect = DbtParseException("parsing error")
+        result = runner.invoke(lint, ["-p"], catch_exceptions=False)
+    assert result.exit_code == 2
+    assert "dbt failed to parse project" in caplog.text
+
+
+def test_lint_other_exception(manifest_path, caplog):
+    """Test lint with an unexpected error."""
+    runner = CliRunner()
+
+    with patch("dbt_score.cli.lint_dbt_project") as mock_lint_dbt_project:
+        mock_lint_dbt_project.side_effect = Exception("some error")
+        result = runner.invoke(
+            lint, ["--manifest", manifest_path], catch_exceptions=False
+        )
+    assert result.exit_code == 2
+    assert caplog.text.startswith("ERROR")
 
 
 def test_fail_project_under(manifest_path):

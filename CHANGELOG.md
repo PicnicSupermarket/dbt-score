@@ -8,6 +8,9 @@ and this project adheres to
 
 ## [Unreleased]
 
+- **Breaking**: Improve error handling in CLI. Log messages are written in
+  stderr, and exit code is 2 in case of anything going wrong. (#73)
+
 ## [0.5.0] - 2024-08-15
 
 - Add model filters to let models be ignored by certain rules.
