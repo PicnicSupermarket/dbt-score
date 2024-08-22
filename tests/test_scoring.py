@@ -1,6 +1,5 @@
 """Unit tests for the scoring module."""
 
-
 from dbt_score.rule import RuleViolation
 from dbt_score.scoring import Score, Scorer
 
@@ -18,7 +17,7 @@ def test_scorer_model_severity_low(default_config, rule_severity_low):
     assert scorer.score_model({rule_severity_low: Exception()}).value == 10.0
     assert (
         round(scorer.score_model({rule_severity_low: RuleViolation("error")}).value, 2)
-        == 6.67
+        == 6.6
     )
 
 
@@ -31,7 +30,7 @@ def test_scorer_model_severity_medium(default_config, rule_severity_medium):
         round(
             scorer.score_model({rule_severity_medium: RuleViolation("error")}).value, 2
         )
-        == 3.33
+        == 3.3
     )
 
 
@@ -83,7 +82,7 @@ def test_scorer_model_multiple_rules(
             ).value,
             2,
         )
-        == 6.67
+        == 6.6
     )
 
     assert (
@@ -97,7 +96,7 @@ def test_scorer_model_multiple_rules(
             ).value,
             2,
         )
-        == 7.78
+        == 7.7
     )
 
     assert (
@@ -111,7 +110,7 @@ def test_scorer_model_multiple_rules(
             ).value,
             2,
         )
-        == 8.89
+        == 8.8
     )
 
 
