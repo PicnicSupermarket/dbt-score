@@ -20,9 +20,10 @@ class Score:
     value: float
     badge: str
 
-    def __post_init__(self) -> None:
+    @property
+    def human_value(self) -> float:
         """Auto-round score down to 1 decimal place."""
-        self.value = math.floor(self.value * 10) / 10
+        return math.floor(self.value * 10) / 10
 
 
 class Scorer:
