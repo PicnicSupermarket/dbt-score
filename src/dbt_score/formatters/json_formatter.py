@@ -2,6 +2,7 @@
 
 Shape of the JSON output:
 
+```json
 {
     "models": {
         "model_foo": {
@@ -39,6 +40,7 @@ Shape of the JSON output:
         "pass": false
     }
 }
+```
 """
 
 

@@ -12,7 +12,7 @@ from dbt_score.cli import cli
 def set_logging() -> None:
     """Set logging configuration."""
     log_format = "%(asctime)s %(levelname)s [%(name)s] %(message)s"
-    handler: logging.Handler = logging.StreamHandler(sys.stdout)
+    handler: logging.Handler = logging.StreamHandler(sys.stderr)
     logging.basicConfig(format=log_format, handlers=[handler])
     for handler in logging.getLogger().handlers:
         handler.setLevel(logging.WARNING)

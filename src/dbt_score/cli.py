@@ -1,6 +1,7 @@
 """CLI interface."""
 
 import logging
+import traceback
 from pathlib import Path
 from typing import Final, Literal
 
@@ -9,7 +10,7 @@ from click.core import ParameterSource
 from dbt.cli.options import MultiOption
 
 from dbt_score.config import Config
-from dbt_score.dbt_utils import dbt_parse, get_default_manifest_path
+from dbt_score.dbt_utils import DbtParseException, dbt_parse, get_default_manifest_path
 from dbt_score.lint import lint_dbt_project
 from dbt_score.rule_catalog import display_catalog
 
@@ -123,10 +124,9 @@ def lint(
     if fail_any_model_under:
         config.overload({"fail_any_model_under": fail_any_model_under})
 
-    if run_dbt_parse:
-        dbt_parse()
-
     try:
+        if run_dbt_parse:
+            dbt_parse()
         evaluation = lint_dbt_project(
             manifest_path=manifest, config=config, format=format, select=select
         )
@@ -136,6 +136,14 @@ def lint(
             "dbt's manifest.json could not be found. If you're in a dbt project, be "
             "sure to run 'dbt parse' first, or use the option '--run-dbt-parse'."
         )
+        ctx.exit(2)
+
+    except DbtParseException:
+        logger.error("dbt failed to parse project. Run `dbt parse` to investigate.")
+        ctx.exit(2)
+
+    except Exception:
+        logger.error(traceback.format_exc())
         ctx.exit(2)
 
     if (
