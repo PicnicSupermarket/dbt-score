@@ -1,6 +1,5 @@
 """Human readable formatter."""
 
-
 from typing import Any
 
 from dbt_score.evaluation import ModelResultsType
@@ -34,9 +33,7 @@ class HumanReadableFormatter(Formatter):
         """Callback when a model has been evaluated."""
         if score.value < self._config.fail_any_model_under:
             self._failed_models.append((model, score))
-        print(
-            f"{score.badge} {self.bold(model.name)} (score: {round(score.value, 1)!s})"
-        )
+        print(f"{score.badge} {self.bold(model.name)} (score: {score.rounded_value!s})")
         for rule, result in results.items():
             if result is None:
                 print(f"{self.indent}{self.label_ok} {rule.source()}")
@@ -51,7 +48,7 @@ class HumanReadableFormatter(Formatter):
 
     def project_evaluated(self, score: Score) -> None:
         """Callback when a project has been evaluated."""
-        print(f"Project score: {self.bold(str(round(score.value, 1)))} {score.badge}")
+        print(f"Project score: {self.bold(str(score.rounded_value))} {score.badge}")
 
         if len(self._failed_models) > 0:
             print()
@@ -59,8 +56,8 @@ class HumanReadableFormatter(Formatter):
                 f"Error: model score too low, fail_any_model_under = "
                 f"{self._config.fail_any_model_under}"
             )
-            for model, score in self._failed_models:
-                print(f"Model {model.name} scored {round(score.value, 1)}")
+            for model, model_score in self._failed_models:
+                print(f"Model {model.name} scored {model_score.value}")
 
         elif score.value < self._config.fail_project_under:
             print()

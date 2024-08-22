@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import math
 import typing
 from dataclasses import dataclass
 
@@ -18,6 +19,11 @@ class Score:
 
     value: float
     badge: str
+
+    @property
+    def rounded_value(self) -> float:
+        """Auto-round score down to 1 decimal place."""
+        return math.floor(self.value * 10) / 10
 
 
 class Scorer:
