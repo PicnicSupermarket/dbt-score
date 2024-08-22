@@ -33,7 +33,7 @@ class HumanReadableFormatter(Formatter):
         """Callback when a model has been evaluated."""
         if score.value < self._config.fail_any_model_under:
             self._failed_models.append((model, score))
-        print(f"{score.badge} {self.bold(model.name)} (score: {score.human_value!s})")
+        print(f"{score.badge} {self.bold(model.name)} (score: {score.rounded_value!s})")
         for rule, result in results.items():
             if result is None:
                 print(f"{self.indent}{self.label_ok} {rule.source()}")
@@ -48,7 +48,7 @@ class HumanReadableFormatter(Formatter):
 
     def project_evaluated(self, score: Score) -> None:
         """Callback when a project has been evaluated."""
-        print(f"Project score: {self.bold(str(score.human_value))} {score.badge}")
+        print(f"Project score: {self.bold(str(score.rounded_value))} {score.badge}")
 
         if len(self._failed_models) > 0:
             print()

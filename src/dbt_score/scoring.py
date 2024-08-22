@@ -21,7 +21,7 @@ class Score:
     badge: str
 
     @property
-    def human_value(self) -> float:
+    def rounded_value(self) -> float:
         """Auto-round score down to 1 decimal place."""
         return math.floor(self.value * 10) / 10
 
