@@ -8,8 +8,11 @@ and this project adheres to
 
 ## [Unreleased]
 
+## [0.6.0] - 2024-08-23
+
 - **Breaking**: Improve error handling in CLI. Log messages are written in
   stderr, and exit code is 2 in case of anything going wrong. (#73)
+- Auto-round scores down to align scores and medals. (#74)
 
 ## [0.5.0] - 2024-08-15
 
