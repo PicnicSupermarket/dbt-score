@@ -2,15 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and
-this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+and this project adheres to
+[Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
 ## [0.6.0] - 2024-08-23
 
-- **Breaking**: Improve error handling in CLI. Log messages are written in stderr, and
-  exit code is 2 in case of anything going wrong. (#73)
+- **Breaking**: Improve error handling in CLI. Log messages are written in
+  stderr, and exit code is 2 in case of anything going wrong. (#73)
 - Auto-round scores down to align scores and medals. (#74)
 
 ## [0.5.0] - 2024-08-15
@@ -19,8 +20,8 @@ this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [0.4.0] - 2024-08-08
 
-- Add null check before calling `project_evaluated` in the `evaluate` method to prevent
-  errors when no models are found. (#64)
+- Add null check before calling `project_evaluated` in the `evaluate` method to
+  prevent errors when no models are found. (#64)
 - Add JSON formatter for machine-readable output. (#68)
 
 ## [0.3.0] - 2024-06-20
