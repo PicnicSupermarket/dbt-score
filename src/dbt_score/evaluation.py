@@ -64,9 +64,13 @@ class Evaluation:
                     self.results[model][rule.__class__] = e
 
             self.scores[model] = self._scorer.score_model(self.results[model])
-            self._formatter.model_evaluated(
-                model, self.results[model], self.scores[model]
-            )
+            if (
+                self.scores[model].value < self._scorer._config.fail_any_model_under
+                or not self._scorer._config.only_show_failing
+            ):
+                self._formatter.model_evaluated(
+                    model, self.results[model], self.scores[model]
+                )
 
         # Compute score for project
         self.project_score = self._scorer.score_aggregate_models(

@@ -93,6 +93,13 @@ def cli() -> None:
     is_flag=False,
     default=None,
 )
+@click.option(
+    "--only_show_failing",
+    help="If set to True, only show failing models",
+    type=bool,
+    is_flag=True,
+    default=False,
+)
 @click.pass_context
 def lint(
     ctx: click.Context,
@@ -104,6 +111,7 @@ def lint(
     run_dbt_parse: bool,
     fail_project_under: float,
     fail_any_model_under: float,
+    only_show_failing: bool,
 ) -> None:
     """Lint dbt models metadata."""
     manifest_provided = (
@@ -123,6 +131,8 @@ def lint(
         config.overload({"fail_project_under": fail_project_under})
     if fail_any_model_under:
         config.overload({"fail_any_model_under": fail_any_model_under})
+    if only_show_failing:
+        config.overload({"only_show_failing": only_show_failing})
 
     try:
         if run_dbt_parse:

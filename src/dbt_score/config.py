@@ -71,6 +71,7 @@ class Config:
         self.badge_config: BadgeConfig = BadgeConfig()
         self.fail_project_under: float = 5.0
         self.fail_any_model_under: float = 5.0
+        self.only_show_failing: bool = False
 
     def set_option(self, option: str, value: Any) -> None:
         """Set an option in the config."""
