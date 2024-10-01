@@ -57,6 +57,7 @@ class Config:
         "inject_cwd_in_python_path",
         "fail_project_under",
         "fail_any_model_under",
+        "show_all",
     ]
     _rules_section: Final[str] = "rules"
     _badges_section: Final[str] = "badges"
@@ -71,7 +72,7 @@ class Config:
         self.badge_config: BadgeConfig = BadgeConfig()
         self.fail_project_under: float = 5.0
         self.fail_any_model_under: float = 5.0
-        self.only_show_failing: bool = False
+        self.show_all: bool = False
 
     def set_option(self, option: str, value: Any) -> None:
         """Set an option in the config."""

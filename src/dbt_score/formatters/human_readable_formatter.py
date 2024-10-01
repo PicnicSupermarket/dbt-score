@@ -33,18 +33,30 @@ class HumanReadableFormatter(Formatter):
         """Callback when a model has been evaluated."""
         if score.value < self._config.fail_any_model_under:
             self._failed_models.append((model, score))
-        print(f"{score.badge} {self.bold(model.name)} (score: {score.rounded_value!s})")
-        for rule, result in results.items():
-            if result is None:
-                print(f"{self.indent}{self.label_ok} {rule.source()}")
-            elif isinstance(result, RuleViolation):
-                print(
-                    f"{self.indent}{self.label_warning} "
-                    f"({rule.severity.name.lower()}) {rule.source()}: {result.message}"
-                )
-            else:
-                print(f"{self.indent}{self.label_error} {rule.source()}: {result!s}")
-        print()
+        if (
+            score.value < self._config.fail_any_model_under
+            or score.value < self._config.fail_project_under
+            or self._config.show_all
+        ):
+            print(
+                f"{score.badge} {self.bold(model.name)} "
+                f"(score: {score.rounded_value!s})"
+            )
+            for rule, result in results.items():
+                if result is None:
+                    if self._config.show_all:
+                        print(f"{self.indent}{self.label_ok} {rule.source()}")
+                elif isinstance(result, RuleViolation):
+                    print(
+                        f"{self.indent}{self.label_warning} "
+                        f"({rule.severity.name.lower()}) "
+                        f"{rule.source()}: {result.message}"
+                    )
+                else:
+                    print(
+                        f"{self.indent}{self.label_error} {rule.source()}: {result!s}"
+                    )
+            print()
 
     def project_evaluated(self, score: Score) -> None:
         """Callback when a project has been evaluated."""

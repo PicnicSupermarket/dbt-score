@@ -21,7 +21,7 @@ def test_lint_existing_manifest(manifest_path):
     """Test lint with an existing manifest."""
     with patch("dbt_score.cli.Config._load_toml_file"):
         runner = CliRunner()
-        result = runner.invoke(lint, ["--manifest", manifest_path])
+        result = runner.invoke(lint, ["--manifest", manifest_path, "--show_all"])
 
         assert "model1" in result.output
         assert "model2" in result.output
@@ -93,7 +93,7 @@ def test_fail_any_model_under(manifest_path):
         result = runner.invoke(
             lint, ["--manifest", manifest_path, "--fail_any_model_under", "10.0"]
         )
-
+        print(result.output)
         assert "model1" in result.output
         assert "model2" in result.output
         assert "Error: model score too low, fail_any_model_under" in result.stdout
