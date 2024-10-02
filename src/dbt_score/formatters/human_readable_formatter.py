@@ -35,7 +35,7 @@ class HumanReadableFormatter(Formatter):
             self._failed_models.append((model, score))
         if (
             score.value < self._config.fail_any_model_under
-            or score.value < self._config.fail_project_under
+            or any(isinstance(result, RuleViolation) for result in results.values())
             or self._config.show_all
         ):
             print(

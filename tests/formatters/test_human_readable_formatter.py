@@ -26,7 +26,14 @@ def test_human_readable_formatter_model(
     }
     formatter.model_evaluated(model1, results, Score(10.0, "🥇"))
     stdout = capsys.readouterr().out
-    assert stdout == ""
+    assert (
+        stdout
+        == """🥇 \x1b[1mmodel1\x1b[0m (score: 10.0)
+    \x1b[1;31mERR \x1b[0m tests.conftest.rule_severity_medium: Oh noes
+    \x1b[1;33mWARN\x1b[0m (critical) tests.conftest.rule_severity_critical: Error
+
+"""
+    )
 
 
 def test_human_readable_formatter_model_show_all(
@@ -147,14 +154,18 @@ Model model1 scored 0.0
     )
 
 
-def test_human_readable_formatter_low_project_score(
+def test_human_readable_formatter_low_project_score_high_model_score(
     capsys,
     default_config,
     manifest_loader,
     model1,
     rule_severity_critical,
 ):
-    """Ensure the formatter has the correct output when the projet has a low score."""
+    """Ensure the formatter has the correct output when the projet has a low score.
+
+    If model itself has a high project score then we need to pass `show_all` flag
+    to make it visible.
+    """
     default_config.overload({"show_all": True})
     formatter = HumanReadableFormatter(
         manifest_loader=manifest_loader, config=default_config
