@@ -94,7 +94,7 @@ def cli() -> None:
     default=None,
 )
 @click.option(
-    "--show_all",
+    "--show-all",
     help="If set to True,show all models and all rules in output"
     "when using `plain` as `--format`."
     "Default behavior is to only show failing models and violated rules",
