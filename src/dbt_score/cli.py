@@ -93,8 +93,17 @@ def cli() -> None:
     is_flag=False,
     default=None,
 )
+@click.option(
+    "--show-all",
+    help="If set to True, show all models and all rules in output "
+    "when using `plain` as `--format`. "
+    "Default behavior is to only show failing models and violated rules.",
+    type=bool,
+    is_flag=True,
+    default=False,
+)
 @click.pass_context
-def lint(
+def lint(  # noqa: PLR0913, C901
     ctx: click.Context,
     format: Literal["plain", "manifest", "ascii"],
     select: tuple[str],
@@ -104,6 +113,7 @@ def lint(
     run_dbt_parse: bool,
     fail_project_under: float,
     fail_any_model_under: float,
+    show_all: bool,
 ) -> None:
     """Lint dbt models metadata."""
     manifest_provided = (
@@ -123,7 +133,8 @@ def lint(
         config.overload({"fail_project_under": fail_project_under})
     if fail_any_model_under:
         config.overload({"fail_any_model_under": fail_any_model_under})
-
+    if show_all:
+        config.overload({"show_all": show_all})
     try:
         if run_dbt_parse:
             dbt_parse()

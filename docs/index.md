@@ -11,7 +11,7 @@ encourage) good practices.
 ## Example
 
 ```
-> dbt-score lint
+> dbt-score lint --show-all
 🥇 customers (score: 10.0)
     OK   dbt_score.rules.generic.has_description
     OK   dbt_score.rules.generic.has_owner: Model lacks an owner.
@@ -21,7 +21,8 @@ Score: 10.0 🥇
 
 In this example, the model `customers` scores the maximum value of `10.0` as it
 passes all the rules. It also is awarded a golden medal because of the perfect
-score.
+score. By default a passing model with or without rule violations will not be shown, 
+unless we pass the `--show-all` flag.
 
 ## Philosophy
 
