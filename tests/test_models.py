@@ -22,6 +22,14 @@ def test_manifest_load(mock_read_text, raw_manifest):
         assert loader.models[0].tests[0].name == "test2"
         assert loader.models[0].columns[0].tests[0].name == "test1"
 
+        assert len(loader.sources) == len(
+            [
+                source
+                for source in raw_manifest["sources"].values()
+                if source["package_name"] == raw_manifest["metadata"]["project_name"]
+            ]
+        )
+
 
 @patch("dbt_score.models.Path.read_text")
 def test_manifest_select_models_simple(mock_read_text, raw_manifest):
