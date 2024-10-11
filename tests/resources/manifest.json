@@ -136,11 +136,7 @@
       "path": "models/sources/sources.yml",
       "original_file_path": "models/sources/sources.yml",
       "unique_id": "source.package.my_source.table1",
-      "fqn": [
-        "package",
-        "my_source",
-        "table1"
-      ],
+      "fqn": ["package", "my_source", "table1"],
       "source_name": "my_source",
       "source_description": "An important source table.",
       "loader": "Fivetran",
@@ -181,11 +177,7 @@
       "path": "models/sources/sources.yml",
       "original_file_path": "models/sources/sources.yml",
       "unique_id": "source.package.my_source.table2",
-      "fqn": [
-        "package",
-        "my_source",
-        "table2"
-      ],
+      "fqn": ["package", "my_source", "table2"],
       "source_name": "my_source",
       "source_description": "Another table with some columns declared.",
       "loader": "Fivetran",
@@ -243,11 +235,7 @@
       "path": "models/sources/sources.yml",
       "original_file_path": "models/sources/sources.yml",
       "unique_id": "source.package.my_other_source.table1",
-      "fqn": [
-        "package",
-        "my_other_source",
-        "table1"
-      ],
+      "fqn": ["package", "my_other_source", "table1"],
       "source_name": "my_other_source",
       "source_description": "A source in a different schema.",
       "loader": "Fivetran",
