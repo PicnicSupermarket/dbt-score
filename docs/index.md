@@ -14,7 +14,7 @@ encourage) good practices.
 > dbt-score lint
 🥇 customers (score: 10.0)
     OK   dbt_score.rules.generic.has_description
-    OK   dbt_score.rules.generic.has_owner: Model lacks an owner.
+    OK   dbt_score.rules.generic.has_owner
     OK   dbt_score.rules.generic.sql_has_reasonable_number_of_lines
 Score: 10.0 🥇
 ```
