@@ -4,7 +4,7 @@ import json
 from pathlib import Path
 from typing import Any, Type
 
-from dbt_score import Model, Rule, RuleViolation, Severity, rule
+from dbt_score import Model, Rule, RuleViolation, Severity, Source, rule
 from dbt_score.config import Config
 from dbt_score.model_filter import ModelFilter, model_filter
 from dbt_score.models import ManifestLoader
@@ -73,6 +73,25 @@ def model2(raw_manifest) -> Model:
     return Model.from_node(raw_manifest["nodes"]["model.package.model2"], [])
 
 
+# Sources
+
+
+@fixture
+def source1(raw_manifest) -> Model:
+    """Source 1."""
+    return Source.from_node(
+        raw_manifest["sources"]["source.package.my_source.table1"], []
+    )
+
+
+@fixture
+def source2(raw_manifest) -> Model:
+    """Source 2."""
+    return Source.from_node(
+        raw_manifest["sources"]["source.package.my_source.table2"], []
+    )
+
+
 # Multiple ways to create rules
 
 
@@ -129,6 +148,61 @@ def class_rule() -> Type[Rule]:
                 return RuleViolation(message="Model1 is a violation.")
 
     return ExampleRule
+
+
+@fixture
+def decorator_rule_source() -> Type[Rule]:
+    """An example rule created with the rule decorator."""
+
+    @rule()
+    def example_rule_source(source: Source) -> RuleViolation | None:
+        """Description of the rule."""
+        if source.name == "table1":
+            return RuleViolation(message="Source1 is a violation.")
+
+    return example_rule_source
+
+
+@fixture
+def decorator_rule_no_parens_source() -> Type[Rule]:
+    """An example rule created with the rule decorator without parentheses."""
+
+    @rule
+    def example_rule_source(source: Source) -> RuleViolation | None:
+        """Description of the rule."""
+        if source.name == "table1":
+            return RuleViolation(message="Source1 is a violation.")
+
+    return example_rule_source
+
+
+@fixture
+def decorator_rule_args_source() -> Type[Rule]:
+    """An example rule created with the rule decorator with arguments."""
+
+    @rule(description="Description of the rule.")
+    def example_rule_source(source: Source) -> RuleViolation | None:
+        if source.name == "table1":
+            return RuleViolation(message="Source1 is a violation.")
+
+    return example_rule_source
+
+
+@fixture
+def class_rule_source() -> Type[Rule]:
+    """An example rule created with a class."""
+
+    class ExampleRuleSource(Rule):
+        """Example rule."""
+
+        description = "Description of the rule."
+
+        def evaluate(self, source: Source) -> RuleViolation | None:
+            """Evaluate source."""
+            if source.name == "table1":
+                return RuleViolation(message="Source1 is a violation.")
+
+    return ExampleRuleSource
 
 
 # Rules
