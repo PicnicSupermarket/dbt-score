@@ -288,7 +288,7 @@ def rule_error() -> Type[Rule]:
 
 
 @fixture
-def rule_with_filter() -> Type[Rule]:
+def model_rule_with_filter() -> Type[Rule]:
     """An example rule that skips through a filter."""
 
     @model_filter
@@ -297,15 +297,32 @@ def rule_with_filter() -> Type[Rule]:
         return model.name != "model1"
 
     @rule(model_filters={skip_model1()})
-    def rule_with_filter(model: Model) -> RuleViolation | None:
+    def model_rule_with_filter(model: Model) -> RuleViolation | None:
         """Rule that always fails when not filtered."""
         return RuleViolation(message="I always fail.")
 
-    return rule_with_filter
+    return model_rule_with_filter
 
 
 @fixture
-def class_rule_with_filter() -> Type[Rule]:
+def source_rule_with_filter() -> Type[Rule]:
+    """An example rule that skips through a filter."""
+
+    @model_filter
+    def skip_source1(source: Source) -> bool:
+        """Skips for source1, passes for source2."""
+        return source.name != "table1"
+
+    @rule(model_filters={skip_source1()})
+    def source_rule_with_filter(source: Source) -> RuleViolation | None:
+        """Rule that always fails when not filtered."""
+        return RuleViolation(message="I always fail.")
+
+    return source_rule_with_filter
+
+
+@fixture
+def model_class_rule_with_filter() -> Type[Rule]:
     """Using class definitions for filters and rules."""
 
     class SkipModel1(ModelFilter):
@@ -315,11 +332,32 @@ def class_rule_with_filter() -> Type[Rule]:
             """Skips for model1, passes for model2."""
             return model.name != "model1"
 
-    class RuleWithFilter(Rule):
+    class ModelRuleWithFilter(Rule):
         description = "Filter defined by a class."
         model_filters = frozenset({SkipModel1()})
 
         def evaluate(self, model: Model) -> RuleViolation | None:
             return RuleViolation(message="I always fail.")
 
-    return RuleWithFilter
+    return ModelRuleWithFilter
+
+
+@fixture
+def source_class_rule_with_filter() -> Type[Rule]:
+    """Using class definitions for filters and rules."""
+
+    class SkipSource1(ModelFilter):
+        description = "Filter defined by a class."
+
+        def evaluate(self, source: Source) -> bool:
+            """Skips for source1, passes for source2."""
+            return source.name != "table1"
+
+    class SourceRuleWithFilter(Rule):
+        description = "Filter defined by a class."
+        model_filters = frozenset({SkipSource1()})
+
+        def evaluate(self, source: Source) -> RuleViolation | None:
+            return RuleViolation(message="I always fail.")
+
+    return SourceRuleWithFilter
