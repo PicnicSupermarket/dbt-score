@@ -2,10 +2,11 @@
 
 from __future__ import annotations
 
+from itertools import chain
 from typing import Type
 
 from dbt_score.formatters import Formatter
-from dbt_score.models import ManifestLoader, Model
+from dbt_score.models import Evaluable, ManifestLoader
 from dbt_score.rule import Rule, RuleViolation
 from dbt_score.rule_registry import RuleRegistry
 from dbt_score.scoring import Score, Scorer
@@ -15,6 +16,7 @@ from dbt_score.scoring import Score, Scorer
 # - A RuleViolation if a linting error was found
 # - An Exception if the rule failed to run
 ModelResultsType = dict[Type[Rule], None | RuleViolation | Exception]
+EvaluableResultsType = dict[Type[Rule], None | RuleViolation | Exception]
 
 
 class Evaluation:
@@ -41,10 +43,10 @@ class Evaluation:
         self._scorer = scorer
 
         # For each model, its results
-        self.results: dict[Model, ModelResultsType] = {}
+        self.results: dict[Evaluable, EvaluableResultsType] = {}
 
         # For each model, its computed score
-        self.scores: dict[Model, Score] = {}
+        self.scores: dict[Evaluable, Score] = {}
 
         # The aggregated project score
         self.project_score: Score
@@ -53,11 +55,13 @@ class Evaluation:
         """Evaluate all rules."""
         rules = self._rule_registry.rules.values()
 
-        for model in self._manifest_loader.models:
+        for model in chain(self._manifest_loader.models, self._manifest_loader.sources):
             self.results[model] = {}
             for rule in rules:
                 try:
-                    if rule.should_evaluate(model):  #  Consider model filter(s).
+                    if rule.resource_type is type(model) and rule.should_evaluate(
+                        model
+                    ):  #  Consider model filter(s).
                         result = rule.evaluate(model, **rule.config)
                         self.results[model][rule.__class__] = result
                 except Exception as e:

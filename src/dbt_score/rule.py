@@ -6,8 +6,10 @@ from dataclasses import dataclass, field
 from enum import Enum
 from typing import Any, Callable, Iterable, Type, TypeAlias, overload
 
+from more_itertools import first_true
+
 from dbt_score.model_filter import ModelFilter
-from dbt_score.models import Model
+from dbt_score.models import Evaluable
 
 
 class Severity(Enum):
@@ -54,7 +56,7 @@ class RuleViolation:
     message: str | None = None
 
 
-RuleEvaluationType: TypeAlias = Callable[[Model], RuleViolation | None]
+RuleEvaluationType: TypeAlias = Callable[[Evaluable], RuleViolation | None]
 
 
 class Rule:
@@ -65,6 +67,7 @@ class Rule:
     model_filter_names: list[str]
     model_filters: frozenset[ModelFilter] = frozenset()
     default_config: typing.ClassVar[dict[str, Any]] = {}
+    resource_type: typing.ClassVar[Evaluable]
 
     def __init__(self, rule_config: RuleConfig | None = None) -> None:
         """Initialize the rule."""
@@ -77,6 +80,25 @@ class Rule:
         super().__init_subclass__(**kwargs)
         if not hasattr(cls, "description"):
             raise AttributeError("Subclass must define class attribute `description`.")
+
+        cls.resource_type = cls._introspect_resource_type()
+
+    @classmethod
+    def _introspect_resource_type(cls) -> Type[Evaluable]:
+        evaluate_func = getattr(cls, "_orig_evaluate", cls.evaluate)
+
+        sig = inspect.signature(evaluate_func)
+        resource_type_argument = first_true(
+            sig.parameters.values(),
+            pred=lambda arg: arg.annotation in typing.get_args(Evaluable),
+        )
+
+        if not resource_type_argument:
+            raise TypeError(
+                "Subclass must implement method `evaluate` with an annotated Model or Source argument."
+            )
+
+        return resource_type_argument.annotation
 
     def process_config(self, rule_config: RuleConfig) -> None:
         """Process the rule config."""
@@ -97,12 +119,12 @@ class Rule:
         self.model_filter_names = rule_config.model_filter_names
         self.config = config
 
-    def evaluate(self, model: Model) -> RuleViolation | None:
+    def evaluate(self, model: Evaluable) -> RuleViolation | None:
         """Evaluates the rule."""
         raise NotImplementedError("Subclass must implement method `evaluate`.")
 
     @classmethod
-    def should_evaluate(cls, model: Model) -> bool:
+    def should_evaluate(cls, model: Evaluable) -> bool:
         """Checks if all filters in the rule allow evaluation."""
         if cls.model_filters:
             return all(f.evaluate(model) for f in cls.model_filters)

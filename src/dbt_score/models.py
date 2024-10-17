@@ -6,7 +6,7 @@ import re
 from collections import defaultdict
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any, Iterable
+from typing import Any, Iterable, Literal, TypeAlias
 
 from dbt_score.dbt_utils import dbt_ls
 
@@ -117,8 +117,39 @@ class Column:
         )
 
 
+class HasColumnsMixin:
+    """Common methods for resource types that have columns."""
+
+    columns: list[Column]
+
+    def get_column(self, column_name: str) -> Column | None:
+        """Get a column by name."""
+        for column in self.columns:
+            if column.name == column_name:
+                return column
+
+        return None
+
+    @staticmethod
+    def _get_columns(
+        node_values: dict[str, Any], test_values: list[dict[str, Any]]
+    ) -> list[Column]:
+        """Get columns from a node and its tests in the manifest."""
+        return [
+            Column.from_node_values(
+                values,
+                [
+                    test
+                    for test in test_values
+                    if test["test_metadata"]["kwargs"].get("column_name") == name
+                ],
+            )
+            for name, values in node_values.get("columns", {}).items()
+        ]
+
+
 @dataclass
-class Model:
+class Model(HasColumnsMixin):
     """Represents a dbt model.
 
     Attributes:
@@ -167,31 +198,6 @@ class Model:
     _raw_values: dict[str, Any] = field(default_factory=dict)
     _raw_test_values: list[dict[str, Any]] = field(default_factory=list)
 
-    def get_column(self, column_name: str) -> Column | None:
-        """Get a column by name."""
-        for column in self.columns:
-            if column.name == column_name:
-                return column
-
-        return None
-
-    @staticmethod
-    def _get_columns(
-        node_values: dict[str, Any], test_values: list[dict[str, Any]]
-    ) -> list[Column]:
-        """Get columns from a node and its tests in the manifest."""
-        return [
-            Column.from_node_values(
-                values,
-                [
-                    test
-                    for test in test_values
-                    if test["test_metadata"]["kwargs"].get("column_name") == name
-                ],
-            )
-            for name, values in node_values.get("columns", {}).items()
-        ]
-
     @classmethod
     def from_node(
         cls, node_values: dict[str, Any], test_values: list[dict[str, Any]]
@@ -230,6 +236,129 @@ class Model:
         return hash(self.unique_id)
 
 
+@dataclass
+class Duration:
+    """Represents a duration used in SourceFreshness.
+
+    This is referred to as `Time` in the dbt JSONSchema.
+
+    Attributes:
+        count: a positive integer
+        period: "minute" | "hour" | "day"
+    """
+
+    count: int | None = None
+    period: Literal["minute", "hour", "day"] | None = None
+
+
+@dataclass
+class SourceFreshness:
+    """Represents a source freshness configuration.
+
+    This is referred to as `FreshnessThreshold` in the dbt JSONSchema.
+
+    Attributes:
+        warn_after: The threshold after which the dbt source freshness check should soft-fail with a warning.
+        error_after: The threshold after which the dbt source freshness check should fail.
+        filter: An optional filter to apply to the input data before running source freshness check.
+    """
+
+    warn_after: Duration
+    error_after: Duration
+    filter: str | None = None
+
+
+@dataclass
+class Source(HasColumnsMixin):
+    """Represents a dbt source table.
+
+    Attributes:
+        unique_id: The id of the source table, e.g. 'source.package.source_name.source_table_name'.
+        name: The alias of the source table.
+        description: The full description of the source table.
+        source_name: The source namespace.
+        source_description: The description for the source namespace.
+        original_file_path: The yml path to the source definition.
+        config: The config of the source definition.
+        meta: Any meta-attributes on the source table.
+        source_meta: Any meta-attribuets on the source namespace.
+        columns: The list of columns for the source table.
+        package_name: The dbt package name for the source table.
+        database: The database name of the source table.
+        schema: The schema name of the source table.
+        identifier: The actual source table name, i.e. not an alias.
+        loader: The tool used to load the source table into the warehouse.
+        freshness: A set of time thresholds after which data may be considered stale.
+        patch_path: The yml path of the source definition.
+        tags: The list of tags attached to the source table.
+        tests: The list of tests attached to the source table.
+        _raw_values: The raw values of the source definition in the manifest.
+        _raw_test_values: The raw test values of the source definition in the manifest.
+    """
+
+    unique_id: str
+    name: str
+    description: str
+    source_name: str
+    source_description: str
+    original_file_path: str
+    config: dict[str, Any]
+    meta: dict[str, Any]
+    source_meta: dict[str, Any]
+    columns: list[Column]
+    package_name: str
+    database: str
+    schema: str
+    identifier: str
+    loader: str
+    freshness: SourceFreshness
+    patch_path: str | None = None
+    tags: list[str] = field(default_factory=list)
+    tests: list[Test] = field(default_factory=list)
+    _raw_values: dict[str, Any] = field(default_factory=dict)
+    _raw_test_values: list[dict[str, Any]] = field(default_factory=list)
+
+    @classmethod
+    def from_node(
+        cls, node_values: dict[str, Any], test_values: list[dict[str, Any]]
+    ) -> "Source":
+        """Create a source object from a node and it's tests in the manifest."""
+        return cls(
+            unique_id=node_values["unique_id"],
+            name=node_values["name"],
+            description=node_values["description"],
+            source_name=node_values["source_name"],
+            source_description=node_values["source_description"],
+            original_file_path=node_values["original_file_path"],
+            config=node_values["config"],
+            meta=node_values["meta"],
+            source_meta=node_values["source_meta"],
+            columns=cls._get_columns(node_values, test_values),
+            package_name=node_values["package_name"],
+            database=node_values["database"],
+            schema=node_values["schema"],
+            identifier=node_values["identifier"],
+            loader=node_values["loader"],
+            freshness=node_values["freshness"],
+            patch_path=node_values["patch_path"],
+            tags=node_values["tags"],
+            tests=[
+                Test.from_node(test)
+                for test in test_values
+                if not test["test_metadata"]["kwargs"].get("column_name")
+            ],
+            _raw_values=node_values,
+            _raw_test_values=test_values,
+        )
+
+    def __hash__(self) -> int:
+        """Compute a unique hash for a source."""
+        return hash(self.unique_id)
+
+
+Evaluable: TypeAlias = Model | Source
+
+
 class ManifestLoader:
     """Load the models and tests from the manifest."""
 
@@ -247,11 +376,19 @@ class ManifestLoader:
             for node_id, node_values in self.raw_manifest.get("nodes", {}).items()
             if node_values["package_name"] == self.project_name
         }
+        self.raw_sources = {
+            source_id: source_values
+            for source_id, source_values in self.raw_manifest.get("sources", {}).items()
+            if source_values["package_name"] == self.project_name
+        }
+
         self.models: list[Model] = []
         self.tests: dict[str, list[dict[str, Any]]] = defaultdict(list)
+        self.sources: list[Source] = []
 
         self._reindex_tests()
         self._load_models()
+        self._load_sources()
 
         if select:
             self._select_models(select)
@@ -265,6 +402,13 @@ class ManifestLoader:
             if node_values.get("resource_type") == "model":
                 model = Model.from_node(node_values, self.tests.get(node_id, []))
                 self.models.append(model)
+
+    def _load_sources(self) -> None:
+        """Load the sources from the manifest."""
+        for source_id, source_values in self.raw_sources.items():
+            if source_values.get("resource_type") == "source":
+                source = Source.from_node(source_values, self.tests.get(source_id, []))
+                self.sources.append(source)
 
     def _reindex_tests(self) -> None:
         """Index tests based on their model id."""
