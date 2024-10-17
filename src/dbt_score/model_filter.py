@@ -1,16 +1,20 @@
 """Model filtering to choose when to apply specific rules."""
-
+import inspect
+import typing
 from typing import Any, Callable, Type, TypeAlias, overload
 
-from dbt_score.models import Model
+from more_itertools import first_true
 
-FilterEvaluationType: TypeAlias = Callable[[Model], bool]
+from dbt_score.models import Evaluable
+
+FilterEvaluationType: TypeAlias = Callable[[Evaluable], bool]
 
 
 class ModelFilter:
     """The Filter base class."""
 
     description: str
+    resource_type: typing.ClassVar[Evaluable]
 
     def __init__(self) -> None:
         """Initialize the filter."""
@@ -22,7 +26,26 @@ class ModelFilter:
         if not hasattr(cls, "description"):
             raise AttributeError("Subclass must define class attribute `description`.")
 
-    def evaluate(self, model: Model) -> bool:
+        cls.resource_type = cls._introspect_resource_type()
+
+    @classmethod
+    def _introspect_resource_type(cls) -> Type[Evaluable]:
+        evaluate_func = getattr(cls, "_orig_evaluate", cls.evaluate)
+
+        sig = inspect.signature(evaluate_func)
+        resource_type_argument = first_true(
+            sig.parameters.values(),
+            pred=lambda arg: arg.annotation in typing.get_args(Evaluable),
+        )
+
+        if not resource_type_argument:
+            raise TypeError(
+                "Subclass must implement method `evaluate` with an annotated Model or Source argument."
+            )
+
+        return resource_type_argument.annotation
+
+    def evaluate(self, model: Evaluable) -> bool:
         """Evaluates the filter."""
         raise NotImplementedError("Subclass must implement method `evaluate`.")
 
