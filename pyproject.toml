@@ -114,3 +114,6 @@ source = [
 [tool.coverage.report]
 show_missing = true
 fail_under = 80
+exclude_also = [
+    "@overload"
+]
