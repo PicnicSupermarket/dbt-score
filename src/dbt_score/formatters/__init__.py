@@ -10,7 +10,7 @@ from dbt_score.scoring import Score
 
 if typing.TYPE_CHECKING:
     from dbt_score.evaluation import EvaluableResultsType
-from dbt_score.models import ManifestLoader, Model, Evaluable
+from dbt_score.models import Evaluable, ManifestLoader
 
 
 class Formatter(ABC):

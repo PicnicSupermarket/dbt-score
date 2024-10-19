@@ -54,7 +54,9 @@ class Evaluation:
         """Evaluate all rules."""
         rules = self._rule_registry.rules.values()
 
-        for evaluable in chain(self._manifest_loader.models, self._manifest_loader.sources):
+        for evaluable in chain(
+            self._manifest_loader.models, self._manifest_loader.sources
+        ):
             self.results[evaluable] = {}
             for rule in rules:
                 try:
@@ -66,7 +68,9 @@ class Evaluation:
                 except Exception as e:
                     self.results[evaluable][rule.__class__] = e
 
-            self.scores[evaluable] = self._scorer.score_evaluable(self.results[evaluable])
+            self.scores[evaluable] = self._scorer.score_evaluable(
+                self.results[evaluable]
+            )
             self._formatter.evaluable_evaluated(
                 evaluable, self.results[evaluable], self.scores[evaluable]
             )

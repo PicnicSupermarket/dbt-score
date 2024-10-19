@@ -1,7 +1,7 @@
 """Test model filters."""
 import pytest
-from dbt_score.rule_filter import RuleFilter, rule_filter
 from dbt_score.models import Model, Source
+from dbt_score.rule_filter import RuleFilter, rule_filter
 
 
 def test_basic_filter(model1, model2):

@@ -4,7 +4,7 @@ from typing import Any
 
 from dbt_score.evaluation import EvaluableResultsType
 from dbt_score.formatters import Formatter
-from dbt_score.models import Model, Evaluable
+from dbt_score.models import Evaluable
 from dbt_score.rule import RuleViolation
 from dbt_score.scoring import Score
 
@@ -33,7 +33,9 @@ class HumanReadableFormatter(Formatter):
         """Callback when an evaluable item has been evaluated."""
         if score.value < self._config.fail_any_evaluable_under:
             self._failed_evaluables.append((evaluable, score))
-        print(f"{score.badge} {self.bold(evaluable.name)} (score: {score.rounded_value!s})")
+        print(
+            f"{score.badge} {self.bold(evaluable.name)} (score: {score.rounded_value!s})"
+        )
         for rule, result in results.items():
             if result is None:
                 print(f"{self.indent}{self.label_ok} {rule.source()}")
