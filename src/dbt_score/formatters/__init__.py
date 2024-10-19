@@ -9,8 +9,8 @@ from dbt_score.config import Config
 from dbt_score.scoring import Score
 
 if typing.TYPE_CHECKING:
-    from dbt_score.evaluation import ModelResultsType
-from dbt_score.models import ManifestLoader, Model
+    from dbt_score.evaluation import EvaluableResultsType
+from dbt_score.models import ManifestLoader, Model, Evaluable
 
 
 class Formatter(ABC):
@@ -22,10 +22,10 @@ class Formatter(ABC):
         self._config = config
 
     @abstractmethod
-    def model_evaluated(
-        self, model: Model, results: ModelResultsType, score: Score
+    def evaluable_evaluated(
+        self, evaluable: Evaluable, results: EvaluableResultsType, score: Score
     ) -> None:
-        """Callback when a model has been evaluated."""
+        """Callback when an evaluable item has been evaluated."""
         raise NotImplementedError
 
     @abstractmethod

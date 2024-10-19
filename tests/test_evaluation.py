@@ -53,11 +53,11 @@ def test_evaluation_low_medium_high(
     assert isinstance(evaluation.results[model2][rule_severity_high], RuleViolation)
     assert isinstance(evaluation.results[model2][rule_error], Exception)
 
-    assert mock_formatter.model_evaluated.call_count == 5
+    assert mock_formatter.evaluable_evaluated.call_count == 5
     assert mock_formatter.project_evaluated.call_count == 1
 
-    assert mock_scorer.score_model.call_count == 5
-    assert mock_scorer.score_aggregate_models.call_count == 1
+    assert mock_scorer.score_evaluable.call_count == 5
+    assert mock_scorer.score_aggregate_evaluables.call_count == 1
 
 
 def test_evaluation_critical(
