@@ -115,5 +115,7 @@ def test_fail_any_model_under(manifest_path):
 
         assert "model1" in result.output
         assert "model2" in result.output
-        assert "Error: evaluable score too low, fail_any_evaluable_under" in result.stdout
+        assert (
+            "Error: evaluable score too low, fail_any_evaluable_under" in result.stdout
+        )
         assert result.exit_code == 1

@@ -12,8 +12,8 @@ from typing import Iterator, Type
 
 from dbt_score.config import Config
 from dbt_score.exceptions import DuplicatedRuleException
-from dbt_score.rule_filter import RuleFilter
 from dbt_score.rule import Rule, RuleConfig
+from dbt_score.rule_filter import RuleFilter
 
 logger = logging.getLogger(__name__)
 

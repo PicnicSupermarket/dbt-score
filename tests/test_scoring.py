@@ -17,7 +17,9 @@ def test_scorer_model_severity_low(default_config, rule_severity_low):
     assert scorer.score_evaluable({rule_severity_low: None}).value == 10.0
     assert scorer.score_evaluable({rule_severity_low: Exception()}).value == 10.0
     assert (
-        round(scorer.score_evaluable({rule_severity_low: RuleViolation("error")}).value, 2)
+        round(
+            scorer.score_evaluable({rule_severity_low: RuleViolation("error")}).value, 2
+        )
         == 6.67
     )
 
@@ -29,7 +31,10 @@ def test_scorer_model_severity_medium(default_config, rule_severity_medium):
     assert scorer.score_evaluable({rule_severity_medium: Exception()}).value == 10.0
     assert (
         round(
-            scorer.score_evaluable({rule_severity_medium: RuleViolation("error")}).value, 2
+            scorer.score_evaluable(
+                {rule_severity_medium: RuleViolation("error")}
+            ).value,
+            2,
         )
         == 3.33
     )
@@ -40,7 +45,10 @@ def test_scorer_model_severity_high(default_config, rule_severity_high):
     scorer = Scorer(config=default_config)
     assert scorer.score_evaluable({rule_severity_high: None}).value == 10.0
     assert scorer.score_evaluable({rule_severity_high: Exception()}).value == 10.0
-    assert scorer.score_evaluable({rule_severity_high: RuleViolation("error")}).value == 0.0
+    assert (
+        scorer.score_evaluable({rule_severity_high: RuleViolation("error")}).value
+        == 0.0
+    )
 
 
 def test_scorer_model_severity_critical(default_config, rule_severity_critical):
