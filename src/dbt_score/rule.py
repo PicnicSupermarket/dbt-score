@@ -8,7 +8,7 @@ from typing import Any, Callable, Iterable, Type, TypeAlias, overload
 
 from more_itertools import first_true
 
-from dbt_score.model_filter import ModelFilter
+from dbt_score.rule_filter import RuleFilter
 from dbt_score.models import Evaluable
 
 
@@ -27,7 +27,7 @@ class RuleConfig:
 
     severity: Severity | None = None
     config: dict[str, Any] = field(default_factory=dict)
-    model_filter_names: list[str] = field(default_factory=list)
+    rule_filter_names: list[str] = field(default_factory=list)
 
     @staticmethod
     def from_dict(rule_config: dict[str, Any]) -> "RuleConfig":
@@ -39,13 +39,13 @@ class RuleConfig:
             else None
         )
         filter_names = (
-            config.pop("model_filter_names", None)
-            if "model_filter_names" in rule_config
+            config.pop("rule_filter_names", None)
+            if "rule_filter_names" in rule_config
             else []
         )
 
         return RuleConfig(
-            severity=severity, config=config, model_filter_names=filter_names
+            severity=severity, config=config, rule_filter_names=filter_names
         )
 
 
@@ -64,8 +64,8 @@ class Rule:
 
     description: str
     severity: Severity = Severity.MEDIUM
-    model_filter_names: list[str]
-    model_filters: frozenset[ModelFilter] = frozenset()
+    rule_filter_names: list[str]
+    rule_filters: frozenset[RuleFilter] = frozenset()
     default_config: typing.ClassVar[dict[str, Any]] = {}
     resource_type: typing.ClassVar[Evaluable]
 
@@ -116,18 +116,18 @@ class Rule:
         self.set_severity(
             rule_config.severity
         ) if rule_config.severity else rule_config.severity
-        self.model_filter_names = rule_config.model_filter_names
+        self.rule_filter_names = rule_config.rule_filter_names
         self.config = config
 
-    def evaluate(self, model: Evaluable) -> RuleViolation | None:
+    def evaluate(self, evaluable: Evaluable) -> RuleViolation | None:
         """Evaluates the rule."""
         raise NotImplementedError("Subclass must implement method `evaluate`.")
 
     @classmethod
-    def should_evaluate(cls, model: Evaluable) -> bool:
+    def should_evaluate(cls, evaluable: Evaluable) -> bool:
         """Checks if all filters in the rule allow evaluation."""
-        if cls.model_filters:
-            return all(f.evaluate(model) for f in cls.model_filters)
+        if cls.rule_filters:
+            return all(f.evaluate(evaluable) for f in cls.rule_filters)
         return True
 
     @classmethod
@@ -136,9 +136,9 @@ class Rule:
         cls.severity = severity
 
     @classmethod
-    def set_filters(cls, model_filters: Iterable[ModelFilter]) -> None:
+    def set_filters(cls, rule_filters: Iterable[RuleFilter]) -> None:
         """Set the filters of the rule."""
-        cls.model_filters = frozenset(model_filters)
+        cls.rule_filters = frozenset(rule_filters)
 
     @classmethod
     def source(cls) -> str:
@@ -164,7 +164,7 @@ def rule(
     *,
     description: str | None = None,
     severity: Severity = Severity.MEDIUM,
-    model_filters: set[ModelFilter] | None = None,
+    rule_filters: set[RuleFilter] | None = None,
 ) -> Callable[[RuleEvaluationType], Type[Rule]]:
     ...
 
@@ -174,7 +174,7 @@ def rule(
     *,
     description: str | None = None,
     severity: Severity = Severity.MEDIUM,
-    model_filters: set[ModelFilter] | None = None,
+    rule_filters: set[RuleFilter] | None = None,
 ) -> Type[Rule] | Callable[[RuleEvaluationType], Type[Rule]]:
     """Rule decorator.
 
@@ -188,7 +188,7 @@ def rule(
         __func: The rule evaluation function being decorated.
         description: The description of the rule.
         severity: The severity of the rule.
-        model_filters: Set of ModelFilter that filters the rule.
+        rule_filters: Set of RuleFilter that filters the items that the rule applies to.
     """
 
     def decorator_rule(
@@ -221,7 +221,7 @@ def rule(
             {
                 "description": rule_description,
                 "severity": severity,
-                "model_filters": model_filters or frozenset(),
+                "rule_filters": rule_filters or frozenset(),
                 "default_config": default_config,
                 "evaluate": wrapped_func,
                 # Save provided evaluate function

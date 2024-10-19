@@ -25,4 +25,4 @@ model_name="model2"
 
 [tool.dbt-score.rules."tests.rules.example.rule_test_example"]
 severity=4
-model_filter_names=["tests.rules.example.skip_model1"]
+rule_filter_names=["tests.rules.example.skip_model1"]
