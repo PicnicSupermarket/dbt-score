@@ -29,7 +29,7 @@ def test_load_valid_toml_file(valid_config_path):
     assert config.fail_any_evaluable_under == 6.9
     assert config.rules_config[
         "tests.rules.example.rule_test_example"
-    ].model_filter_names == ["tests.rules.example.skip_model1"]
+    ].rule_filter_names == ["tests.rules.example.skip_model1"]
 
 
 def test_load_invalid_toml_file(caplog, invalid_config_path):

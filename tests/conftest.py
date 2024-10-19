@@ -6,7 +6,7 @@ from typing import Any, Type
 
 from dbt_score import Model, Rule, RuleViolation, Severity, Source, rule
 from dbt_score.config import Config
-from dbt_score.model_filter import ModelFilter, model_filter
+from dbt_score.rule_filter import RuleFilter, rule_filter
 from dbt_score.models import ManifestLoader
 from pytest import fixture
 
@@ -291,12 +291,12 @@ def rule_error() -> Type[Rule]:
 def model_rule_with_filter() -> Type[Rule]:
     """An example rule that skips through a filter."""
 
-    @model_filter
+    @rule_filter
     def skip_model1(model: Model) -> bool:
         """Skips for model1, passes for model2."""
         return model.name != "model1"
 
-    @rule(model_filters={skip_model1()})
+    @rule(rule_filters={skip_model1()})
     def model_rule_with_filter(model: Model) -> RuleViolation | None:
         """Rule that always fails when not filtered."""
         return RuleViolation(message="I always fail.")
@@ -308,12 +308,12 @@ def model_rule_with_filter() -> Type[Rule]:
 def source_rule_with_filter() -> Type[Rule]:
     """An example rule that skips through a filter."""
 
-    @model_filter
+    @rule_filter
     def skip_source1(source: Source) -> bool:
         """Skips for source1, passes for source2."""
         return source.name != "table1"
 
-    @rule(model_filters={skip_source1()})
+    @rule(rule_filters={skip_source1()})
     def source_rule_with_filter(source: Source) -> RuleViolation | None:
         """Rule that always fails when not filtered."""
         return RuleViolation(message="I always fail.")
@@ -325,7 +325,7 @@ def source_rule_with_filter() -> Type[Rule]:
 def model_class_rule_with_filter() -> Type[Rule]:
     """Using class definitions for filters and rules."""
 
-    class SkipModel1(ModelFilter):
+    class SkipModel1(RuleFilter):
         description = "Filter defined by a class."
 
         def evaluate(self, model: Model) -> bool:
@@ -334,7 +334,7 @@ def model_class_rule_with_filter() -> Type[Rule]:
 
     class ModelRuleWithFilter(Rule):
         description = "Filter defined by a class."
-        model_filters = frozenset({SkipModel1()})
+        rule_filters = frozenset({SkipModel1()})
 
         def evaluate(self, model: Model) -> RuleViolation | None:
             return RuleViolation(message="I always fail.")
@@ -346,7 +346,7 @@ def model_class_rule_with_filter() -> Type[Rule]:
 def source_class_rule_with_filter() -> Type[Rule]:
     """Using class definitions for filters and rules."""
 
-    class SkipSource1(ModelFilter):
+    class SkipSource1(RuleFilter):
         description = "Filter defined by a class."
 
         def evaluate(self, source: Source) -> bool:
@@ -355,7 +355,7 @@ def source_class_rule_with_filter() -> Type[Rule]:
 
     class SourceRuleWithFilter(Rule):
         description = "Filter defined by a class."
-        model_filters = frozenset({SkipSource1()})
+        rule_filters = frozenset({SkipSource1()})
 
         def evaluate(self, source: Source) -> RuleViolation | None:
             return RuleViolation(message="I always fail.")

@@ -15,7 +15,7 @@ def test_rule_registry_discovery(default_config):
         "tests.rules.example.rule_test_example",
         "tests.rules.nested.example.rule_test_nested_example",
     ]
-    assert list(r._model_filters.keys()) == ["tests.rules.example.skip_model1"]
+    assert list(r._rule_filters.keys()) == ["tests.rules.example.skip_model1"]
 
 
 def test_disabled_rule_registry_discovery():
