@@ -2,7 +2,7 @@
 
 import json
 
-from dbt_score.evaluation import ModelResultsType
+from dbt_score.evaluation import EvaluableResultsType
 from dbt_score.formatters.manifest_formatter import ManifestFormatter
 from dbt_score.rule import RuleViolation
 from dbt_score.scoring import Score
@@ -21,12 +21,12 @@ def test_manifest_formatter_model(
     formatter = ManifestFormatter(
         manifest_loader=manifest_loader, config=default_config
     )
-    results: ModelResultsType = {
+    results: EvaluableResultsType = {
         rule_severity_low: None,
         rule_severity_medium: Exception("Oh noes"),
         rule_severity_critical: RuleViolation("Error"),
     }
-    formatter.model_evaluated(model1, results, Score(10.0, "🥇"))
+    formatter.evaluable_evaluated(model1, results, Score(10.0, "🥇"))
     stdout = capsys.readouterr().out
     assert stdout == ""
 
@@ -45,19 +45,19 @@ def test_manifest_formatter_project(
     formatter = ManifestFormatter(
         manifest_loader=manifest_loader, config=default_config
     )
-    result1: ModelResultsType = {
+    result1: EvaluableResultsType = {
         rule_severity_low: None,
         rule_severity_medium: Exception("Oh noes"),
         rule_severity_critical: RuleViolation("Error"),
     }
-    result2: ModelResultsType = {
+    result2: EvaluableResultsType = {
         rule_severity_low: None,
         rule_severity_medium: None,
         rule_severity_critical: None,
     }
 
-    formatter.model_evaluated(model1, result1, Score(5.0, "🚧"))
-    formatter.model_evaluated(model2, result2, Score(10.0, "🥇"))
+    formatter.evaluable_evaluated(model1, result1, Score(5.0, "🚧"))
+    formatter.evaluable_evaluated(model2, result2, Score(10.0, "🥇"))
     formatter.project_evaluated(Score(7.5, "🥉"))
     stdout = capsys.readouterr().out
     new_manifest = json.loads(stdout)
