@@ -44,9 +44,9 @@ def sql_has_reasonable_number_of_lines(
 
 
 @rule(severity=Severity.LOW)
-def public_model_has_example_sql(model: Model) -> RuleViolation | None:
-    """The documentation of a public model should have an example query."""
-    if model.language == "sql" and model.access == "public":
+def has_example_sql(model: Model) -> RuleViolation | None:
+    """The documentation of a model should have an example query."""
+    if model.language == "sql":
         if "```sql" not in model.description:
             return RuleViolation(
                 "The model description does not include an example SQL query."
