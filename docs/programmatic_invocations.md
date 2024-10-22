@@ -32,7 +32,7 @@ $ dbt-score lint --format json
           "severity": "medium",
           "message": "Model lacks an owner."
         },
-        "dbt_score.rules.generic.public_model_has_example_sql": {
+        "dbt_score.rules.generic.has_example_sql": {
           "result": "OK",
           "severity": "low",
           "message": null
