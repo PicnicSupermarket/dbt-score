@@ -106,7 +106,7 @@ def lint(
     fail_project_under: float,
     fail_any_evaluable_under: float,
 ) -> None:
-    """Lint dbt models metadata."""
+    """Lint dbt metadata."""
     manifest_provided = (
         click.get_current_context().get_parameter_source("manifest")
         != ParameterSource.DEFAULT
