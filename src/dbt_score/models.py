@@ -72,7 +72,7 @@ class Test:
 
 @dataclass
 class Column:
-    """Represents a column in a model.
+    """Represents a column.
 
     Attributes:
         name: The name of the column.
@@ -318,6 +318,16 @@ class Source(HasColumnsMixin):
     _raw_values: dict[str, Any] = field(default_factory=dict)
     _raw_test_values: list[dict[str, Any]] = field(default_factory=list)
 
+    @property
+    def selector_name(self) -> str:
+        """Returns the name used by the dbt `source` method selector.
+
+        Note: This is also the format output by `dbt ls --output name` for sources.
+
+        https://docs.getdbt.com/reference/node-selection/methods#the-source-method
+        """
+        return f"{self.source_name}.{self.name}"
+
     @classmethod
     def from_node(
         cls, node_values: dict[str, Any], test_values: list[dict[str, Any]]
@@ -391,10 +401,10 @@ class ManifestLoader:
         self._load_sources()
 
         if select:
-            self._select_models(select)
+            self._filter_evaluables(select)
 
-        if len(self.models) == 0:
-            logger.warning("No model found.")
+        if (len(self.models) + len(self.sources)) == 0:
+            logger.warning("Nothing to evaluate!")
 
     def _load_models(self) -> None:
         """Load the models from the manifest."""
@@ -419,8 +429,8 @@ class ManifestLoader:
             ):
                 self.tests[attached_node].append(node_values)
 
-    def _select_models(self, select: Iterable[str]) -> None:
-        """Filter models like dbt's --select."""
+    def _filter_evaluables(self, select: Iterable[str]) -> None:
+        """Filter evaluables like dbt's --select."""
         single_model_select = re.compile(r"[a-zA-Z0-9_]+")
 
         if all(single_model_select.fullmatch(x) for x in select):
@@ -431,4 +441,5 @@ class ManifestLoader:
             # Use dbt's implementation of --select
             selected = dbt_ls(select)
 
-        self.models = [x for x in self.models if x.name in selected]
+        self.models = [m for m in self.models if m.name in selected]
+        self.sources = [s for s in self.sources if s.selector_name in selected]
