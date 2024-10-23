@@ -60,4 +60,4 @@ def test_manifest_no_model(mock_dbt_ls, mock_read_text, raw_manifest, caplog):
         manifest_loader = ManifestLoader(Path("some.json"), select=["non_existing"])
 
     assert len(manifest_loader.models) == 0
-    assert "No model found" in caplog.text
+    assert "Nothing to evaluate!" in caplog.text
