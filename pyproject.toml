@@ -6,7 +6,7 @@ build-backend = "pdm.backend"
 name = "dbt-score"
 dynamic = ["version"]
 
-description = "Linter for dbt model metadata."
+description = "Linter for dbt metadata."
 authors = [
     {name = "Picnic Analyst Development Platform", email = "analyst-development-platform@teampicnic.com"}
 ]
