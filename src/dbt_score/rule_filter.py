@@ -59,7 +59,7 @@ class RuleFilter:
         return hash(self.source())
 
 
-# Use @overload to have proper typing for both @model_filter and @model_filter(...)
+# Use @overload to have proper typing for both @rule_filter and @rule_filter(...)
 # https://mypy.readthedocs.io/en/stable/generics.html#decorator-factories
 
 
