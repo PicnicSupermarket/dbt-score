@@ -1,4 +1,4 @@
-"""Test model filters."""
+"""Test rule filters."""
 import pytest
 from dbt_score.models import Model, Source
 from dbt_score.rule_filter import RuleFilter, rule_filter
@@ -19,7 +19,7 @@ def test_basic_filter(model1, model2):
 
 
 def test_basic_filter_with_sources(source1, source2):
-    """Test basic filter testing for a specific model."""
+    """Test basic filter testing for a specific source."""
 
     @rule_filter
     def only_source1(source: Source) -> bool:

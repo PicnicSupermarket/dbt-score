@@ -78,7 +78,7 @@ class Scorer:
         """Compute the score of a list of evaluables."""
         actual_scores = [s.value for s in scores]
         if 0.0 in actual_scores:
-            # Any model with a CRITICAL violation makes the project score 0
+            # Any evaluable with a CRITICAL violation makes the project score 0
             score = Score(self.min_score, self._badge(self.min_score))
         elif len(actual_scores) == 0:
             score = Score(self.max_score, self._badge(self.max_score))
