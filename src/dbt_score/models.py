@@ -8,6 +8,8 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Iterable, Literal, TypeAlias
 
+from more_itertools import first
+
 from dbt_score.dbt_utils import dbt_ls
 
 logger = logging.getLogger(__name__)
@@ -421,13 +423,21 @@ class ManifestLoader:
                 self.sources.append(source)
 
     def _reindex_tests(self) -> None:
-        """Index tests based on their model id."""
+        """Index tests based on their associated evaluable."""
         for node_values in self.raw_nodes.values():
-            # Only include tests that are attached to a model
-            if node_values.get("resource_type") == "test" and (
-                attached_node := node_values.get("attached_node")
-            ):
-                self.tests[attached_node].append(node_values)
+            if node_values.get("resource_type") == "test":
+                # tests for models have a non-null value for `attached_node`
+                if attached_node := node_values.get("attached_node"):
+                    self.tests[attached_node].append(node_values)
+
+                # Tests for sources will have a null `attached_node`, and a non-empty list for `sources`.
+                # They need to be attributed to the source id based on the `depends_on` field.
+                elif node_values.get("sources") and (
+                    source_unique_id := first(
+                        node_values.get("depends_on", {}).get("nodes", []), None
+                    )
+                ):
+                    self.tests[source_unique_id].append(node_values)
 
     def _filter_evaluables(self, select: Iterable[str]) -> None:
         """Filter evaluables like dbt's --select."""

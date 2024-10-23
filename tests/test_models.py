@@ -29,6 +29,7 @@ def test_manifest_load(mock_read_text, raw_manifest):
                 if source["package_name"] == raw_manifest["metadata"]["project_name"]
             ]
         )
+        assert loader.sources[0].tests[0].name == "source_test1"
 
 
 @patch("dbt_score.models.Path.read_text")

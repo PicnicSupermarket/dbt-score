@@ -124,6 +124,43 @@
     "test.package.test3": {
       "resource_type": "test",
       "package_name": "package"
+    },
+    "test.package.source_test1": {
+      "resource_type": "test",
+      "package_name": "package",
+      "name": "source_test1",
+      "attached_node": null,
+      "sources": [["my_source", "table1"]],
+      "depends_on": {
+        "nodes": ["source.package.my_source.table1"]
+      },
+      "test_metadata": {
+        "name": "type",
+        "kwargs": {}
+      }
+    },
+    "test.package.bad_source_test1": {
+      "resource_type": "test",
+      "package_name": "package",
+      "name": "source_test__malformed_missing_depends_on",
+      "attached_node": null,
+      "sources": [["my_source", "table1"]],
+      "test_metadata": {
+        "name": "type",
+        "kwargs": {}
+      }
+    },
+    "test.package.bad_source_test2": {
+      "resource_type": "test",
+      "package_name": "package",
+      "name": "source_test__malformed_missing_depends_on_nodes",
+      "attached_node": null,
+      "sources": [["my_source", "table1"]],
+      "depends_on": {},
+      "test_metadata": {
+        "name": "type",
+        "kwargs": {}
+      }
     }
   },
   "sources": {
