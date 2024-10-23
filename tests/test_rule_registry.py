@@ -55,7 +55,7 @@ def test_rule_registry_core_rules(default_config):
     assert len(r.rules) > 0
 
 
-def test_rule_registry_model_filters(valid_config_path, model1, model2):
+def test_rule_registry_rule_filters(valid_config_path, model1, model2):
     """Test config filters are loaded."""
     config = Config()
     config._load_toml_file(str(valid_config_path))
