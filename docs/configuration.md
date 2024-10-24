@@ -18,7 +18,7 @@ rule_namespaces = ["dbt_score.rules", "dbt_score_rules", "custom_rules"]
 disabled_rules = ["dbt_score.rules.generic.columns_have_description"]
 inject_cwd_in_python_path = true
 fail_project_under = 7.5
-fail_any_model_under = 8.0
+fail_any_item_under = 8.0
 
 [tool.dbt-score.badges]
 first.threshold = 10.0
@@ -51,7 +51,7 @@ The following options can be set in the `pyproject.toml` file:
 - `disabled_rules`: A list of rules to disable.
 - `fail_project_under` (default: `5.0`): If the project score is below this
   value the command will fail with return code 1.
-- `fail_any_model_under` (default: `5.0`): If any model scores below this value
+- `fail_any_item_under` (default: `5.0`): If any model or source scores below this value
   the command will fail with return code 1.
 
 #### Badges configuration
@@ -86,7 +86,7 @@ Every rule can be configured with the following option:
 - `severity`: The severity of the rule. Rules have a default severity and can be
   overridden. It's an integer with a minimum value of 1 and a maximum value
   of 4.
-- `model_filter_names`: Filters used by the rule. Takes a list of names that can
+- `rule_filter_names`: Filters used by the rule. Takes a list of names that can
   be found in the same namespace as the rules (see
   [Package rules](package_rules.md)).
 
