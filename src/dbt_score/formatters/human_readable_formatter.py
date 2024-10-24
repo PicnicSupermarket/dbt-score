@@ -31,7 +31,7 @@ class HumanReadableFormatter(Formatter):
         self, evaluable: Evaluable, results: EvaluableResultsType, score: Score
     ) -> None:
         """Callback when an evaluable item has been evaluated."""
-        if score.value < self._config.fail_any_evaluable_under:
+        if score.value < self._config.fail_any_item_under:
             self._failed_evaluables.append((evaluable, score))
         print(
             f"{score.badge} {self.bold(evaluable.name)} (score: {score.rounded_value!s})"
@@ -55,8 +55,8 @@ class HumanReadableFormatter(Formatter):
         if len(self._failed_evaluables) > 0:
             print()
             print(
-                f"Error: evaluable score too low, fail_any_evaluable_under = "
-                f"{self._config.fail_any_evaluable_under}"
+                f"Error: evaluable score too low, fail_any_item_under = "
+                f"{self._config.fail_any_item_under}"
             )
             for evaluable, evaluable_score in self._failed_evaluables:
                 print(f"Model {evaluable.name} scored {evaluable_score.value}")

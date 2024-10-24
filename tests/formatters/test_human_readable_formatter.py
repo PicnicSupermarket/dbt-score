@@ -115,7 +115,7 @@ def test_human_readable_formatter_low_model_score(
 
 Project score: \x1B[1m0.0\x1B[0m 🚧
 
-Error: evaluable score too low, fail_any_evaluable_under = 5.0
+Error: evaluable score too low, fail_any_item_under = 5.0
 Model model1 scored 0.0
 """
     )
