@@ -60,9 +60,7 @@ class Evaluation:
             self.results[evaluable] = {}
             for rule in rules:
                 try:
-                    if rule.resource_type is type(evaluable) and rule.should_evaluate(
-                        evaluable
-                    ):  #  Consider rule filter(s).
+                    if rule.should_evaluate(evaluable):
                         result = rule.evaluate(evaluable, **rule.config)
                         self.results[evaluable][rule.__class__] = result
                 except Exception as e:

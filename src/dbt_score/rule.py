@@ -125,10 +125,20 @@ class Rule:
 
     @classmethod
     def should_evaluate(cls, evaluable: Evaluable) -> bool:
-        """Checks if all filters in the rule allow evaluation."""
+        """Checks whether the rule should be applied against the evaluable.
+
+        The evaluable must satisfy the following criteria:
+            - all filters in the rule allow evaluation
+            - the rule and evaluable have matching resource_types
+        """
+        resource_types_match = cls.resource_type is type(evaluable)
+
         if cls.rule_filters:
-            return all(f.evaluate(evaluable) for f in cls.rule_filters)
-        return True
+            return (
+                all(f.evaluate(evaluable) for f in cls.rule_filters)
+                and resource_types_match
+            )
+        return resource_types_match
 
     @classmethod
     def set_severity(cls, severity: Severity) -> None:
