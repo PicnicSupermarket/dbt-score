@@ -70,7 +70,7 @@ class JSONFormatter(Formatter):
         self._model_results[evaluable.name] = {
             "score": score.value,
             "badge": score.badge,
-            "pass": score.value >= self._config.fail_any_evaluable_under,
+            "pass": score.value >= self._config.fail_any_item_under,
             "results": {},
         }
         for rule, result in results.items():

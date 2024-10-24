@@ -2,7 +2,7 @@
 rule_namespaces = ["foo", "tests"]
 disabled_rules = ["foo.foo", "tests.bar"]
 fail_project_under = 7.5
-fail_any_evaluable_under = 6.9
+fail_any_item_under = 6.9
 
 [tool.dbt-score.badges]
 wip.icon = "🏗️"
