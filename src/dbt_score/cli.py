@@ -148,10 +148,7 @@ def lint(
         ctx.exit(2)
 
     if (
-        any(
-            x.value < config.fail_any_item_under
-            for x in evaluation.scores.values()
-        )
+        any(x.value < config.fail_any_item_under for x in evaluation.scores.values())
         or evaluation.project_score.value < config.fail_project_under
     ):
         ctx.exit(1)
