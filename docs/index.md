@@ -12,7 +12,7 @@ encourage) good practices.
 
 ```
 > dbt-score lint
-🥇 customers (score: 10.0)
+🥇 M: customers (score: 10.0)
     OK   dbt_score.rules.generic.has_description
     OK   dbt_score.rules.generic.has_owner
     OK   dbt_score.rules.generic.sql_has_reasonable_number_of_lines
@@ -32,10 +32,10 @@ data teams dealing with many models.
 
 To that end, `dbt-score` has 2 main features:
 
-- It runs rules on models, and displays rule violations. Those can be used in
+- It runs rules on dbt models and sources, and displays any rule violations. These can be used in
   interactive environments or in CI.
-- Using those run results, it scores models, as to give them a measure of their
-  maturity. This score can help gamify model metadata improvements, and be
+- Using those run results, it scores items, to ascribe them a measure of their
+  maturity. This score can help gamify metadata improvements/coverage, and be
   reflected in data catalogs.
 
 `dbt-score` aims to:

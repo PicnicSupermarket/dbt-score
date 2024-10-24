@@ -9,7 +9,7 @@ from dataclasses import dataclass
 from dbt_score.config import Config
 
 if typing.TYPE_CHECKING:
-    from dbt_score.evaluation import ModelResultsType
+    from dbt_score.evaluation import EvaluableResultsType
 from dbt_score.rule import RuleViolation, Severity
 
 
@@ -43,16 +43,16 @@ class Scorer:
         """Create a Scorer object."""
         self._config = config
 
-    def score_model(self, model_results: ModelResultsType) -> Score:
-        """Compute the score of a given model."""
-        rule_count = len(model_results)
+    def score_evaluable(self, evaluable_results: EvaluableResultsType) -> Score:
+        """Compute the score of a given evaluable."""
+        rule_count = len(evaluable_results)
 
         if rule_count == 0:
             # No rule? No problem
             score = self.max_score
         elif any(
             rule.severity == Severity.CRITICAL and isinstance(result, RuleViolation)
-            for rule, result in model_results.items()
+            for rule, result in evaluable_results.items()
         ):
             # If there's a CRITICAL violation, the score is 0
             score = self.min_score
@@ -65,7 +65,7 @@ class Scorer:
                         self.score_cardinality - rule.severity.value
                         if isinstance(result, RuleViolation)  # Either 0/3, 1/3 or 2/3
                         else self.score_cardinality  # 3/3
-                        for rule, result in model_results.items()
+                        for rule, result in evaluable_results.items()
                     ]
                 )
                 / (self.score_cardinality * rule_count)
@@ -74,11 +74,11 @@ class Scorer:
 
         return Score(score, self._badge(score))
 
-    def score_aggregate_models(self, scores: list[Score]) -> Score:
-        """Compute the score of a list of models."""
+    def score_aggregate_evaluables(self, scores: list[Score]) -> Score:
+        """Compute the score of a list of evaluables."""
         actual_scores = [s.value for s in scores]
         if 0.0 in actual_scores:
-            # Any model with a CRITICAL violation makes the project score 0
+            # Any evaluable with a CRITICAL violation makes the project score 0
             score = Score(self.min_score, self._badge(self.min_score))
         elif len(actual_scores) == 0:
             score = Score(self.max_score, self._badge(self.max_score))

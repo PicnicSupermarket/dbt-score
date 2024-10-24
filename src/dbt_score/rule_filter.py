@@ -1,16 +1,20 @@
-"""Model filtering to choose when to apply specific rules."""
-
+"""Evaluable filtering to choose when to apply specific rules."""
+import inspect
+import typing
 from typing import Any, Callable, Type, TypeAlias, overload
 
-from dbt_score.models import Model
+from more_itertools import first_true
 
-FilterEvaluationType: TypeAlias = Callable[[Model], bool]
+from dbt_score.models import Evaluable
+
+FilterEvaluationType: TypeAlias = Callable[[Evaluable], bool]
 
 
-class ModelFilter:
+class RuleFilter:
     """The Filter base class."""
 
     description: str
+    resource_type: typing.ClassVar[Evaluable]
 
     def __init__(self) -> None:
         """Initialize the filter."""
@@ -22,7 +26,26 @@ class ModelFilter:
         if not hasattr(cls, "description"):
             raise AttributeError("Subclass must define class attribute `description`.")
 
-    def evaluate(self, model: Model) -> bool:
+        cls.resource_type = cls._introspect_resource_type()
+
+    @classmethod
+    def _introspect_resource_type(cls) -> Type[Evaluable]:
+        evaluate_func = getattr(cls, "_orig_evaluate", cls.evaluate)
+
+        sig = inspect.signature(evaluate_func)
+        resource_type_argument = first_true(
+            sig.parameters.values(),
+            pred=lambda arg: arg.annotation in typing.get_args(Evaluable),
+        )
+
+        if not resource_type_argument:
+            raise TypeError(
+                "Subclass must implement method `evaluate` with an annotated Model or Source argument."
+            )
+
+        return resource_type_argument.annotation
+
+    def evaluate(self, evaluable: Evaluable) -> bool:
         """Evaluates the filter."""
         raise NotImplementedError("Subclass must implement method `evaluate`.")
 
@@ -36,36 +59,36 @@ class ModelFilter:
         return hash(self.source())
 
 
-# Use @overload to have proper typing for both @model_filter and @model_filter(...)
+# Use @overload to have proper typing for both @rule_filter and @rule_filter(...)
 # https://mypy.readthedocs.io/en/stable/generics.html#decorator-factories
 
 
 @overload
-def model_filter(__func: FilterEvaluationType) -> Type[ModelFilter]:
+def rule_filter(__func: FilterEvaluationType) -> Type[RuleFilter]:
     ...
 
 
 @overload
-def model_filter(
+def rule_filter(
     *,
     description: str | None = None,
-) -> Callable[[FilterEvaluationType], Type[ModelFilter]]:
+) -> Callable[[FilterEvaluationType], Type[RuleFilter]]:
     ...
 
 
-def model_filter(
+def rule_filter(
     __func: FilterEvaluationType | None = None,
     *,
     description: str | None = None,
-) -> Type[ModelFilter] | Callable[[FilterEvaluationType], Type[ModelFilter]]:
-    """Model-filter decorator.
+) -> Type[RuleFilter] | Callable[[FilterEvaluationType], Type[RuleFilter]]:
+    """Rule-filter decorator.
 
-    The model-filter decorator creates a filter class (subclass of ModelFilter)
+    The rule_filter decorator creates a filter class (subclass of RuleFilter)
     and returns it.
 
     Using arguments or not are both supported:
-    - ``@model_filter``
-    - ``@model_filter(description="...")``
+    - ``@rule_filter``
+    - ``@rule_filter(description="...")``
 
     Args:
         __func: The filter evaluation function being decorated.
@@ -74,11 +97,11 @@ def model_filter(
 
     def decorator_filter(
         func: FilterEvaluationType,
-    ) -> Type[ModelFilter]:
+    ) -> Type[RuleFilter]:
         """Decorator function."""
         if func.__doc__ is None and description is None:
             raise AttributeError(
-                "ModelFilter must define `description` or `func.__doc__`."
+                "RuleFilter must define `description` or `func.__doc__`."
             )
 
         # Get description parameter, otherwise use the docstring
@@ -86,14 +109,14 @@ def model_filter(
             func.__doc__.split("\n")[0] if func.__doc__ else None
         )
 
-        def wrapped_func(self: ModelFilter, *args: Any, **kwargs: Any) -> bool:
+        def wrapped_func(self: RuleFilter, *args: Any, **kwargs: Any) -> bool:
             """Wrap func to add `self`."""
             return func(*args, **kwargs)
 
-        # Create the filter class inheriting from ModelFilter
+        # Create the filter class inheriting from RuleFilter
         filter_class = type(
             func.__name__,
-            (ModelFilter,),
+            (RuleFilter,),
             {
                 "description": filter_description,
                 "evaluate": wrapped_func,
@@ -108,8 +131,8 @@ def model_filter(
         return filter_class
 
     if __func is not None:
-        # The syntax @model_filter is used
+        # The syntax @rule_filter is used
         return decorator_filter(__func)
     else:
-        # The syntax @model_filter(...) is used
+        # The syntax @rule_filter(...) is used
         return decorator_filter

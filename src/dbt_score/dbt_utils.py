@@ -42,7 +42,7 @@ def dbt_parse() -> dbtRunnerResult:
 
 def dbt_ls(select: Iterable[str] | None) -> Iterable[str]:
     """Run dbt ls."""
-    cmd = ["ls", "--resource-type", "model", "--output", "name"]
+    cmd = ["ls", "--resource-types", "model", "source", "--output", "name"]
     if select:
         cmd += ["--select", *select]
 

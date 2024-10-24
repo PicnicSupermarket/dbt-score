@@ -1,7 +1,7 @@
 """Unit tests for the ASCII formatter."""
 
 
-from dbt_score.evaluation import ModelResultsType
+from dbt_score.evaluation import EvaluableResultsType
 from dbt_score.formatters.ascii_formatter import ASCIIFormatter
 from dbt_score.rule import RuleViolation
 from dbt_score.scoring import Score
@@ -18,12 +18,12 @@ def test_ascii_formatter_model(
 ):
     """Ensure the formatter doesn't write anything after model evaluation."""
     formatter = ASCIIFormatter(manifest_loader=manifest_loader, config=default_config)
-    results: ModelResultsType = {
+    results: EvaluableResultsType = {
         rule_severity_low: None,
         rule_severity_medium: Exception("Oh noes"),
         rule_severity_critical: RuleViolation("Error"),
     }
-    formatter.model_evaluated(model1, results, Score(10.0, "🥇"))
+    formatter.evaluable_evaluated(model1, results, Score(10.0, "🥇"))
     stdout = capsys.readouterr().out
     assert stdout == ""
 
