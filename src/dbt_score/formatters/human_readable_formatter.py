@@ -4,7 +4,7 @@ from typing import Any
 
 from dbt_score.evaluation import EvaluableResultsType
 from dbt_score.formatters import Formatter
-from dbt_score.models import Evaluable
+from dbt_score.models import Evaluable, Model, Source
 from dbt_score.rule import RuleViolation
 from dbt_score.scoring import Score
 
@@ -27,15 +27,29 @@ class HumanReadableFormatter(Formatter):
         """Return text in bold."""
         return f"\033[1m{text}\033[0m"
 
+    @staticmethod
+    def pretty_name(evaluable: Evaluable) -> str:
+        """Return the pretty name for an evaluable."""
+        match evaluable:
+            case Model():
+                return evaluable.name
+            case Source():
+                return evaluable.selector_name
+            case _:
+                raise NotImplementedError
+
     def evaluable_evaluated(
         self, evaluable: Evaluable, results: EvaluableResultsType, score: Score
     ) -> None:
         """Callback when an evaluable item has been evaluated."""
         if score.value < self._config.fail_any_item_under:
             self._failed_evaluables.append((evaluable, score))
-        print(
-            f"{score.badge} {self.bold(evaluable.name)} (score: {score.rounded_value!s})"
-        )
+
+        resource_type = type(evaluable).__name__
+        name_formatted = f"{resource_type[0]}: {self.pretty_name(evaluable)}"
+        header = f"{score.badge} {self.bold(name_formatted)} (score: {score.rounded_value!s})"
+
+        print(header)
         for rule, result in results.items():
             if result is None:
                 print(f"{self.indent}{self.label_ok} {rule.source()}")
@@ -59,7 +73,10 @@ class HumanReadableFormatter(Formatter):
                 f"{self._config.fail_any_item_under}"
             )
             for evaluable, evaluable_score in self._failed_evaluables:
-                print(f"Model {evaluable.name} scored {evaluable_score.value}")
+                resource_type = type(evaluable)
+                print(
+                    f"{resource_type.__name__} {self.pretty_name(evaluable)} scored {evaluable_score.value}"
+                )
 
         elif score.value < self._config.fail_project_under:
             print()
