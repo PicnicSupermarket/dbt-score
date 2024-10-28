@@ -8,6 +8,9 @@ and this project adheres to
 
 ## [Unreleased]
 
+- **Breaking**: Remove `dbt-core` from dependencies. Since it is not mandatory
+  for `dbt-score` to execute `dbt`, remove the dependency.
+
 ## [0.6.0] - 2024-08-23
 
 - **Breaking**: Improve error handling in CLI. Log messages are written in
