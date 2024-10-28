@@ -7,16 +7,12 @@ from typing import Iterable, Iterator, cast
 
 # Conditionally import dbt objects.
 try:
+    DBT_INSTALLED = True
     from dbt.cli.main import dbtRunner, dbtRunnerResult  # type: ignore
     from dbt.cli.options import MultiOption  # type: ignore
-
-    DBT_INSTALLED = True
 except ImportError:
     DBT_INSTALLED = False
     MultiOption = None
-    print("dbt not present.")
-
-__all__ = ["MultiOption"]  # TODO fix
 
 
 class DbtNotInstalledException(Exception):

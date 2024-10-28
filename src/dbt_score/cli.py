@@ -9,7 +9,7 @@ import click
 from click.core import ParameterSource
 
 from dbt_score.config import Config
-from dbt_score.dbt_utils import (
+from dbt_score.dbt_utils import (  # type: ignore[attr-defined]
     DBT_INSTALLED,
     DbtParseException,
     MultiOption,
@@ -56,7 +56,7 @@ def cli() -> None:
     cls=MultiOption if DBT_INSTALLED else None,
     type=tuple,
     multiple=True,
-    hidden=not DBT_INSTALLED,
+    hidden=not DBT_INSTALLED,  #  Only include if dbt is installed
 )
 @click.option(
     "--namespace",
