@@ -59,6 +59,25 @@ def test_lint_dbt_parse_exception(caplog):
     assert "dbt failed to parse project" in caplog.text
 
 
+def test_lint_dbt_not_installed(caplog, manifest_path):
+    """Test lint with a valid manifest when dbt is not installed."""
+    runner = CliRunner()
+
+    with patch("dbt_score.cli.DBT_INSTALLED", new=False):
+        result = runner.invoke(lint, ["-m", manifest_path], catch_exceptions=False)
+    assert result.exit_code == 0
+
+
+def test_lint_dbt_not_installed_v(caplog):
+    """Test lint with dbt parse when dbt is not installed."""
+    runner = CliRunner()
+
+    with patch("dbt_score.dbt_utils.DBT_INSTALLED", new=False):
+        result = runner.invoke(lint, ["-p"])
+    assert result.exit_code == 2
+    assert "DbtNotInstalledException" in caplog.text
+
+
 def test_lint_other_exception(manifest_path, caplog):
     """Test lint with an unexpected error."""
     runner = CliRunner()
