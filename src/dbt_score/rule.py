@@ -83,6 +83,17 @@ class Rule:
 
         cls.resource_type = cls._introspect_resource_type()
 
+        cls._validate_rule_filters()
+
+    @classmethod
+    def _validate_rule_filters(cls):
+        for rule_filter in cls.rule_filters:
+            if rule_filter.resource_type != cls.resource_type:
+                raise TypeError(
+                    f"Mismatched resource_type on filter {rule_filter.__class__.__name__}. "
+                    f"Expected {cls.resource_type.__name__}, but got {rule_filter.resource_type.__name__}."
+                )
+
     @classmethod
     def _introspect_resource_type(cls) -> Type[Evaluable]:
         evaluate_func = getattr(cls, "_orig_evaluate", cls.evaluate)
