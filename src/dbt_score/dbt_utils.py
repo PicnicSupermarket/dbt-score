@@ -44,7 +44,8 @@ def dbt_parse() -> "dbtRunnerResult":
     """
     if not DBT_INSTALLED:
         raise DbtNotInstalledException(
-            "To execute dbt parse, install dbt-core in your environment."
+            "This option requires dbt to be installed in the same Python"
+            "environment as dbt-score."
         )
 
     with _disable_dbt_stdout():
@@ -60,7 +61,8 @@ def dbt_ls(select: Iterable[str] | None) -> Iterable[str]:
     """Run dbt ls."""
     if not DBT_INSTALLED:
         raise DbtNotInstalledException(
-            "To execute dbt ls, install dbt-core in your environment."
+            "This option requires dbt to be installed in the same Python"
+            "environment as dbt-score."
         )
 
     cmd = ["ls", "--resource-type", "model", "--output", "name"]
