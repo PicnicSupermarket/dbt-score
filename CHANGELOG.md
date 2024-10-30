@@ -12,6 +12,7 @@ and this project adheres to
   `has_example_sql` and applies by default to all models.
 - **Breaking**: Remove `dbt-core` from dependencies. Since it is not mandatory
   for `dbt-score` to execute `dbt`, remove the dependency.
+- **Breaking**: Stop using `MultiOption` selection type.
 
 ## [0.6.0] - 2024-08-23
 
