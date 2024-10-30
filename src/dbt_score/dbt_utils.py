@@ -3,7 +3,7 @@
 import contextlib
 import os
 from pathlib import Path
-from typing import Iterable, Iterator, cast
+from typing import Any, Callable, Iterable, Iterator, cast
 
 # Conditionally import dbt objects.
 try:
@@ -25,12 +25,26 @@ class DbtLsException(Exception):
     """Raised when dbt ls fails."""
 
 
+def dbt_required(func: Callable[..., Any]) -> Callable[..., Any]:
+    """Decorator for methods that require dbt to be installed."""
+
+    def inner() -> None:
+        if not DBT_INSTALLED:
+            raise DbtNotInstalledException(
+                "This option requires dbt to be installed in the same Python"
+                "environment as dbt-score."
+            )
+
+    return inner
+
+
 @contextlib.contextmanager
 def _disable_dbt_stdout() -> Iterator[None]:
     with contextlib.redirect_stdout(None):
         yield
 
 
+@dbt_required
 def dbt_parse() -> "dbtRunnerResult":
     """Parse a dbt project.
 
@@ -40,12 +54,6 @@ def dbt_parse() -> "dbtRunnerResult":
     Raises:
         DbtParseException: dbt parse failed.
     """
-    if not DBT_INSTALLED:
-        raise DbtNotInstalledException(
-            "This option requires dbt to be installed in the same Python"
-            "environment as dbt-score."
-        )
-
     with _disable_dbt_stdout():
         result: "dbtRunnerResult" = dbtRunner().invoke(["parse"])
 
@@ -55,14 +63,9 @@ def dbt_parse() -> "dbtRunnerResult":
     return result
 
 
+@dbt_required
 def dbt_ls(select: Iterable[str] | None) -> Iterable[str]:
     """Run dbt ls."""
-    if not DBT_INSTALLED:
-        raise DbtNotInstalledException(
-            "This option requires dbt to be installed in the same Python"
-            "environment as dbt-score."
-        )
-
     cmd = ["ls", "--resource-type", "model", "--output", "name"]
     if select:
         cmd += ["--select", *select]
