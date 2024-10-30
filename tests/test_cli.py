@@ -63,7 +63,7 @@ def test_lint_dbt_not_installed(caplog, manifest_path):
     """Test lint with a valid manifest when dbt is not installed."""
     runner = CliRunner()
 
-    with patch("dbt_score.cli.DBT_INSTALLED", new=False):
+    with patch("dbt_score.dbt_utils.DBT_INSTALLED", new=False):
         result = runner.invoke(lint, ["-m", manifest_path], catch_exceptions=False)
     assert result.exit_code == 0
 

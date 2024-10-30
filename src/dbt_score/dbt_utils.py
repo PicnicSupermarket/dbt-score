@@ -9,10 +9,8 @@ from typing import Iterable, Iterator, cast
 try:
     DBT_INSTALLED = True
     from dbt.cli.main import dbtRunner, dbtRunnerResult  # type: ignore
-    from dbt.cli.options import MultiOption  # type: ignore
 except ImportError:
     DBT_INSTALLED = False
-    MultiOption = None
 
 
 class DbtNotInstalledException(Exception):

@@ -36,6 +36,7 @@ dbt-score = "dbt_score.__main__:main"
 [tool.pdm]
 [tool.pdm.dev-dependencies]
 dev = [
+    "dbt-core>=1.5",
     "tox-pdm~=0.7.2",
     "tox~=4.13",
 ]
