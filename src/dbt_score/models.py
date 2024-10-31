@@ -8,8 +8,6 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Iterable, Literal, TypeAlias
 
-from more_itertools import first
-
 from dbt_score.dbt_utils import dbt_ls
 
 logger = logging.getLogger(__name__)
@@ -439,8 +437,8 @@ class ManifestLoader:
                 # They need to be attributed to the source id
                 # based on the `depends_on` field.
                 elif node_values.get("sources") and (
-                    source_unique_id := first(
-                        node_values.get("depends_on", {}).get("nodes", []), None
+                    source_unique_id := next(
+                        iter(node_values.get("depends_on", {}).get("nodes", [])), None
                     )
                 ):
                     self.tests[source_unique_id].append(node_values)

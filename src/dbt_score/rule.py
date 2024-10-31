@@ -6,9 +6,8 @@ from dataclasses import dataclass, field
 from enum import Enum
 from typing import Any, Callable, Iterable, Type, TypeAlias, overload
 
-from more_itertools import first_true
-
 from dbt_score.models import Evaluable
+from dbt_score.more_itertools import first_true
 from dbt_score.rule_filter import RuleFilter
 
 
