@@ -2,6 +2,7 @@
 
 import contextlib
 import os
+from functools import wraps
 from pathlib import Path
 from typing import Any, Callable, Iterable, Iterator, cast
 
@@ -28,14 +29,16 @@ class DbtLsException(Exception):
 def dbt_required(func: Callable[..., Any]) -> Callable[..., Any]:
     """Decorator for methods that require dbt to be installed."""
 
-    def inner() -> None:
+    @wraps(func)
+    def wrapper(*args: Any, **kwargs: Any) -> Any:
         if not DBT_INSTALLED:
             raise DbtNotInstalledException(
                 "This option requires dbt to be installed in the same Python"
                 "environment as dbt-score."
             )
+        return func(*args, **kwargs)
 
-    return inner
+    return wrapper
 
 
 @contextlib.contextmanager
