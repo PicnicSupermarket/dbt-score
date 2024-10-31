@@ -7,10 +7,13 @@ from typing import Final, Literal
 
 import click
 from click.core import ParameterSource
-from dbt.cli.options import MultiOption
 
 from dbt_score.config import Config
-from dbt_score.dbt_utils import DbtParseException, dbt_parse, get_default_manifest_path
+from dbt_score.dbt_utils import (
+    DbtParseException,
+    dbt_parse,
+    get_default_manifest_path,
+)
 from dbt_score.lint import lint_dbt_project
 from dbt_score.rule_catalog import display_catalog
 
@@ -48,8 +51,6 @@ def cli() -> None:
     "--select",
     "-s",
     help="Specify the nodes to include.",
-    cls=MultiOption,
-    type=tuple,
     multiple=True,
 )
 @click.option(

@@ -11,8 +11,8 @@ Installation of `dbt-score` is simple:
 pip install dbt-score
 ```
 
-If a virtual environment is used to run dbt, make sure to install `dbt-score` in
-the same environment.
+In order to run `dbt-score` with all its features, be sure to install
+`dbt-score` in the same environment as `dbt-core`.
 
 ## Usage
 
