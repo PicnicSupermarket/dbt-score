@@ -8,6 +8,12 @@ and this project adheres to
 
 ## [Unreleased]
 
+- **Breaking**: The rule `public_model_has_example_sql` has been renamed
+  `has_example_sql` and applies by default to all models.
+- **Breaking**: Remove `dbt-core` from dependencies. Since it is not mandatory
+  for `dbt-score` to execute `dbt`, remove the dependency.
+- **Breaking**: Stop using `MultiOption` selection type.
+
 ## [0.6.0] - 2024-08-23
 
 - **Breaking**: Improve error handling in CLI. Log messages are written in

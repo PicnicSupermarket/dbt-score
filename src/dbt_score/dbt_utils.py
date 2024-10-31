@@ -2,10 +2,20 @@
 
 import contextlib
 import os
+from functools import wraps
 from pathlib import Path
-from typing import Iterable, Iterator, cast
+from typing import Any, Callable, Iterable, Iterator, cast
 
-from dbt.cli.main import dbtRunner, dbtRunnerResult
+# Conditionally import dbt objects.
+try:
+    DBT_INSTALLED = True
+    from dbt.cli.main import dbtRunner, dbtRunnerResult  # type: ignore
+except ImportError:
+    DBT_INSTALLED = False
+
+
+class DbtNotInstalledException(Exception):
+    """Raised when trying to run dbt when dbt is not installed."""
 
 
 class DbtParseException(Exception):
@@ -16,13 +26,29 @@ class DbtLsException(Exception):
     """Raised when dbt ls fails."""
 
 
+def dbt_required(func: Callable[..., Any]) -> Callable[..., Any]:
+    """Decorator for methods that require dbt to be installed."""
+
+    @wraps(func)
+    def wrapper(*args: Any, **kwargs: Any) -> Any:
+        if not DBT_INSTALLED:
+            raise DbtNotInstalledException(
+                "This option requires dbt to be installed in the same Python"
+                "environment as dbt-score."
+            )
+        return func(*args, **kwargs)
+
+    return wrapper
+
+
 @contextlib.contextmanager
 def _disable_dbt_stdout() -> Iterator[None]:
     with contextlib.redirect_stdout(None):
         yield
 
 
-def dbt_parse() -> dbtRunnerResult:
+@dbt_required
+def dbt_parse() -> "dbtRunnerResult":
     """Parse a dbt project.
 
     Returns:
@@ -32,7 +58,7 @@ def dbt_parse() -> dbtRunnerResult:
         DbtParseException: dbt parse failed.
     """
     with _disable_dbt_stdout():
-        result: dbtRunnerResult = dbtRunner().invoke(["parse"])
+        result: "dbtRunnerResult" = dbtRunner().invoke(["parse"])
 
     if not result.success:
         raise DbtParseException("dbt parse failed.") from result.exception
@@ -40,6 +66,7 @@ def dbt_parse() -> dbtRunnerResult:
     return result
 
 
+@dbt_required
 def dbt_ls(select: Iterable[str] | None) -> Iterable[str]:
     """Run dbt ls."""
     cmd = ["ls", "--resource-type", "model", "--output", "name"]
@@ -47,7 +74,7 @@ def dbt_ls(select: Iterable[str] | None) -> Iterable[str]:
         cmd += ["--select", *select]
 
     with _disable_dbt_stdout():
-        result: dbtRunnerResult = dbtRunner().invoke(cmd)
+        result: "dbtRunnerResult" = dbtRunner().invoke(cmd)
 
     if not result.success:
         raise DbtLsException("dbt ls failed.") from result.exception
