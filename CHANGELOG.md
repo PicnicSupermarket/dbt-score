@@ -8,6 +8,11 @@ and this project adheres to
 
 ## [Unreleased]
 
+- **Breaking**: Support linting of sources.
+- **Breaking**: `--fail_any_model_under` becomes `--fail-any-item-under` and
+  `--fail_project_under` becomes `--fail-project-under`.
+- **Breaking**: `model_filter_names` becomes `rule_filter_names`.
+
 ## [0.7.1] - 2024-11-01
 
 - Fix mkdocs.

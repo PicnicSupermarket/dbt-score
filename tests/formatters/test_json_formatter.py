@@ -29,7 +29,7 @@ def test_json_formatter(
     assert (
         stdout
         == """{
-  "models": {
+  "evaluables": {
     "model1": {
       "score": 10.0,
       "badge": "🥇",

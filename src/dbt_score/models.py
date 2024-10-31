@@ -44,7 +44,7 @@ class Constraint:
 
 @dataclass
 class Test:
-    """Test for a column or model.
+    """Test for a column, model or source.
 
     Attributes:
         name: The name of the test.
@@ -372,7 +372,7 @@ Evaluable: TypeAlias = Model | Source
 
 
 class ManifestLoader:
-    """Load the models and tests from the manifest."""
+    """Load the models, sources and tests from the manifest."""
 
     def __init__(self, file_path: Path, select: Iterable[str] | None = None):
         """Initialize the ManifestLoader.

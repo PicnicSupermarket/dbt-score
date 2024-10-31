@@ -2,8 +2,9 @@
 
 `dbt-score` is a linter for [dbt](https://www.getdbt.com/) metadata.
 
-dbt allows data practitioners to organize their data in to _models_. Those
-models have metadata associated with them: documentation, tests, types, etc.
+dbt allows data practitioners to organize their data in to _models_ and
+_sources_. Those models and sources have metadata associated with them:
+documentation, tests, types, etc.
 
 `dbt-score` allows to lint and score this metadata, in order to enforce (or
 encourage) good practices.
@@ -25,15 +26,15 @@ score.
 
 ## Philosophy
 
-dbt models are often used as metadata containers: either in YAML files or
-through the use of `{{ config() }}` blocks, they are associated with a lot of
+dbt models/sources are often used as metadata containers: either in YAML files
+or through the use of `{{ config() }}` blocks, they are associated with a lot of
 information. At scale, it becomes tedious to enforce good practices in large
-data teams dealing with many models.
+data teams dealing with many models/sources.
 
 To that end, `dbt-score` has 2 main features:
 
-- It runs rules on dbt models and sources, and displays any rule violations. These can be used in
-  interactive environments or in CI.
+- It runs rules on dbt models and sources, and displays any rule violations.
+  These can be used in interactive environments or in CI.
 - Using those run results, it scores items, to ascribe them a measure of their
   maturity. This score can help gamify metadata improvements/coverage, and be
   reflected in data catalogs.

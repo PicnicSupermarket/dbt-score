@@ -1,9 +1,9 @@
 # Create rules
 
-In order to lint and score models or sources, `dbt-score` uses a set of 
-rules that are applied to each item. A rule can pass or fail when it is run. 
-Based on the severity of the rule, items are scored with the weighted 
-average of the rules results. Note that `dbt-score` comes bundled with a
+In order to lint and score models or sources, `dbt-score` uses a set of rules
+that are applied to each item. A rule can pass or fail when it is run. Based on
+the severity of the rule, items are scored with the weighted average of the
+rules results. Note that `dbt-score` comes bundled with a
 [set of default rules](rules/generic.md).
 
 On top of the generic rules, it's possible to add your own rules. Two ways exist
@@ -31,10 +31,11 @@ The name of the function is the name of the rule and the docstring of the
 function is its description. Therefore, it is important to use a
 self-explanatory name for the function and document it well.
 
-The type annotation for the rule's argument dictates whether the rule should
-be applied to dbt models or sources.
+The type annotation for the rule's argument dictates whether the rule should be
+applied to dbt models or sources.
 
 Here is the same example rule, applied to sources:
+
 ```python
 from dbt_score import rule, RuleViolation, Source
 
@@ -68,7 +69,7 @@ class ModelHasDescription(Rule):
         """Evaluate the rule."""
         if not model.description:
             return RuleViolation(message="Model lacks a description.")
-        
+
 class SourceHasDescription(Rule):
    description = "A source should have a description."
 
@@ -116,8 +117,8 @@ def sql_has_reasonable_number_of_lines(model: Model, max_lines: int = 200) -> Ru
 ### Filtering rules
 
 Custom and standard rules can be configured to have filters. Filters allow
-models or sources to be ignored by one or multiple rules if the item doesn't satisfy
-the filter criteria.
+models or sources to be ignored by one or multiple rules if the item doesn't
+satisfy the filter criteria.
 
 Filters are created using the same discovery mechanism and interface as custom
 rules, except they do not accept parameters. Similar to Python's built-in
@@ -138,7 +139,8 @@ class SkipSchemaY(RuleFilter):
       return model.schema.lower() != 'y'
 ```
 
-Filters also rely on type-annotations to dictate whether they apply to models or sources:
+Filters also rely on type-annotations to dictate whether they apply to models or
+sources:
 
 ```python
 from dbt_score import RuleFilter, rule_filter, Source
@@ -153,7 +155,6 @@ class SkipSourceDatabaseB(RuleFilter):
    def evaluate(self, source: Source) -> bool:
       return source.database.lower() != 'b'
 ```
-
 
 Similar to setting a rule severity, standard rules can have filters set in the
 [configuration file](configuration.md/#tooldbt-scorerulesrule_namespacerule_name),

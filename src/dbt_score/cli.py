@@ -81,7 +81,7 @@ def cli() -> None:
     default=False,
 )
 @click.option(
-    "--fail_project_under",
+    "--fail-project-under",
     help="Fail if the project score is under this value.",
     type=float,
     is_flag=False,

@@ -4,7 +4,7 @@ Shape of the JSON output:
 
 ```json
 {
-    "models": {
+    "evaluables": {
         "model_foo": {
             "score": 5.0,
             "badge": "🥈",
@@ -60,14 +60,14 @@ class JSONFormatter(Formatter):
     def __init__(self, *args: Any, **kwargs: Any):
         """Instantiate formatter."""
         super().__init__(*args, **kwargs)
-        self._model_results: dict[str, dict[str, Any]] = {}
+        self.evaluable_results: dict[str, dict[str, Any]] = {}
         self._project_results: dict[str, Any]
 
     def evaluable_evaluated(
         self, evaluable: Evaluable, results: EvaluableResultsType, score: Score
     ) -> None:
         """Callback when an evaluable item has been evaluated."""
-        self._model_results[evaluable.name] = {
+        self.evaluable_results[evaluable.name] = {
             "score": score.value,
             "badge": score.badge,
             "pass": score.value >= self._config.fail_any_item_under,
@@ -76,19 +76,19 @@ class JSONFormatter(Formatter):
         for rule, result in results.items():
             severity = rule.severity.name.lower()
             if result is None:
-                self._model_results[evaluable.name]["results"][rule.source()] = {
+                self.evaluable_results[evaluable.name]["results"][rule.source()] = {
                     "result": "OK",
                     "severity": severity,
                     "message": None,
                 }
             elif isinstance(result, RuleViolation):
-                self._model_results[evaluable.name]["results"][rule.source()] = {
+                self.evaluable_results[evaluable.name]["results"][rule.source()] = {
                     "result": "WARN",
                     "severity": severity,
                     "message": result.message,
                 }
             else:
-                self._model_results[evaluable.name]["results"][rule.source()] = {
+                self.evaluable_results[evaluable.name]["results"][rule.source()] = {
                     "result": "ERR",
                     "severity": severity,
                     "message": str(result),
@@ -102,7 +102,7 @@ class JSONFormatter(Formatter):
             "pass": score.value >= self._config.fail_project_under,
         }
         document = {
-            "models": self._model_results,
+            "evaluables": self.evaluable_results,
             "project": self._project_results,
         }
         print(json.dumps(document, indent=2, ensure_ascii=False))

@@ -96,7 +96,7 @@ def test_fail_project_under(manifest_path):
     with patch("dbt_score.cli.Config._load_toml_file"):
         runner = CliRunner()
         result = runner.invoke(
-            lint, ["--manifest", manifest_path, "--fail_project_under", "10.0"]
+            lint, ["--manifest", manifest_path, "--fail-project-under", "10.0"]
         )
 
         assert "model1" in result.output
