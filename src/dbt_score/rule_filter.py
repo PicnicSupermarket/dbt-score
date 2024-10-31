@@ -40,7 +40,8 @@ class RuleFilter:
 
         if not resource_type_argument:
             raise TypeError(
-                "Subclass must implement method `evaluate` with an annotated Model or Source argument."
+                "Subclass must implement method `evaluate` with an "
+                "annotated Model or Source argument."
             )
 
         return resource_type_argument.annotation

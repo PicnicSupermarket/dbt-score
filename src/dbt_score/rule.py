@@ -90,8 +90,10 @@ class Rule:
         for rule_filter in cls.rule_filters:
             if rule_filter.resource_type != cls.resource_type:
                 raise TypeError(
-                    f"Mismatched resource_type on filter {rule_filter.__class__.__name__}. "
-                    f"Expected {cls.resource_type.__name__}, but got {rule_filter.resource_type.__name__}."
+                    f"Mismatched resource_type on filter "
+                    f"{rule_filter.__class__.__name__}. "
+                    f"Expected {cls.resource_type.__name__}, "
+                    f"but got {rule_filter.resource_type.__name__}."
                 )
 
     @classmethod
@@ -106,7 +108,8 @@ class Rule:
 
         if not resource_type_argument:
             raise TypeError(
-                "Subclass must implement method `evaluate` with an annotated Model or Source argument."
+                "Subclass must implement method `evaluate` with an "
+                "annotated Model or Source argument."
             )
 
         return resource_type_argument.annotation

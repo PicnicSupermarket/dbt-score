@@ -27,15 +27,14 @@ def test_human_readable_formatter_model(
     }
     formatter.evaluable_evaluated(model1, results, Score(10.0, "🥇"))
     stdout = capsys.readouterr().out
-    assert stdout == dedent(
-        """\
-        🥇 \x1B[1mM: model1\x1B[0m (score: 10.0)
-            \x1B[1;32mOK  \x1B[0m tests.conftest.rule_severity_low
-            \x1B[1;31mERR \x1B[0m tests.conftest.rule_severity_medium: Oh noes
-            \x1B[1;33mWARN\x1B[0m (critical) tests.conftest.rule_severity_critical: Error
+    expected = """\
+    🥇 \x1B[1mM: model1\x1B[0m (score: 10.0)
+        \x1B[1;32mOK  \x1B[0m tests.conftest.rule_severity_low
+        \x1B[1;31mERR \x1B[0m tests.conftest.rule_severity_medium: Oh noes
+        \x1B[1;33mWARN\x1B[0m (critical) tests.conftest.rule_severity_critical: Error
 
-        """
-    )
+    """
+    assert stdout == dedent(expected)
 
 
 def test_human_readable_formatter_project(capsys, default_config, manifest_loader):
@@ -68,15 +67,15 @@ def test_human_readable_formatter_near_perfect_model_score(
     }
     formatter.evaluable_evaluated(model1, results, Score(9.99, "🥈"))
     stdout = capsys.readouterr().out
-    assert stdout == dedent(
-        """\
-        🥈 \x1B[1mM: model1\x1B[0m (score: 9.9)
-            \x1B[1;32mOK  \x1B[0m tests.conftest.rule_severity_low
-            \x1B[1;31mERR \x1B[0m tests.conftest.rule_severity_medium: Oh noes
-            \x1B[1;33mWARN\x1B[0m (critical) tests.conftest.rule_severity_critical: Error
 
-        """
-    )
+    expected = """\
+    🥈 \x1B[1mM: model1\x1B[0m (score: 9.9)
+        \x1B[1;32mOK  \x1B[0m tests.conftest.rule_severity_low
+        \x1B[1;31mERR \x1B[0m tests.conftest.rule_severity_medium: Oh noes
+        \x1B[1;33mWARN\x1B[0m (critical) tests.conftest.rule_severity_critical: Error
+
+    """
+    assert stdout == dedent(expected)
 
 
 def test_human_readable_formatter_near_perfect_project_score(
@@ -111,21 +110,20 @@ def test_human_readable_formatter_low_evaluable_score(
     formatter.project_evaluated(Score(0.0, "🚧"))
     stdout = capsys.readouterr().out
 
-    assert stdout == dedent(
-        """\
-        🚧 \x1B[1mM: model1\x1B[0m (score: 0.0)
-            \x1B[1;33mWARN\x1B[0m (critical) tests.conftest.rule_severity_critical: Error
+    expected = """\
+    🚧 \x1B[1mM: model1\x1B[0m (score: 0.0)
+        \x1B[1;33mWARN\x1B[0m (critical) tests.conftest.rule_severity_critical: Error
 
-        🚧 \x1B[1mS: my_source.table1\x1B[0m (score: 0.0)
-            \x1B[1;33mWARN\x1B[0m (critical) tests.conftest.rule_severity_critical: Error
+    🚧 \x1B[1mS: my_source.table1\x1B[0m (score: 0.0)
+        \x1B[1;33mWARN\x1B[0m (critical) tests.conftest.rule_severity_critical: Error
 
-        Project score: \x1B[1m0.0\x1B[0m 🚧
+    Project score: \x1B[1m0.0\x1B[0m 🚧
 
-        Error: evaluable score too low, fail_any_item_under = 5.0
-        Model model1 scored 0.0
-        Source my_source.table1 scored 0.0
-        """
-    )
+    Error: evaluable score too low, fail_any_item_under = 5.0
+    Model model1 scored 0.0
+    Source my_source.table1 scored 0.0
+    """
+    assert stdout == dedent(expected)
 
 
 def test_human_readable_formatter_low_project_score(
@@ -146,13 +144,12 @@ def test_human_readable_formatter_low_project_score(
     formatter.project_evaluated(Score(0.0, "🚧"))
     stdout = capsys.readouterr().out
 
-    assert stdout == dedent(
-        """\
-        🥇 \x1B[1mM: model1\x1B[0m (score: 10.0)
-            \x1B[1;33mWARN\x1B[0m (critical) tests.conftest.rule_severity_critical: Error
+    expected = """\
+    🥇 \x1B[1mM: model1\x1B[0m (score: 10.0)
+        \x1B[1;33mWARN\x1B[0m (critical) tests.conftest.rule_severity_critical: Error
 
-        Project score: \x1B[1m0.0\x1B[0m 🚧
+    Project score: \x1B[1m0.0\x1B[0m 🚧
 
-        Error: project score too low, fail_project_under = 5.0
-        """
-    )
+    Error: project score too low, fail_project_under = 5.0
+    """
+    assert stdout == dedent(expected)

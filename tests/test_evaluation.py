@@ -263,7 +263,7 @@ def test_evaluation_with_class_filter(
 def test_evaluation_with_models_and_sources(
     manifest_path, default_config, decorator_rule, decorator_rule_source
 ):
-    """Test that model rules are applied to models and source rules are applied to sources."""
+    """Test that model rules apply to models and source rules apply to sources."""
     manifest_loader = ManifestLoader(manifest_path)
     mock_formatter = Mock()
     mock_scorer = Mock()

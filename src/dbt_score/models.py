@@ -260,9 +260,12 @@ class SourceFreshness:
     This is referred to as `FreshnessThreshold` in the dbt JSONSchema.
 
     Attributes:
-        warn_after: The threshold after which the dbt source freshness check should soft-fail with a warning.
-        error_after: The threshold after which the dbt source freshness check should fail.
-        filter: An optional filter to apply to the input data before running source freshness check.
+        warn_after: The threshold after which the dbt source freshness check should
+            soft-fail with a warning.
+        error_after: The threshold after which the dbt source freshness check should
+            fail.
+        filter: An optional filter to apply to the input data before running
+            source freshness check.
     """
 
     warn_after: Duration
@@ -275,7 +278,8 @@ class Source(HasColumnsMixin):
     """Represents a dbt source table.
 
     Attributes:
-        unique_id: The id of the source table, e.g. 'source.package.source_name.source_table_name'.
+        unique_id: The id of the source table,
+            e.g. 'source.package.source_name.source_table_name'.
         name: The alias of the source table.
         description: The full description of the source table.
         source_name: The source namespace.
@@ -430,8 +434,10 @@ class ManifestLoader:
                 if attached_node := node_values.get("attached_node"):
                     self.tests[attached_node].append(node_values)
 
-                # Tests for sources will have a null `attached_node`, and a non-empty list for `sources`.
-                # They need to be attributed to the source id based on the `depends_on` field.
+                # Tests for sources will have a null `attached_node`,
+                # and a non-empty list for `sources`.
+                # They need to be attributed to the source id
+                # based on the `depends_on` field.
                 elif node_values.get("sources") and (
                     source_unique_id := first(
                         node_values.get("depends_on", {}).get("nodes", []), None

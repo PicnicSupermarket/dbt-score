@@ -47,7 +47,10 @@ class HumanReadableFormatter(Formatter):
 
         resource_type = type(evaluable).__name__
         name_formatted = f"{resource_type[0]}: {self.pretty_name(evaluable)}"
-        header = f"{score.badge} {self.bold(name_formatted)} (score: {score.rounded_value!s})"
+        header = (
+            f"{score.badge} "
+            f"{self.bold(name_formatted)} (score: {score.rounded_value!s})"
+        )
 
         print(header)
         for rule, result in results.items():
@@ -75,7 +78,8 @@ class HumanReadableFormatter(Formatter):
             for evaluable, evaluable_score in self._failed_evaluables:
                 resource_type = type(evaluable)
                 print(
-                    f"{resource_type.__name__} {self.pretty_name(evaluable)} scored {evaluable_score.value}"
+                    f"{resource_type.__name__} "
+                    f"{self.pretty_name(evaluable)} scored {evaluable_score.value}"
                 )
 
         elif score.value < self._config.fail_project_under:

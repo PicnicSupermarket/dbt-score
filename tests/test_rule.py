@@ -81,13 +81,13 @@ def test_missing_evaluate_rule_class(model1):
     ],
 )
 def test_rule_introspects_its_resource_type(request, rule_fixture, expected_type):
-    """Test that each rule is aware of the resource-type that it can be evaluated against."""
+    """Test that each rule is aware of the resource-type it is evaluated against."""
     rule = request.getfixturevalue(rule_fixture)
     assert rule().resource_type is expected_type
 
 
 class TestRuleFilterValidation:
-    """Tests that a rule filter must have a matching resource-type to the rule it's attached to."""
+    """Tests that a rule filter matches resource-type to the rule it's attached to."""
 
     @pytest.fixture
     def source_filter_no_parens(self):
@@ -130,7 +130,7 @@ class TestRuleFilterValidation:
     def test_rule_filter_must_match_resource_type_as_rule(
         self, request, rule_filter_fixture
     ):
-        """Tests that rules cannot be initialized when filters are of the wrong resource-type."""
+        """Tests that rules can't be created with filters of incorrect resource-type."""
         rule_filter = request.getfixturevalue(rule_filter_fixture)
 
         with pytest.raises(TypeError) as excinfo:
