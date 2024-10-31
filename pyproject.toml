@@ -50,7 +50,7 @@ test = [
 ]
 docs = [
     "mkdocs-material~=9.5",
-    "mkdocstrings[python]~=0.24.0"
+    "mkdocstrings[python]~=0.26.0"
 ]
 
 [tool.pdm.version]
