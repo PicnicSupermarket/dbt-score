@@ -8,6 +8,10 @@ and this project adheres to
 
 ## [Unreleased]
 
+## [0.7.1] - 2024-11-01
+
+- Fix mkdocs.
+
 ## [0.7.0] - 2024-11-01
 
 - **Breaking**: The rule `public_model_has_example_sql` has been renamed
