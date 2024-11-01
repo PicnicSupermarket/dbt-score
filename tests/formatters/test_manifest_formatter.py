@@ -37,6 +37,8 @@ def test_manifest_formatter_project(
     manifest_loader,
     model1,
     model2,
+    source1,
+    source2,
     rule_severity_low,
     rule_severity_medium,
     rule_severity_critical,
@@ -58,10 +60,30 @@ def test_manifest_formatter_project(
 
     formatter.evaluable_evaluated(model1, result1, Score(5.0, "🚧"))
     formatter.evaluable_evaluated(model2, result2, Score(10.0, "🥇"))
+    formatter.evaluable_evaluated(source1, result1, Score(5.0, "🚧"))
+    formatter.evaluable_evaluated(source2, result2, Score(10.0, "🥇"))
     formatter.project_evaluated(Score(7.5, "🥉"))
+
     stdout = capsys.readouterr().out
     new_manifest = json.loads(stdout)
     assert new_manifest["nodes"]["model.package.model1"]["meta"]["score"] == 5.0
     assert new_manifest["nodes"]["model.package.model1"]["meta"]["badge"] == "🚧"
     assert new_manifest["nodes"]["model.package.model2"]["meta"]["score"] == 10.0
     assert new_manifest["nodes"]["model.package.model2"]["meta"]["badge"] == "🥇"
+
+    assert (
+        new_manifest["sources"]["source.package.my_source.table1"]["meta"]["score"]
+        == 5.0
+    )
+    assert (
+        new_manifest["sources"]["source.package.my_source.table1"]["meta"]["badge"]
+        == "🚧"
+    )
+    assert (
+        new_manifest["sources"]["source.package.my_source.table2"]["meta"]["score"]
+        == 10.0
+    )
+    assert (
+        new_manifest["sources"]["source.package.my_source.table2"]["meta"]["badge"]
+        == "🥇"
+    )
