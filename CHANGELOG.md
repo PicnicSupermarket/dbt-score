@@ -8,7 +8,7 @@ and this project adheres to
 
 ## [Unreleased]
 
-## [0.6.0] - 2024-10-31
+## [0.7.0] - 2024-11-01
 
 - **Breaking**: The rule `public_model_has_example_sql` has been renamed
   `has_example_sql` and applies by default to all models.
