@@ -1,4 +1,5 @@
 """Evaluable filtering to choose when to apply specific rules."""
+
 import inspect
 import typing
 from typing import Any, Callable, Type, TypeAlias, overload
