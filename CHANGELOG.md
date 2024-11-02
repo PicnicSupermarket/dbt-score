@@ -9,15 +9,14 @@ and this project adheres to
 ## [Unreleased]
 
 - Support linting of sources.
-- **Breaking**: Renamed modules: 
-  `dbt_score.model_filter` becomes `dbt_score.rule_filter`
-- **Breaking**: Renamed filter class and decorator:
-  `@model_filter` becomes `@rule_filter` and
-  `ModelFilter` becomes `RuleFilter`.
+- **Breaking**: Renamed modules: `dbt_score.model_filter` becomes
+  `dbt_score.rule_filter`
+- **Breaking**: Renamed filter class and decorator: `@model_filter` becomes
+  `@rule_filter` and `ModelFilter` becomes `RuleFilter`.
 - **Breaking**: Config option `model_filter_names` becomes `rule_filter_names`.
-- **Breaking**: CLI flag naming fixes:
-  `--fail_any_model_under` becomes `--fail-any-item-under` and
-  `--fail_project_under` becomes `--fail-project-under`.
+- **Breaking**: CLI flag naming fixes: `--fail_any_model_under` becomes
+  `--fail-any-item-under` and `--fail_project_under` becomes
+  `--fail-project-under`.
 
 ## [0.7.1] - 2024-11-01
 
