@@ -2,9 +2,7 @@
 
 import pytest
 from dbt_score import Model, Rule, RuleViolation, Severity, Source, rule
-from dbt_score.rule_filter import rule_filter
-
-from src.dbt_score.rule_filter import RuleFilter
+from dbt_score.rule_filter import RuleFilter, rule_filter
 
 
 def test_rule_decorator_and_class(
