@@ -38,7 +38,7 @@ def test_class_filter(model1, model2):
     class OnlyModel1(RuleFilter):
         description = "Some description."
 
-        def evaluate(self, model: Model) -> bool:
+        def evaluate(self, model: Model) -> bool:  # type: ignore[override]
             return model.name == "model1"
 
     instance = OnlyModel1()
@@ -53,7 +53,7 @@ def test_class_filter_with_sources(source1, source2):
     class OnlySource1(RuleFilter):
         description = "Some description."
 
-        def evaluate(self, source: Source) -> bool:
+        def evaluate(self, source: Source) -> bool:  # type: ignore[override]
             return source.name == "table1"
 
     instance = OnlySource1()
@@ -78,7 +78,7 @@ def test_missing_description_rule_class():
         class BadFilter(RuleFilter):
             """Bad example filter."""
 
-            def evaluate(self, model: Model) -> bool:
+            def evaluate(self, model: Model) -> bool:  # type: ignore[override]
                 """Evaluate filter."""
                 return True
 

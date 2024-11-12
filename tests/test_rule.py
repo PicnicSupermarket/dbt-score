@@ -50,7 +50,7 @@ def test_missing_description_rule_class():
         class BadRule(Rule):
             """Bad example rule."""
 
-            def evaluate(self, model: Model) -> RuleViolation | None:
+            def evaluate(self, model: Model) -> RuleViolation | None:  # type: ignore[override]
                 """Evaluate model."""
                 return None
 
@@ -116,7 +116,7 @@ class TestRuleFilterValidation:
         class SourceFilter(RuleFilter):
             description = "Description"
 
-            def evaluate(self, source: Source) -> bool:
+            def evaluate(self, source: Source) -> bool:  # type: ignore[override]
                 return False
 
         return SourceFilter
@@ -147,7 +147,7 @@ class TestRuleFilterValidation:
                 description = "Description."
                 rule_filters = frozenset([rule_filter])
 
-                def evaluate(self, model: Model) -> RuleViolation | None:
+                def evaluate(self, model: Model) -> RuleViolation | None:  # type: ignore[override]
                     pass
 
         assert "Mismatched resource_type on filter" in str(excinfo.value)

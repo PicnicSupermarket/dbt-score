@@ -142,7 +142,7 @@ def class_rule() -> Type[Rule]:
 
         description = "Description of the rule."
 
-        def evaluate(self, model: Model) -> RuleViolation | None:
+        def evaluate(self, model: Model) -> RuleViolation | None:  # type: ignore[override]
             """Evaluate model."""
             if model.name == "model1":
                 return RuleViolation(message="Model1 is a violation.")
@@ -197,7 +197,7 @@ def class_rule_source() -> Type[Rule]:
 
         description = "Description of the rule."
 
-        def evaluate(self, source: Source) -> RuleViolation | None:
+        def evaluate(self, source: Source) -> RuleViolation | None:  # type: ignore[override]
             """Evaluate source."""
             if source.name == "table1":
                 return RuleViolation(message="Source1 is a violation.")
@@ -328,7 +328,7 @@ def model_class_rule_with_filter() -> Type[Rule]:
     class SkipModel1(RuleFilter):
         description = "Filter defined by a class."
 
-        def evaluate(self, model: Model) -> bool:
+        def evaluate(self, model: Model) -> bool:  # type: ignore[override]
             """Skips for model1, passes for model2."""
             return model.name != "model1"
 
@@ -336,7 +336,7 @@ def model_class_rule_with_filter() -> Type[Rule]:
         description = "Filter defined by a class."
         rule_filters = frozenset({SkipModel1()})
 
-        def evaluate(self, model: Model) -> RuleViolation | None:
+        def evaluate(self, model: Model) -> RuleViolation | None:  # type: ignore[override]
             return RuleViolation(message="I always fail.")
 
     return ModelRuleWithFilter
@@ -349,7 +349,7 @@ def source_class_rule_with_filter() -> Type[Rule]:
     class SkipSource1(RuleFilter):
         description = "Filter defined by a class."
 
-        def evaluate(self, source: Source) -> bool:
+        def evaluate(self, source: Source) -> bool:  # type: ignore[override]
             """Skips for source1, passes for source2."""
             return source.name != "table1"
 
@@ -357,7 +357,7 @@ def source_class_rule_with_filter() -> Type[Rule]:
         description = "Filter defined by a class."
         rule_filters = frozenset({SkipSource1()})
 
-        def evaluate(self, source: Source) -> RuleViolation | None:
+        def evaluate(self, source: Source) -> RuleViolation | None:  # type: ignore[override]
             return RuleViolation(message="I always fail.")
 
     return SourceRuleWithFilter
