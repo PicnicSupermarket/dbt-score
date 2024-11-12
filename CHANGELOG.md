@@ -8,6 +8,8 @@ and this project adheres to
 
 ## [Unreleased]
 
+## [0.8.0] - 2024-11-12
+
 - Support linting of sources.
 - **Breaking**: Renamed modules: `dbt_score.model_filter` becomes
   `dbt_score.rule_filter`
