@@ -1,9 +1,9 @@
 # Create rules
 
-In order to lint and score models, `dbt-score` uses a set of rules that are
-applied to each model. A rule can pass or fail when it is run. Based on the
-severity of the rule, models are scored with the weighted average of the rules
-results. Note that `dbt-score` comes bundled with a
+In order to lint and score models or sources, `dbt-score` uses a set of rules
+that are applied to each item. A rule can pass or fail when it is run. Based on
+the severity of the rule, items are scored with the weighted average of the
+rules results. Note that `dbt-score` comes bundled with a
 [set of default rules](rules/generic.md).
 
 On top of the generic rules, it's possible to add your own rules. Two ways exist
@@ -21,7 +21,7 @@ The `@rule` decorator can be used to easily create a new rule:
 from dbt_score import Model, rule, RuleViolation
 
 @rule
-def has_description(model: Model) -> RuleViolation | None:
+def model_has_description(model: Model) -> RuleViolation | None:
     """A model should have a description."""
     if not model.description:
         return RuleViolation(message="Model lacks a description.")
@@ -30,6 +30,21 @@ def has_description(model: Model) -> RuleViolation | None:
 The name of the function is the name of the rule and the docstring of the
 function is its description. Therefore, it is important to use a
 self-explanatory name for the function and document it well.
+
+The type annotation for the rule's argument dictates whether the rule should be
+applied to dbt models or sources.
+
+Here is the same example rule, applied to sources:
+
+```python
+from dbt_score import rule, RuleViolation, Source
+
+@rule
+def source_has_description(source: Source) -> RuleViolation | None:
+   """A source should have a description."""
+   if not source.description:
+      return RuleViolation(message="Source lacks a description.")
+```
 
 The severity of a rule can be set using the `severity` argument:
 
@@ -45,15 +60,23 @@ For more advanced use cases, a rule can be created by inheriting from the `Rule`
 class:
 
 ```python
-from dbt_score import Model, Rule, RuleViolation
+from dbt_score import Model, Rule, RuleViolation, Source
 
-class HasDescription(Rule):
+class ModelHasDescription(Rule):
     description = "A model should have a description."
 
     def evaluate(self, model: Model) -> RuleViolation | None:
         """Evaluate the rule."""
         if not model.description:
             return RuleViolation(message="Model lacks a description.")
+
+class SourceHasDescription(Rule):
+   description = "A source should have a description."
+
+   def evaluate(self, source: Source) -> RuleViolation | None:
+      """Evaluate the rule."""
+      if not source.description:
+         return RuleViolation(message="Source lacks a description.")
 ```
 
 ### Rules location
@@ -91,28 +114,46 @@ def sql_has_reasonable_number_of_lines(model: Model, max_lines: int = 200) -> Ru
         )
 ```
 
-### Filtering models
+### Filtering rules
 
-Custom and standard rules can be configured to have model filters. Filters allow
-models to be ignored by one or multiple rules.
+Custom and standard rules can be configured to have filters. Filters allow
+models or sources to be ignored by one or multiple rules if the item doesn't
+satisfy the filter criteria.
 
 Filters are created using the same discovery mechanism and interface as custom
 rules, except they do not accept parameters. Similar to Python's built-in
-`filter` function, when the filter evaluation returns `True` the model should be
+`filter` function, when the filter evaluation returns `True` the item should be
 evaluated, otherwise it should be ignored.
 
 ```python
-from dbt_score import ModelFilter, model_filter
+from dbt_score import Model, RuleFilter, rule_filter
 
-@model_filter
+@rule_filter
 def only_schema_x(model: Model) -> bool:
     """Only applies a rule to schema X."""
     return model.schema.lower() == 'x'
 
-class SkipSchemaY(ModelFilter):
+class SkipSchemaY(RuleFilter):
     description = "Applies a rule to every schema but Y."
     def evaluate(self, model: Model) -> bool:
       return model.schema.lower() != 'y'
+```
+
+Filters also rely on type-annotations to dictate whether they apply to models or
+sources:
+
+```python
+from dbt_score import RuleFilter, rule_filter, Source
+
+@rule_filter
+def only_from_source_a(source: Source) -> bool:
+   """Only applies a rule to source tables from source X."""
+   return source.source_name.lower() == 'a'
+
+class SkipSourceDatabaseB(RuleFilter):
+   description = "Applies a rule to every source except Database B."
+   def evaluate(self, source: Source) -> bool:
+      return source.database.lower() != 'b'
 ```
 
 Similar to setting a rule severity, standard rules can have filters set in the
@@ -123,7 +164,7 @@ while custom rules accept the configuration file or a decorator parameter.
 from dbt_score import Model, rule, RuleViolation
 from my_project import only_schema_x
 
-@rule(model_filters={only_schema_x()})
+@rule(rule_filters={only_schema_x()})
 def models_in_x_follow_naming_standard(model: Model) -> RuleViolation | None:
     """Models in schema X must follow the naming standard."""
     if some_regex_fails(model.name):

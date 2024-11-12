@@ -11,7 +11,7 @@
 
 ## What is `dbt-score`?
 
-`dbt-score` is a linter for dbt model metadata.
+`dbt-score` is a linter for dbt metadata.
 
 [dbt][dbt] (Data Build Tool) is a great framework for creating, building,
 organizing, testing and documenting _data models_, i.e. data sets living in a

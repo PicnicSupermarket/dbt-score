@@ -4,10 +4,10 @@ import json
 from pathlib import Path
 from typing import Any, Type
 
-from dbt_score import Model, Rule, RuleViolation, Severity, rule
+from dbt_score import Model, Rule, RuleViolation, Severity, Source, rule
 from dbt_score.config import Config
-from dbt_score.model_filter import ModelFilter, model_filter
 from dbt_score.models import ManifestLoader
+from dbt_score.rule_filter import RuleFilter, rule_filter
 from pytest import fixture
 
 # Configuration
@@ -73,6 +73,25 @@ def model2(raw_manifest) -> Model:
     return Model.from_node(raw_manifest["nodes"]["model.package.model2"], [])
 
 
+# Sources
+
+
+@fixture
+def source1(raw_manifest) -> Source:
+    """Source 1."""
+    return Source.from_node(
+        raw_manifest["sources"]["source.package.my_source.table1"], []
+    )
+
+
+@fixture
+def source2(raw_manifest) -> Source:
+    """Source 2."""
+    return Source.from_node(
+        raw_manifest["sources"]["source.package.my_source.table2"], []
+    )
+
+
 # Multiple ways to create rules
 
 
@@ -123,12 +142,67 @@ def class_rule() -> Type[Rule]:
 
         description = "Description of the rule."
 
-        def evaluate(self, model: Model) -> RuleViolation | None:
+        def evaluate(self, model: Model) -> RuleViolation | None:  # type: ignore[override]
             """Evaluate model."""
             if model.name == "model1":
                 return RuleViolation(message="Model1 is a violation.")
 
     return ExampleRule
+
+
+@fixture
+def decorator_rule_source() -> Type[Rule]:
+    """An example rule created with the rule decorator."""
+
+    @rule()
+    def example_rule_source(source: Source) -> RuleViolation | None:
+        """Description of the rule."""
+        if source.name == "table1":
+            return RuleViolation(message="Source1 is a violation.")
+
+    return example_rule_source
+
+
+@fixture
+def decorator_rule_no_parens_source() -> Type[Rule]:
+    """An example rule created with the rule decorator without parentheses."""
+
+    @rule
+    def example_rule_source(source: Source) -> RuleViolation | None:
+        """Description of the rule."""
+        if source.name == "table1":
+            return RuleViolation(message="Source1 is a violation.")
+
+    return example_rule_source
+
+
+@fixture
+def decorator_rule_args_source() -> Type[Rule]:
+    """An example rule created with the rule decorator with arguments."""
+
+    @rule(description="Description of the rule.")
+    def example_rule_source(source: Source) -> RuleViolation | None:
+        if source.name == "table1":
+            return RuleViolation(message="Source1 is a violation.")
+
+    return example_rule_source
+
+
+@fixture
+def class_rule_source() -> Type[Rule]:
+    """An example rule created with a class."""
+
+    class ExampleRuleSource(Rule):
+        """Example rule."""
+
+        description = "Description of the rule."
+
+        def evaluate(self, source: Source) -> RuleViolation | None:  # type: ignore[override]
+            """Evaluate source."""
+            if source.name == "table1":
+                return RuleViolation(message="Source1 is a violation.")
+
+    return ExampleRuleSource
 
 
 # Rules
@@ -214,38 +288,76 @@ def rule_error() -> Type[Rule]:
 
 
 @fixture
-def rule_with_filter() -> Type[Rule]:
+def model_rule_with_filter() -> Type[Rule]:
     """An example rule that skips through a filter."""
 
-    @model_filter
+    @rule_filter
     def skip_model1(model: Model) -> bool:
         """Skips for model1, passes for model2."""
         return model.name != "model1"
 
-    @rule(model_filters={skip_model1()})
-    def rule_with_filter(model: Model) -> RuleViolation | None:
+    @rule(rule_filters={skip_model1()})
+    def model_rule_with_filter(model: Model) -> RuleViolation | None:
         """Rule that always fails when not filtered."""
         return RuleViolation(message="I always fail.")
 
-    return rule_with_filter
+    return model_rule_with_filter
 
 
 @fixture
-def class_rule_with_filter() -> Type[Rule]:
+def source_rule_with_filter() -> Type[Rule]:
+    """An example rule that skips through a filter."""
+
+    @rule_filter
+    def skip_source1(source: Source) -> bool:
+        """Skips for source1, passes for source2."""
+        return source.name != "table1"
+
+    @rule(rule_filters={skip_source1()})
+    def source_rule_with_filter(source: Source) -> RuleViolation | None:
+        """Rule that always fails when not filtered."""
+        return RuleViolation(message="I always fail.")
+
+    return source_rule_with_filter
+
+
+@fixture
+def model_class_rule_with_filter() -> Type[Rule]:
     """Using class definitions for filters and rules."""
 
-    class SkipModel1(ModelFilter):
+    class SkipModel1(RuleFilter):
         description = "Filter defined by a class."
 
-        def evaluate(self, model: Model) -> bool:
+        def evaluate(self, model: Model) -> bool:  # type: ignore[override]
             """Skips for model1, passes for model2."""
             return model.name != "model1"
 
-    class RuleWithFilter(Rule):
+    class ModelRuleWithFilter(Rule):
         description = "Filter defined by a class."
-        model_filters = frozenset({SkipModel1()})
+        rule_filters = frozenset({SkipModel1()})
 
-        def evaluate(self, model: Model) -> RuleViolation | None:
+        def evaluate(self, model: Model) -> RuleViolation | None:  # type: ignore[override]
             return RuleViolation(message="I always fail.")
 
-    return RuleWithFilter
+    return ModelRuleWithFilter
+
+
+@fixture
+def source_class_rule_with_filter() -> Type[Rule]:
+    """Using class definitions for filters and rules."""
+
+    class SkipSource1(RuleFilter):
+        description = "Filter defined by a class."
+
+        def evaluate(self, source: Source) -> bool:  # type: ignore[override]
+            """Skips for source1, passes for source2."""
+            return source.name != "table1"
+
+    class SourceRuleWithFilter(Rule):
+        description = "Filter defined by a class."
+        rule_filters = frozenset({SkipSource1()})
+
+        def evaluate(self, source: Source) -> RuleViolation | None:  # type: ignore[override]
+            return RuleViolation(message="I always fail.")
+
+    return SourceRuleWithFilter

@@ -96,7 +96,7 @@ def test_fail_project_under(manifest_path):
     with patch("dbt_score.cli.Config._load_toml_file"):
         runner = CliRunner()
         result = runner.invoke(
-            lint, ["--manifest", manifest_path, "--fail_project_under", "10.0"]
+            lint, ["--manifest", manifest_path, "--fail-project-under", "10.0"]
         )
 
         assert "model1" in result.output
@@ -110,10 +110,10 @@ def test_fail_any_model_under(manifest_path):
     with patch("dbt_score.cli.Config._load_toml_file"):
         runner = CliRunner()
         result = runner.invoke(
-            lint, ["--manifest", manifest_path, "--fail_any_model_under", "10.0"]
+            lint, ["--manifest", manifest_path, "--fail-any-item-under", "10.0"]
         )
 
         assert "model1" in result.output
         assert "model2" in result.output
-        assert "Error: model score too low, fail_any_model_under" in result.stdout
+        assert "Error: evaluable score too low, fail_any_item_under" in result.stdout
         assert result.exit_code == 1

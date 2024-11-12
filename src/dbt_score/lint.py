@@ -1,4 +1,4 @@
-"""Lint dbt models metadata."""
+"""Lint dbt metadata."""
 
 from pathlib import Path
 from typing import Iterable, Literal
