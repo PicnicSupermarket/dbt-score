@@ -2,7 +2,7 @@
 rule_namespaces = ["foo", "tests"]
 disabled_rules = ["foo.foo", "tests.bar"]
 fail_project_under = 7.5
-fail_any_model_under = 6.9
+fail_any_item_under = 6.9
 
 [tool.dbt-score.badges]
 wip.icon = "🏗️"
@@ -25,4 +25,4 @@ model_name="model2"
 
 [tool.dbt-score.rules."tests.rules.example.rule_test_example"]
 severity=4
-model_filter_names=["tests.rules.example.skip_model1"]
+rule_filter_names=["tests.rules.example.skip_model1"]

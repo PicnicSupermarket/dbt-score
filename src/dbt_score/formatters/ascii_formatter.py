@@ -1,9 +1,9 @@
 """ASCII formatter."""
 
 
-from dbt_score.evaluation import ModelResultsType
+from dbt_score.evaluation import EvaluableResultsType
 from dbt_score.formatters import Formatter
-from dbt_score.models import Model
+from dbt_score.models import Evaluable
 from dbt_score.scoring import Score, Scorer
 
 # ruff: noqa: E501 [line-too-long]
@@ -66,10 +66,10 @@ wip = """
 class ASCIIFormatter(Formatter):
     """Formatter for ASCII medals in the terminal."""
 
-    def model_evaluated(
-        self, model: Model, results: ModelResultsType, score: Score
+    def evaluable_evaluated(
+        self, evaluable: Evaluable, results: EvaluableResultsType, score: Score
     ) -> None:
-        """Callback when a model has been evaluated."""
+        """Callback when an evaluable item has been evaluated."""
         pass
 
     def project_evaluated(self, score: Score) -> None:

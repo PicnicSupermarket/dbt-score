@@ -81,15 +81,15 @@ def cli() -> None:
     default=False,
 )
 @click.option(
-    "--fail_project_under",
+    "--fail-project-under",
     help="Fail if the project score is under this value.",
     type=float,
     is_flag=False,
     default=None,
 )
 @click.option(
-    "--fail_any_model_under",
-    help="Fail if any model is under this value.",
+    "--fail-any-item-under",
+    help="Fail if any evaluable item is under this value.",
     type=float,
     is_flag=False,
     default=None,
@@ -104,9 +104,9 @@ def lint(
     manifest: Path,
     run_dbt_parse: bool,
     fail_project_under: float,
-    fail_any_model_under: float,
+    fail_any_item_under: float,
 ) -> None:
-    """Lint dbt models metadata."""
+    """Lint dbt metadata."""
     manifest_provided = (
         click.get_current_context().get_parameter_source("manifest")
         != ParameterSource.DEFAULT
@@ -122,8 +122,8 @@ def lint(
         config.overload({"disabled_rules": disabled_rule})
     if fail_project_under:
         config.overload({"fail_project_under": fail_project_under})
-    if fail_any_model_under:
-        config.overload({"fail_any_model_under": fail_any_model_under})
+    if fail_any_item_under:
+        config.overload({"fail_any_item_under": fail_any_item_under})
 
     try:
         if run_dbt_parse:
@@ -148,7 +148,7 @@ def lint(
         ctx.exit(2)
 
     if (
-        any(x.value < config.fail_any_model_under for x in evaluation.scores.values())
+        any(x.value < config.fail_any_item_under for x in evaluation.scores.values())
         or evaluation.project_score.value < config.fail_project_under
     ):
         ctx.exit(1)

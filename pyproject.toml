@@ -6,7 +6,7 @@ build-backend = "pdm.backend"
 name = "dbt-score"
 dynamic = ["version"]
 
-description = "Linter for dbt model metadata."
+description = "Linter for dbt metadata."
 authors = [
     {name = "Picnic Analyst Development Platform", email = "analyst-development-platform@teampicnic.com"}
 ]
@@ -101,6 +101,7 @@ max-args = 9
 [tool.ruff.lint.per-file-ignores]
 "tests/**/*.py" = [
     "PLR2004",  # Magic value comparisons
+    "PLR0913",  # Too many args in func def
 ]
 
 ### Coverage ###
@@ -114,3 +115,7 @@ source = [
 [tool.coverage.report]
 show_missing = true
 fail_under = 80
+exclude_also = [
+    "@overload"
+]
+

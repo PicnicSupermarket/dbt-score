@@ -124,6 +124,185 @@
     "test.package.test3": {
       "resource_type": "test",
       "package_name": "package"
+    },
+    "test.package.source_test1": {
+      "resource_type": "test",
+      "package_name": "package",
+      "name": "source_test1",
+      "attached_node": null,
+      "sources": [["my_source", "table1"]],
+      "depends_on": {
+        "nodes": ["source.package.my_source.table1"]
+      },
+      "test_metadata": {
+        "name": "type",
+        "kwargs": {}
+      }
+    },
+    "test.package.bad_source_test1": {
+      "resource_type": "test",
+      "package_name": "package",
+      "name": "source_test__malformed_missing_depends_on",
+      "attached_node": null,
+      "sources": [["my_source", "table1"]],
+      "test_metadata": {
+        "name": "type",
+        "kwargs": {}
+      }
+    },
+    "test.package.bad_source_test2": {
+      "resource_type": "test",
+      "package_name": "package",
+      "name": "source_test__malformed_missing_depends_on_nodes",
+      "attached_node": null,
+      "sources": [["my_source", "table1"]],
+      "depends_on": {},
+      "test_metadata": {
+        "name": "type",
+        "kwargs": {}
+      }
+    }
+  },
+  "sources": {
+    "source.package.my_source.table1": {
+      "database": "source_db",
+      "schema": "source_schema",
+      "name": "table1",
+      "resource_type": "source",
+      "package_name": "package",
+      "path": "models/sources/sources.yml",
+      "original_file_path": "models/sources/sources.yml",
+      "unique_id": "source.package.my_source.table1",
+      "fqn": ["package", "my_source", "table1"],
+      "source_name": "my_source",
+      "source_description": "An important source table.",
+      "loader": "Fivetran",
+      "identifier": "table1",
+      "quoting": {},
+      "loaded_at_field": null,
+      "freshness": {
+        "warn_after": {
+          "count": null,
+          "period": null
+        },
+        "error_after": {
+          "count": null,
+          "period": null
+        },
+        "filter": null
+      },
+      "external": null,
+      "description": "",
+      "columns": {},
+      "meta": {},
+      "source_meta": {},
+      "tags": [],
+      "config": {
+        "enabled": true
+      },
+      "patch_path": null,
+      "unrendered_config": {},
+      "relation_name": "\"package\".\"my_source\".\"table1\"",
+      "created_at": 1728529440.4206917
+    },
+    "source.package.my_source.table2": {
+      "database": "source_db",
+      "schema": "source_schema",
+      "name": "table2",
+      "resource_type": "source",
+      "package_name": "package",
+      "path": "models/sources/sources.yml",
+      "original_file_path": "models/sources/sources.yml",
+      "unique_id": "source.package.my_source.table2",
+      "fqn": ["package", "my_source", "table2"],
+      "source_name": "my_source",
+      "source_description": "Another table with some columns declared.",
+      "loader": "Fivetran",
+      "identifier": "table2",
+      "quoting": {},
+      "loaded_at_field": null,
+      "freshness": {
+        "warn_after": {
+          "count": null,
+          "period": null
+        },
+        "error_after": {
+          "count": null,
+          "period": null
+        },
+        "filter": null
+      },
+      "external": null,
+      "description": "",
+      "columns": {
+        "a": {
+          "name": "column_a",
+          "description": "Column A.",
+          "data_type": "string",
+          "meta": {},
+          "constraints": [],
+          "tags": []
+        },
+        "b": {
+          "name": "column_b",
+          "description": "Column B.",
+          "data_type": "integer",
+          "meta": {},
+          "constraints": [],
+          "tags": []
+        }
+      },
+      "meta": {},
+      "source_meta": {},
+      "tags": [],
+      "config": {
+        "enabled": true
+      },
+      "patch_path": null,
+      "unrendered_config": {},
+      "relation_name": "\"package\".\"my_source\".\"table2\"",
+      "created_at": 1728529440.4206917
+    },
+    "source.package.my_other_source.table1": {
+      "database": "source_db",
+      "schema": "alternate_schema",
+      "name": "table1",
+      "resource_type": "source",
+      "package_name": "package",
+      "path": "models/sources/sources.yml",
+      "original_file_path": "models/sources/sources.yml",
+      "unique_id": "source.package.my_other_source.table1",
+      "fqn": ["package", "my_other_source", "table1"],
+      "source_name": "my_other_source",
+      "source_description": "A source in a different schema.",
+      "loader": "Fivetran",
+      "identifier": "table1",
+      "quoting": {},
+      "loaded_at_field": null,
+      "freshness": {
+        "warn_after": {
+          "count": null,
+          "period": null
+        },
+        "error_after": {
+          "count": null,
+          "period": null
+        },
+        "filter": null
+      },
+      "external": null,
+      "description": "",
+      "columns": {},
+      "meta": {},
+      "source_meta": {},
+      "tags": [],
+      "config": {
+        "enabled": true
+      },
+      "patch_path": null,
+      "unrendered_config": {},
+      "relation_name": "\"package\".\"my_other_source\".\"table1\"",
+      "created_at": 1728529440.4206917
     }
   }
 }

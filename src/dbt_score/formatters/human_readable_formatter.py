@@ -2,9 +2,9 @@
 
 from typing import Any
 
-from dbt_score.evaluation import ModelResultsType
+from dbt_score.evaluation import EvaluableResultsType
 from dbt_score.formatters import Formatter
-from dbt_score.models import Model
+from dbt_score.models import Evaluable, Model, Source
 from dbt_score.rule import RuleViolation
 from dbt_score.scoring import Score
 
@@ -20,20 +20,39 @@ class HumanReadableFormatter(Formatter):
     def __init__(self, *args: Any, **kwargs: Any):
         """Instantiate formatter."""
         super().__init__(*args, **kwargs)
-        self._failed_models: list[tuple[Model, Score]] = []
+        self._failed_evaluables: list[tuple[Evaluable, Score]] = []
 
     @staticmethod
     def bold(text: str) -> str:
         """Return text in bold."""
         return f"\033[1m{text}\033[0m"
 
-    def model_evaluated(
-        self, model: Model, results: ModelResultsType, score: Score
+    @staticmethod
+    def pretty_name(evaluable: Evaluable) -> str:
+        """Return the pretty name for an evaluable."""
+        match evaluable:
+            case Model():
+                return evaluable.name
+            case Source():
+                return evaluable.selector_name
+            case _:
+                raise NotImplementedError
+
+    def evaluable_evaluated(
+        self, evaluable: Evaluable, results: EvaluableResultsType, score: Score
     ) -> None:
-        """Callback when a model has been evaluated."""
-        if score.value < self._config.fail_any_model_under:
-            self._failed_models.append((model, score))
-        print(f"{score.badge} {self.bold(model.name)} (score: {score.rounded_value!s})")
+        """Callback when an evaluable item has been evaluated."""
+        if score.value < self._config.fail_any_item_under:
+            self._failed_evaluables.append((evaluable, score))
+
+        resource_type = type(evaluable).__name__
+        name_formatted = f"{resource_type[0]}: {self.pretty_name(evaluable)}"
+        header = (
+            f"{score.badge} "
+            f"{self.bold(name_formatted)} (score: {score.rounded_value!s})"
+        )
+
+        print(header)
         for rule, result in results.items():
             if result is None:
                 print(f"{self.indent}{self.label_ok} {rule.source()}")
@@ -50,14 +69,18 @@ class HumanReadableFormatter(Formatter):
         """Callback when a project has been evaluated."""
         print(f"Project score: {self.bold(str(score.rounded_value))} {score.badge}")
 
-        if len(self._failed_models) > 0:
+        if len(self._failed_evaluables) > 0:
             print()
             print(
-                f"Error: model score too low, fail_any_model_under = "
-                f"{self._config.fail_any_model_under}"
+                f"Error: evaluable score too low, fail_any_item_under = "
+                f"{self._config.fail_any_item_under}"
             )
-            for model, model_score in self._failed_models:
-                print(f"Model {model.name} scored {model_score.value}")
+            for evaluable, evaluable_score in self._failed_evaluables:
+                resource_type = type(evaluable)
+                print(
+                    f"{resource_type.__name__} "
+                    f"{self.pretty_name(evaluable)} scored {evaluable_score.value}"
+                )
 
         elif score.value < self._config.fail_project_under:
             print()
