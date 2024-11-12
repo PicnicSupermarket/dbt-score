@@ -2,19 +2,21 @@
 
 import inspect
 import typing
-from typing import Any, Callable, Type, TypeAlias, overload
+from typing import Any, Callable, Type, TypeAlias, cast, overload
 
-from dbt_score.models import Evaluable
+from dbt_score.models import Evaluable, Model, Source
 from dbt_score.more_itertools import first_true
 
-FilterEvaluationType: TypeAlias = Callable[[Evaluable], bool]
+ModelFilterEvaluationType: TypeAlias = Callable[[Model], bool]
+SourceFilterEvaluationType: TypeAlias = Callable[[Source], bool]
+FilterEvaluationType: TypeAlias = ModelFilterEvaluationType | SourceFilterEvaluationType
 
 
 class RuleFilter:
     """The Filter base class."""
 
     description: str
-    resource_type: typing.ClassVar[Evaluable]
+    resource_type: typing.ClassVar[type[Evaluable]]
 
     def __init__(self) -> None:
         """Initialize the filter."""
@@ -44,7 +46,8 @@ class RuleFilter:
                 "annotated Model or Source argument."
             )
 
-        return resource_type_argument.annotation
+        resource_type = cast(type[Evaluable], resource_type_argument.annotation)
+        return resource_type
 
     def evaluate(self, evaluable: Evaluable) -> bool:
         """Evaluates the filter."""
@@ -65,7 +68,12 @@ class RuleFilter:
 
 
 @overload
-def rule_filter(__func: FilterEvaluationType) -> Type[RuleFilter]:
+def rule_filter(__func: ModelFilterEvaluationType) -> Type[RuleFilter]:
+    ...
+
+
+@overload
+def rule_filter(__func: SourceFilterEvaluationType) -> Type[RuleFilter]:
     ...
 
 
@@ -96,9 +104,7 @@ def rule_filter(
         description: The description of the filter.
     """
 
-    def decorator_filter(
-        func: FilterEvaluationType,
-    ) -> Type[RuleFilter]:
+    def decorator_filter(func: FilterEvaluationType) -> Type[RuleFilter]:
         """Decorator function."""
         if func.__doc__ is None and description is None:
             raise AttributeError(

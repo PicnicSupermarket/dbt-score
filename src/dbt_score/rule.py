@@ -4,9 +4,17 @@ import inspect
 import typing
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Any, Callable, Iterable, Type, TypeAlias, overload
+from typing import (
+    Any,
+    Callable,
+    Iterable,
+    Type,
+    TypeAlias,
+    cast,
+    overload,
+)
 
-from dbt_score.models import Evaluable
+from dbt_score.models import Evaluable, Model, Source
 from dbt_score.more_itertools import first_true
 from dbt_score.rule_filter import RuleFilter
 
@@ -55,7 +63,9 @@ class RuleViolation:
     message: str | None = None
 
 
-RuleEvaluationType: TypeAlias = Callable[[Evaluable], RuleViolation | None]
+ModelRuleEvaluationType: TypeAlias = Callable[[Model], RuleViolation | None]
+SourceRuleEvaluationType: TypeAlias = Callable[[Source], RuleViolation | None]
+RuleEvaluationType: TypeAlias = ModelRuleEvaluationType | SourceRuleEvaluationType
 
 
 class Rule:
@@ -66,7 +76,7 @@ class Rule:
     rule_filter_names: list[str]
     rule_filters: frozenset[RuleFilter] = frozenset()
     default_config: typing.ClassVar[dict[str, Any]] = {}
-    resource_type: typing.ClassVar[Evaluable]
+    resource_type: typing.ClassVar[type[Evaluable]]
 
     def __init__(self, rule_config: RuleConfig | None = None) -> None:
         """Initialize the rule."""
@@ -85,7 +95,7 @@ class Rule:
         cls._validate_rule_filters()
 
     @classmethod
-    def _validate_rule_filters(cls):
+    def _validate_rule_filters(cls) -> None:
         for rule_filter in cls.rule_filters:
             if rule_filter.resource_type != cls.resource_type:
                 raise TypeError(
@@ -111,7 +121,8 @@ class Rule:
                 "annotated Model or Source argument."
             )
 
-        return resource_type_argument.annotation
+        resource_type = cast(type[Evaluable], resource_type_argument.annotation)
+        return resource_type
 
     def process_config(self, rule_config: RuleConfig) -> None:
         """Process the rule config."""
@@ -178,7 +189,12 @@ class Rule:
 
 
 @overload
-def rule(__func: RuleEvaluationType) -> Type[Rule]:
+def rule(__func: ModelRuleEvaluationType) -> Type[Rule]:
+    ...
+
+
+@overload
+def rule(__func: SourceRuleEvaluationType) -> Type[Rule]:
     ...
 
 
@@ -214,9 +230,7 @@ def rule(
         rule_filters: Set of RuleFilter that filters the items that the rule applies to.
     """
 
-    def decorator_rule(
-        func: RuleEvaluationType,
-    ) -> Type[Rule]:
+    def decorator_rule(func: RuleEvaluationType) -> Type[Rule]:
         """Decorator function."""
         if func.__doc__ is None and description is None:
             raise AttributeError("Rule must define `description` or `func.__doc__`.")

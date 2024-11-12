@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from itertools import chain
-from typing import Type
+from typing import Type, cast
 
 from dbt_score.formatters import Formatter
 from dbt_score.models import Evaluable, ManifestLoader
@@ -57,6 +57,9 @@ class Evaluation:
         for evaluable in chain(
             self._manifest_loader.models, self._manifest_loader.sources
         ):
+            # type inference on elements from `chain` is wonky
+            # and resolves to superclass HasColumnsMixin
+            evaluable = cast(Evaluable, evaluable)
             self.results[evaluable] = {}
             for rule in rules:
                 try:

@@ -77,7 +77,7 @@ def model2(raw_manifest) -> Model:
 
 
 @fixture
-def source1(raw_manifest) -> Model:
+def source1(raw_manifest) -> Source:
     """Source 1."""
     return Source.from_node(
         raw_manifest["sources"]["source.package.my_source.table1"], []
@@ -85,7 +85,7 @@ def source1(raw_manifest) -> Model:
 
 
 @fixture
-def source2(raw_manifest) -> Model:
+def source2(raw_manifest) -> Source:
     """Source 2."""
     return Source.from_node(
         raw_manifest["sources"]["source.package.my_source.table2"], []
