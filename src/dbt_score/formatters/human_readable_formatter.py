@@ -33,18 +33,17 @@ class HumanReadableFormatter(Formatter):
         """Callback when a model has been evaluated."""
         if score.value < self._config.fail_any_model_under:
             self._failed_models.append((model, score))
-        if (
-            score.value < self._config.fail_any_model_under
-            or any(isinstance(result, RuleViolation) for result in results.values())
-            or self._config.show_all
-        ):
+        if score.value < self._config.fail_any_model_under or self._config.show in [
+            "all",
+            "failing-rules",
+        ]:
             print(
                 f"{score.badge} {self.bold(model.name)} "
                 f"(score: {score.rounded_value!s})"
             )
             for rule, result in results.items():
                 if result is None:
-                    if self._config.show_all:
+                    if self._config.show in ["all", "failing-models"]:
                         print(f"{self.indent}{self.label_ok} {rule.source()}")
                 elif isinstance(result, RuleViolation):
                     print(

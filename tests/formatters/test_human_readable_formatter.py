@@ -46,7 +46,7 @@ def test_human_readable_formatter_model_show_all(
     rule_severity_critical,
 ):
     """Ensure the formatter has the correct output after model evaluation."""
-    default_config.overload({"show_all": True})
+    default_config.overload({"show": "all"})
     formatter = HumanReadableFormatter(
         manifest_loader=manifest_loader, config=default_config
     )
@@ -88,7 +88,7 @@ def test_human_readable_formatter_near_perfect_model_score(
     rule_severity_critical,
 ):
     """Ensure the formatter has the correct output after model evaluation."""
-    default_config.overload({"show_all": True})
+    default_config.overload({"show": "all"})
     formatter = HumanReadableFormatter(
         manifest_loader=manifest_loader, config=default_config
     )
