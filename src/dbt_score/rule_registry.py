@@ -12,8 +12,8 @@ from typing import Iterator, Type
 
 from dbt_score.config import Config
 from dbt_score.exceptions import DuplicatedRuleException
-from dbt_score.model_filter import ModelFilter
 from dbt_score.rule import Rule, RuleConfig
+from dbt_score.rule_filter import RuleFilter
 
 logger = logging.getLogger(__name__)
 
@@ -25,7 +25,7 @@ class RuleRegistry:
         """Instantiate a rule registry."""
         self.config = config
         self._rules: dict[str, Rule] = {}
-        self._model_filters: dict[str, ModelFilter] = {}
+        self._rule_filters: dict[str, RuleFilter] = {}
 
     @property
     def rules(self) -> dict[str, Rule]:
@@ -33,9 +33,9 @@ class RuleRegistry:
         return self._rules
 
     @property
-    def model_filters(self) -> dict[str, ModelFilter]:
+    def rule_filters(self) -> dict[str, RuleFilter]:
         """Get all filters."""
-        return self._model_filters
+        return self._rule_filters
 
     def _walk_packages(self, namespace_name: str) -> Iterator[str]:
         """Walk packages and sub-packages recursively."""
@@ -66,8 +66,8 @@ class RuleRegistry:
                     self._add_rule(obj)
                 if (
                     type(obj) is type
-                    and issubclass(obj, ModelFilter)
-                    and obj is not ModelFilter
+                    and issubclass(obj, RuleFilter)
+                    and obj is not RuleFilter
                 ):
                     self._add_filter(obj)
 
@@ -80,12 +80,12 @@ class RuleRegistry:
             rule_config = self.config.rules_config.get(rule_name, RuleConfig())
             self._rules[rule_name] = rule(rule_config=rule_config)
 
-    def _add_filter(self, model_filter: Type[ModelFilter]) -> None:
+    def _add_filter(self, rule_filter: Type[RuleFilter]) -> None:
         """Initialize and add a filter."""
-        filter_name = model_filter.source()
-        if filter_name in self._model_filters:
+        filter_name = rule_filter.source()
+        if filter_name in self._rule_filters:
             raise DuplicatedRuleException(filter_name)
-        self._model_filters[filter_name] = model_filter()
+        self._rule_filters[filter_name] = rule_filter()
 
     def load_all(self) -> None:
         """Load all rules, core and third-party."""
@@ -103,17 +103,17 @@ class RuleRegistry:
         self._load_filters_into_rules()
 
     def _load_filters_into_rules(self) -> None:
-        """Loads ModelFilters into Rule objects.
+        """Loads RuleFilters into Rule objects.
 
-        If the config of the rule has filter names in the `model_filter_names` key,
-        load those filters from the rule registry into the actual `model_filters` field.
+        If the config of the rule has filter names in the `rule_filter_names` key,
+        load those filters from the rule registry into the actual `rule_filters` field.
         Configuration overwrites any pre-existing filters.
         """
         for rule in self._rules.values():
-            filter_names: list[str] = rule.model_filter_names or []
+            filter_names: list[str] = rule.rule_filter_names or []
             if len(filter_names) > 0:
                 rule.set_filters(
-                    model_filter
-                    for name, model_filter in self.model_filters.items()
+                    rule_filter
+                    for name, rule_filter in self.rule_filters.items()
                     if name in filter_names
                 )

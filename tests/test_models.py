@@ -22,6 +22,15 @@ def test_manifest_load(mock_read_text, raw_manifest):
         assert loader.models[0].tests[0].name == "test2"
         assert loader.models[0].columns[0].tests[0].name == "test1"
 
+        assert len(loader.sources) == len(
+            [
+                source
+                for source in raw_manifest["sources"].values()
+                if source["package_name"] == raw_manifest["metadata"]["project_name"]
+            ]
+        )
+        assert loader.sources[0].tests[0].name == "source_test1"
+
 
 @patch("dbt_score.models.Path.read_text")
 def test_manifest_select_models_simple(mock_read_text, raw_manifest):
@@ -52,4 +61,4 @@ def test_manifest_no_model(mock_dbt_ls, mock_read_text, raw_manifest, caplog):
         manifest_loader = ManifestLoader(Path("some.json"), select=["non_existing"])
 
     assert len(manifest_loader.models) == 0
-    assert "No model found" in caplog.text
+    assert "Nothing to evaluate!" in caplog.text

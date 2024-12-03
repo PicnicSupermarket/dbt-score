@@ -8,6 +8,32 @@ and this project adheres to
 
 ## [Unreleased]
 
+- Documenting support for python 3.13. (#86)
+
+## [0.8.0] - 2024-11-12
+
+- Support linting of sources.
+- **Breaking**: Renamed modules: `dbt_score.model_filter` becomes
+  `dbt_score.rule_filter`
+- **Breaking**: Renamed filter class and decorator: `@model_filter` becomes
+  `@rule_filter` and `ModelFilter` becomes `RuleFilter`.
+- **Breaking**: Config option `model_filter_names` becomes `rule_filter_names`.
+- **Breaking**: CLI flag naming fixes: `--fail_any_model_under` becomes
+  `--fail-any-item-under` and `--fail_project_under` becomes
+  `--fail-project-under`.
+
+## [0.7.1] - 2024-11-01
+
+- Fix mkdocs.
+
+## [0.7.0] - 2024-11-01
+
+- **Breaking**: The rule `public_model_has_example_sql` has been renamed
+  `has_example_sql` and applies by default to all models.
+- **Breaking**: Remove `dbt-core` from dependencies. Since it is not mandatory
+  for `dbt-score` to execute `dbt`, remove the dependency.
+- **Breaking**: Stop using `MultiOption` selection type.
+
 ## [0.6.0] - 2024-08-23
 
 - **Breaking**: Improve error handling in CLI. Log messages are written in

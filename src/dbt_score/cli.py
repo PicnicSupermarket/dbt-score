@@ -7,10 +7,13 @@ from typing import Final, Literal
 
 import click
 from click.core import ParameterSource
-from dbt.cli.options import MultiOption
 
 from dbt_score.config import Config
-from dbt_score.dbt_utils import DbtParseException, dbt_parse, get_default_manifest_path
+from dbt_score.dbt_utils import (
+    DbtParseException,
+    dbt_parse,
+    get_default_manifest_path,
+)
 from dbt_score.lint import lint_dbt_project
 from dbt_score.rule_catalog import display_catalog
 
@@ -48,8 +51,6 @@ def cli() -> None:
     "--select",
     "-s",
     help="Specify the nodes to include.",
-    cls=MultiOption,
-    type=tuple,
     multiple=True,
 )
 @click.option(
@@ -80,15 +81,15 @@ def cli() -> None:
     default=False,
 )
 @click.option(
-    "--fail_project_under",
+    "--fail-project-under",
     help="Fail if the project score is under this value.",
     type=float,
     is_flag=False,
     default=None,
 )
 @click.option(
-    "--fail_any_model_under",
-    help="Fail if any model is under this value.",
+    "--fail-any-item-under",
+    help="Fail if any evaluable item is under this value.",
     type=float,
     is_flag=False,
     default=None,
@@ -115,10 +116,10 @@ def lint(  # noqa: PLR0913, C901
     manifest: Path,
     run_dbt_parse: bool,
     fail_project_under: float,
-    fail_any_model_under: float,
+    fail_any_item_under: float,
     show: Literal["all", "failing-models", "failing-rules"],
 ) -> None:
-    """Lint dbt models metadata."""
+    """Lint dbt metadata."""
     manifest_provided = (
         click.get_current_context().get_parameter_source("manifest")
         != ParameterSource.DEFAULT
@@ -134,10 +135,11 @@ def lint(  # noqa: PLR0913, C901
         config.overload({"disabled_rules": disabled_rule})
     if fail_project_under:
         config.overload({"fail_project_under": fail_project_under})
-    if fail_any_model_under:
-        config.overload({"fail_any_model_under": fail_any_model_under})
+    if fail_any_item_under:
+        config.overload({"fail_any_item_under": fail_any_item_under})
     if show:
         config.overload({"show": show})
+
     try:
         if run_dbt_parse:
             dbt_parse()
@@ -161,7 +163,7 @@ def lint(  # noqa: PLR0913, C901
         ctx.exit(2)
 
     if (
-        any(x.value < config.fail_any_model_under for x in evaluation.scores.values())
+        any(x.value < config.fail_any_item_under for x in evaluation.scores.values())
         or evaluation.project_score.value < config.fail_project_under
     ):
         ctx.exit(1)

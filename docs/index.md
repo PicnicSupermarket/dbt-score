@@ -2,8 +2,9 @@
 
 `dbt-score` is a linter for [dbt](https://www.getdbt.com/) metadata.
 
-dbt allows data practitioners to organize their data in to _models_. Those
-models have metadata associated with them: documentation, tests, types, etc.
+dbt allows data practitioners to organize their data in to _models_ and
+_sources_. Those models and sources have metadata associated with them:
+documentation, tests, types, etc.
 
 `dbt-score` allows to lint and score this metadata, in order to enforce (or
 encourage) good practices.
@@ -11,32 +12,32 @@ encourage) good practices.
 ## Example
 
 ```
-> dbt-score lint --show-all
-🥇 customers (score: 10.0)
+> dbt-score lint --show all
+🥇 M: customers (score: 10.0)
     OK   dbt_score.rules.generic.has_description
-    OK   dbt_score.rules.generic.has_owner: Model lacks an owner.
+    OK   dbt_score.rules.generic.has_owner
     OK   dbt_score.rules.generic.sql_has_reasonable_number_of_lines
 Score: 10.0 🥇
 ```
 
 In this example, the model `customers` scores the maximum value of `10.0` as it
 passes all the rules. It also is awarded a golden medal because of the perfect
-score. By default a passing model with or without rule violations will not be shown, 
-unless we pass the `--show-all` flag.
+score. By default a passing model with or without rule violations will not be
+shown, unless we pass the `--show-all` flag.
 
 ## Philosophy
 
-dbt models are often used as metadata containers: either in YAML files or
-through the use of `{{ config() }}` blocks, they are associated with a lot of
+dbt models/sources are often used as metadata containers: either in YAML files
+or through the use of `{{ config() }}` blocks, they are associated with a lot of
 information. At scale, it becomes tedious to enforce good practices in large
-data teams dealing with many models.
+data teams dealing with many models/sources.
 
 To that end, `dbt-score` has 2 main features:
 
-- It runs rules on models, and displays rule violations. Those can be used in
-  interactive environments or in CI.
-- Using those run results, it scores models, as to give them a measure of their
-  maturity. This score can help gamify model metadata improvements, and be
+- It runs rules on dbt models and sources, and displays any rule violations.
+  These can be used in interactive environments or in CI.
+- Using those run results, it scores items, to ascribe them a measure of their
+  maturity. This score can help gamify metadata improvements/coverage, and be
   reflected in data catalogs.
 
 `dbt-score` aims to:

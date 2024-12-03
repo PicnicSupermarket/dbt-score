@@ -11,8 +11,8 @@ Installation of `dbt-score` is simple:
 pip install dbt-score
 ```
 
-If a virtual environment is used to run dbt, make sure to install `dbt-score` in
-the same environment.
+In order to run `dbt-score` with all its features, be sure to install
+`dbt-score` in the same environment as `dbt-core`.
 
 ## Usage
 
@@ -40,8 +40,8 @@ It's also possible to automatically run `dbt parse`, to generate the
 dbt-score lint --run-dbt-parse
 ```
 
-To lint only a selection of models, the argument `--select` can be used. It
-accepts any
+To lint only a selection of models or sources, the argument `--select` can be
+used. It accepts any
 [dbt node selection syntax](https://docs.getdbt.com/reference/node-selection/syntax):
 
 ```shell

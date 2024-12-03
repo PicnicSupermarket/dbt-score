@@ -23,13 +23,13 @@ def test_json_formatter(
         rule_severity_medium: Exception("Oh noes"),
         rule_severity_critical: RuleViolation("Error"),
     }
-    formatter.model_evaluated(model1, results, Score(10.0, "🥇"))
+    formatter.evaluable_evaluated(model1, results, Score(10.0, "🥇"))
     formatter.project_evaluated(Score(10.0, "🥇"))
     stdout = capsys.readouterr().out
     assert (
         stdout
         == """{
-  "models": {
+  "evaluables": {
     "model1": {
       "score": 10.0,
       "badge": "🥇",

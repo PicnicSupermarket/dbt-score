@@ -59,6 +59,25 @@ def test_lint_dbt_parse_exception(caplog):
     assert "dbt failed to parse project" in caplog.text
 
 
+def test_lint_dbt_not_installed(caplog, manifest_path):
+    """Test lint with a valid manifest when dbt is not installed."""
+    runner = CliRunner()
+
+    with patch("dbt_score.dbt_utils.DBT_INSTALLED", new=False):
+        result = runner.invoke(lint, ["-m", manifest_path], catch_exceptions=False)
+    assert result.exit_code == 0
+
+
+def test_lint_dbt_not_installed_v(caplog):
+    """Test lint with dbt parse when dbt is not installed."""
+    runner = CliRunner()
+
+    with patch("dbt_score.dbt_utils.DBT_INSTALLED", new=False):
+        result = runner.invoke(lint, ["-p"])
+    assert result.exit_code == 2
+    assert "DbtNotInstalledException" in caplog.text
+
+
 def test_lint_other_exception(manifest_path, caplog):
     """Test lint with an unexpected error."""
     runner = CliRunner()
@@ -77,7 +96,7 @@ def test_fail_project_under(manifest_path):
     with patch("dbt_score.cli.Config._load_toml_file"):
         runner = CliRunner()
         result = runner.invoke(
-            lint, ["--manifest", manifest_path, "--fail_project_under", "10.0"]
+            lint, ["--manifest", manifest_path, "--fail-project-under", "10.0"]
         )
 
         assert "model1" in result.output
@@ -91,9 +110,9 @@ def test_fail_any_model_under(manifest_path):
     with patch("dbt_score.cli.Config._load_toml_file"):
         runner = CliRunner()
         result = runner.invoke(
-            lint, ["--manifest", manifest_path, "--fail_any_model_under", "10.0"]
+            lint, ["--manifest", manifest_path, "--fail-any-item-under", "10.0"]
         )
         assert "model1" in result.output
         assert "model2" in result.output
-        assert "Error: model score too low, fail_any_model_under" in result.stdout
+        assert "Error: evaluable score too low, fail_any_item_under" in result.stdout
         assert result.exit_code == 1
