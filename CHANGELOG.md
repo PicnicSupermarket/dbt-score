@@ -8,6 +8,8 @@ and this project adheres to
 
 ## [Unreleased]
 
+- Documenting support for python 3.13. (#86)
+
 ## [0.8.0] - 2024-11-12
 
 - Support linting of sources.
