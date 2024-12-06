@@ -51,3 +51,30 @@ def has_example_sql(model: Model) -> RuleViolation | None:
             return RuleViolation(
                 "The model description does not include an example SQL query."
             )
+
+@rule(severity=Severity.HIGH)
+def has_uniqueness_test(model: Model) -> RuleViolation | None:
+    """Model has uniqueness test for primary key."""
+    if model.config["materialized"] == "view":
+        return None
+
+    # Single-column PK
+    for column in model.columns:
+        for constraint in column.constraints:
+            if constraint.type == "primary_key":
+                for data_test in column.tests:
+                    if data_test.type == "unique":
+                        break
+                else:
+                    return RuleViolation("Model must have uniqueness test for PK.")
+
+    # Composite PK
+    for constraint in model._raw_values[  # pylint: disable=protected-access
+        "constraints"
+    ]:
+        if constraint["type"] == "primary_key":
+            for data_test in model.tests:
+                if data_test.type == "unique_combination_of_columns":
+                    break
+            else:
+                return RuleViolation("Model must have uniqueness test for PK.")
