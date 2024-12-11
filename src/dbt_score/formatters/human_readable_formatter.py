@@ -47,7 +47,10 @@ class HumanReadableFormatter(Formatter):
         if (
             evaluable_failed
             or self._config.show == "all"
-            or any(result is not None for result in results.values())
+            or (
+                self._config.show not in ["failing-items"]
+                and any(result is not None for result in results.values())
+            )
         ):
             resource_type = type(evaluable).__name__
             name_formatted = f"{resource_type[0]}: {self.pretty_name(evaluable)}"
@@ -59,7 +62,7 @@ class HumanReadableFormatter(Formatter):
             print(header)
             for rule, result in results.items():
                 if result is None:
-                    if self._config.show in ["all", "failing-items"]:
+                    if self._config.show in ["all"]:
                         print(f"{self.indent}{self.label_ok} {rule.source()}")
                 elif isinstance(result, RuleViolation):
                     print(
