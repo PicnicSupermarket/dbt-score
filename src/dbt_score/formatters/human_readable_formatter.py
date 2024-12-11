@@ -42,12 +42,13 @@ class HumanReadableFormatter(Formatter):
         self, evaluable: Evaluable, results: EvaluableResultsType, score: Score
     ) -> None:
         """Callback when an evaluable item has been evaluated."""
-        if score.value < self._config.fail_any_item_under:
+        if evaluable_failed := score.value < self._config.fail_any_item_under:
             self._failed_evaluables.append((evaluable, score))
-        if score.value < self._config.fail_any_item_under or self._config.show in [
-            "all",
-            "failing-rules",
-        ]:
+        if (
+            evaluable_failed
+            or self._config.show == "all"
+            or any(result is not None for result in results.values())
+        ):
             resource_type = type(evaluable).__name__
             name_formatted = f"{resource_type[0]}: {self.pretty_name(evaluable)}"
             header = (
