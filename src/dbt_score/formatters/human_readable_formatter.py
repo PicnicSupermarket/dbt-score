@@ -58,7 +58,7 @@ class HumanReadableFormatter(Formatter):
             print(header)
             for rule, result in results.items():
                 if result is None:
-                    if self._config.show in ["all", "failing-models"]:
+                    if self._config.show in ["all", "failing-items"]:
                         print(f"{self.indent}{self.label_ok} {rule.source()}")
                 elif isinstance(result, RuleViolation):
                     print(

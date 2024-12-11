@@ -98,11 +98,11 @@ def cli() -> None:
     "--show",
     help="Type of output which should be shown"
     "when using `plain` as `--format`. "
-    "`all` shows all models and all rules"
-    "`failing-models` shows failing rules of failing models"
-    "`failing-rules` shows failing rules of all models"
-    "Default behavior is to show violated rules of all models.",
-    type=click.Choice(["all", "failing-models", "failing-rules"]),
+    "`all` shows all items and all rules"
+    "`failing-items` shows failing rules of failing items"
+    "`failing-rules` shows failing rules of all items"
+    "Default behavior is to show violated rules of all items.",
+    type=click.Choice(["all", "failing-items", "failing-rules"]),
     is_flag=False,
     default="failing-rules",
 )
@@ -117,7 +117,7 @@ def lint(  # noqa: PLR0913, C901
     run_dbt_parse: bool,
     fail_project_under: float,
     fail_any_item_under: float,
-    show: Literal["all", "failing-models", "failing-rules"],
+    show: Literal["all", "failing-items", "failing-rules"],
 ) -> None:
     """Lint dbt metadata."""
     manifest_provided = (
