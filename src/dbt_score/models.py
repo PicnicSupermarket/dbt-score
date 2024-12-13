@@ -63,8 +63,8 @@ class Test:
         """Create a test object from a test node in the manifest."""
         return cls(
             name=test_node["name"],
-            type=test_node["test_metadata"]["name"],
-            kwargs=test_node["test_metadata"].get("kwargs", {}),
+            type=test_node.get("test_metadata", {}).get("name", "generic"),
+            kwargs=test_node.get("test_metadata", {}).get("kwargs", {}),
             tags=test_node.get("tags", []),
             _raw_values=test_node,
         )
@@ -359,7 +359,9 @@ class Source(HasColumnsMixin):
             tests=[
                 Test.from_node(test)
                 for test in test_values
-                if not test["test_metadata"]["kwargs"].get("column_name")
+                if not test.get("test_metadata", {})  # Not all tests have metadata.
+                .get("kwargs", {})
+                .get("column_name")
             ],
             _raw_values=node_values,
             _raw_test_values=test_values,
