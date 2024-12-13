@@ -13,9 +13,13 @@ def test_rule_registry_discovery(default_config):
     r._load("tests.rules")
     assert sorted(r._rules.keys()) == [
         "tests.rules.example.rule_test_example",
+        "tests.rules.imported.original.rule_to_be_imported",
         "tests.rules.nested.example.rule_test_nested_example",
     ]
-    assert list(r._rule_filters.keys()) == ["tests.rules.example.skip_model1"]
+    assert list(r._rule_filters.keys()) == [
+        "tests.rules.example.skip_model1",
+        "tests.rules.imported.original.rule_filter_to_be_imported",
+    ]
 
 
 def test_disabled_rule_registry_discovery():
@@ -26,6 +30,7 @@ def test_disabled_rule_registry_discovery():
     r._load("tests.rules")
     assert sorted(r._rules.keys()) == [
         "tests.rules.example.rule_test_example",
+        "tests.rules.imported.original.rule_to_be_imported",
     ]
 
 
