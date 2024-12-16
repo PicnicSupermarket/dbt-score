@@ -364,7 +364,7 @@ class Source(HasColumnsMixin):
             tests=[
                 Test.from_node(test)
                 for test in test_values
-                if not test.get("test_metadata", {})  # Not all tests have metadata.
+                if not test.get("test_metadata", {})
                 .get("kwargs", {})
                 .get("column_name")
             ],
