@@ -141,7 +141,10 @@ class HasColumnsMixin:
                 [
                     test
                     for test in test_values
-                    if test["test_metadata"]["kwargs"].get("column_name") == name
+                    if test.get("test_metadata", {})
+                    .get("kwargs", {})
+                    .get("column_name")
+                    == name
                 ],
             )
             for name, values in node_values.get("columns", {}).items()
@@ -224,7 +227,9 @@ class Model(HasColumnsMixin):
             tests=[
                 Test.from_node(test)
                 for test in test_values
-                if not test["test_metadata"]["kwargs"].get("column_name")
+                if not test.get("test_metadata", {})
+                .get("kwargs", {})
+                .get("column_name")
             ],
             depends_on=node_values["depends_on"],
             _raw_values=node_values,
