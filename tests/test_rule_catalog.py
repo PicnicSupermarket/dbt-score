@@ -6,9 +6,6 @@ from dbt_score.rule_catalog import display_catalog
 def test_rule_catalog_terminal(capsys, default_config):
     """Test rule catalog with the terminal formatter."""
     default_config.overload({"rule_namespaces": ["tests.rules"]})
-    default_config.overload(
-        {"disabled_rules": ["tests.rules.imported.original.rule_to_be_imported"]}
-    )
     display_catalog(default_config, "Doc for tests.rules", "terminal")
     stdout = capsys.readouterr().out
     assert (
@@ -26,9 +23,6 @@ def test_rule_catalog_terminal(capsys, default_config):
 def test_rule_catalog_markdown(capsys, default_config):
     """Test rule catalog with the markdown formatter."""
     default_config.overload({"rule_namespaces": ["tests.rules"]})
-    default_config.overload(
-        {"disabled_rules": ["tests.rules.imported.original.rule_to_be_imported"]}
-    )
     display_catalog(default_config, "Doc for tests.rules", "markdown")
     stdout = capsys.readouterr().out
     assert (
