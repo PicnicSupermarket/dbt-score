@@ -435,20 +435,17 @@ class ManifestLoader:
         """Index tests based on their associated evaluable."""
         for node_values in self.raw_nodes.values():
             if node_values.get("resource_type") == "test":
-                # tests for models have a non-null value for `attached_node`
+                # Tests for models have a non-null value for `attached_node`
                 if attached_node := node_values.get("attached_node"):
                     self.tests[attached_node].append(node_values)
 
-                # Tests for sources will have a null `attached_node`,
-                # and a non-empty list for `sources`.
-                # They need to be attributed to the source id
+                # Tests for sources or separate tests will have `attached_node` == null.
+                # They need to be attributed to the node id
                 # based on the `depends_on` field.
-                elif node_values.get("sources") and (
-                    source_unique_id := next(
-                        iter(node_values.get("depends_on", {}).get("nodes", [])), None
-                    )
+                elif node_unique_id := next(
+                    iter(node_values.get("depends_on", {}).get("nodes", [])), None
                 ):
-                    self.tests[source_unique_id].append(node_values)
+                    self.tests[node_unique_id].append(node_values)
 
     def _filter_evaluables(self, select: Iterable[str]) -> None:
         """Filter evaluables like dbt's --select."""
