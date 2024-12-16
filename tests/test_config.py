@@ -15,7 +15,7 @@ def test_load_valid_toml_file(valid_config_path):
     assert config.disabled_rules == ["foo.foo", "tests.bar"]
     assert config.rules_config["foo.bar"].severity == Severity.CRITICAL
     assert (
-        config.rules_config["tests.rules.example.rule_test_example"].severity
+        config.rules_config["tests.rules.rules.rule_test_example"].severity
         == Severity.CRITICAL
     )
     assert config.badge_config.third.threshold == 6.5
@@ -28,8 +28,8 @@ def test_load_valid_toml_file(valid_config_path):
     assert config.fail_project_under == 7.5
     assert config.fail_any_item_under == 6.9
     assert config.rules_config[
-        "tests.rules.example.rule_test_example"
-    ].rule_filter_names == ["tests.rules.example.skip_model1"]
+        "tests.rules.rules.rule_test_example"
+    ].rule_filter_names == ["tests.rules.rule_filters.skip_model1"]
 
 
 def test_load_invalid_toml_file(caplog, invalid_config_path):
