@@ -42,28 +42,40 @@ class HumanReadableFormatter(Formatter):
         self, evaluable: Evaluable, results: EvaluableResultsType, score: Score
     ) -> None:
         """Callback when an evaluable item has been evaluated."""
-        if score.value < self._config.fail_any_item_under:
+        if evaluable_failed := score.value < self._config.fail_any_item_under:
             self._failed_evaluables.append((evaluable, score))
+        if (
+            evaluable_failed
+            or self._config.show == "all"
+            or (
+                self._config.show not in ["failing-items"]
+                and any(result is not None for result in results.values())
+            )
+        ):
+            resource_type = type(evaluable).__name__
+            name_formatted = f"{resource_type[0]}: {self.pretty_name(evaluable)}"
+            header = (
+                f"{score.badge} "
+                f"{self.bold(name_formatted)} (score: {score.rounded_value!s})"
+            )
 
-        resource_type = type(evaluable).__name__
-        name_formatted = f"{resource_type[0]}: {self.pretty_name(evaluable)}"
-        header = (
-            f"{score.badge} "
-            f"{self.bold(name_formatted)} (score: {score.rounded_value!s})"
-        )
-
-        print(header)
-        for rule, result in results.items():
-            if result is None:
-                print(f"{self.indent}{self.label_ok} {rule.source()}")
-            elif isinstance(result, RuleViolation):
-                print(
-                    f"{self.indent}{self.label_warning} "
-                    f"({rule.severity.name.lower()}) {rule.source()}: {result.message}"
-                )
-            else:
-                print(f"{self.indent}{self.label_error} {rule.source()}: {result!s}")
-        print()
+            print(header)
+            for rule, result in results.items():
+                if result is None:
+                    if self._config.show in ["all"]:
+                        print(f"{self.indent}{self.label_ok} {rule.source()}")
+                elif isinstance(result, RuleViolation):
+                    print(
+                        f"{self.indent}{self.label_warning} "
+                        f"({rule.severity.name.lower()}) {rule.source()}: "
+                        f"{result.message}"
+                    )
+                else:
+                    print(
+                        f"{self.indent}{self.label_error} {rule.source()}: "
+                        f"{result!s}"
+                    )
+            print()
 
     def project_evaluated(self, score: Score) -> None:
         """Callback when a project has been evaluated."""
