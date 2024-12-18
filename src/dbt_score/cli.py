@@ -94,8 +94,20 @@ def cli() -> None:
     is_flag=False,
     default=None,
 )
+@click.option(
+    "--show",
+    help="Type of output which should be shown "
+    "when using `plain` as `--format`. "
+    "`all` shows all items and all rules. "
+    "`failing-items` shows failing rules of failing items. "
+    "`failing-rules` shows failing rules of all items. "
+    "Default is --failing-rules.",
+    type=click.Choice(["all", "failing-items", "failing-rules"]),
+    is_flag=False,
+    default="failing-rules",
+)
 @click.pass_context
-def lint(
+def lint(  # noqa: PLR0913, C901
     ctx: click.Context,
     format: Literal["plain", "manifest", "ascii"],
     select: tuple[str],
@@ -105,6 +117,7 @@ def lint(
     run_dbt_parse: bool,
     fail_project_under: float,
     fail_any_item_under: float,
+    show: Literal["all", "failing-items", "failing-rules"],
 ) -> None:
     """Lint dbt metadata."""
     manifest_provided = (
@@ -124,6 +137,8 @@ def lint(
         config.overload({"fail_project_under": fail_project_under})
     if fail_any_item_under:
         config.overload({"fail_any_item_under": fail_any_item_under})
+    if show:
+        config.overload({"show": show})
 
     try:
         if run_dbt_parse:
