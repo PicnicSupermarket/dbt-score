@@ -11,6 +11,7 @@ and this project adheres to
 - Documenting support for python 3.13. (#86)
 - Only show failing rules per default in `HumanReadableFormatter`. Also added
   `--show` parameter in the CLI to change this behavior. (#77)
+- Ignore imported rules and filters when building the rule registry. (#87)
 
 ## [0.8.0] - 2024-11-12
 
