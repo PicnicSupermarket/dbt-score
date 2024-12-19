@@ -9,7 +9,7 @@ and this project adheres to
 ## [Unreleased]
 
 - Documenting support for python 3.13. (#86)
-- Ignore imported rules and filters when building the rule registry. (#85)
+- Ignore imported rules and filters when building the rule registry. (#87)
 
 ## [0.8.0] - 2024-11-12
 
