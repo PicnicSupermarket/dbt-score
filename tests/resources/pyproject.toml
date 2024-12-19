@@ -23,6 +23,6 @@ severity=4
 [tool.dbt-score.rules."tests.conftest.rule_with_config"]
 model_name="model2"
 
-[tool.dbt-score.rules."tests.rules.example.rule_test_example"]
+[tool.dbt-score.rules."tests.rules.rules.rule_test_example"]
 severity=4
-rule_filter_names=["tests.rules.example.skip_model1"]
+rule_filter_names=["tests.rules.rule_filters.skip_model1"]

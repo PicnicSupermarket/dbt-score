@@ -12,10 +12,13 @@ def test_rule_registry_discovery(default_config):
     r = RuleRegistry(default_config)
     r._load("tests.rules")
     assert sorted(r._rules.keys()) == [
-        "tests.rules.example.rule_test_example",
         "tests.rules.nested.example.rule_test_nested_example",
+        "tests.rules.rules.rule_test_example",
     ]
-    assert list(r._rule_filters.keys()) == ["tests.rules.example.skip_model1"]
+    assert list(r._rule_filters.keys()) == [
+        "tests.rules.rule_filters.skip_model1",
+        "tests.rules.rule_filters.skip_schemaX",
+    ]
 
 
 def test_disabled_rule_registry_discovery():
@@ -25,7 +28,7 @@ def test_disabled_rule_registry_discovery():
     r = RuleRegistry(config)
     r._load("tests.rules")
     assert sorted(r._rules.keys()) == [
-        "tests.rules.example.rule_test_example",
+        "tests.rules.rules.rule_test_example",
     ]
 
 
@@ -35,9 +38,7 @@ def test_configured_rule_registry_discovery(valid_config_path):
     config._load_toml_file(str(valid_config_path))
     r = RuleRegistry(config)
     r._load("tests.rules")
-    assert (
-        r.rules["tests.rules.example.rule_test_example"].severity == Severity.CRITICAL
-    )
+    assert r.rules["tests.rules.rules.rule_test_example"].severity == Severity.CRITICAL
 
 
 def test_rule_registry_no_duplicates(default_config):
@@ -63,5 +64,5 @@ def test_rule_registry_rule_filters(valid_config_path, model1, model2):
     r._load("tests.rules")
     r._load_filters_into_rules()
 
-    assert not r.rules["tests.rules.example.rule_test_example"].should_evaluate(model1)
-    assert r.rules["tests.rules.example.rule_test_example"].should_evaluate(model2)
+    assert not r.rules["tests.rules.rules.rule_test_example"].should_evaluate(model1)
+    assert r.rules["tests.rules.rules.rule_test_example"].should_evaluate(model2)

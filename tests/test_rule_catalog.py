@@ -10,10 +10,10 @@ def test_rule_catalog_terminal(capsys, default_config):
     stdout = capsys.readouterr().out
     assert (
         stdout
-        == """\x1B[1mtests.rules.example.rule_test_example\x1B[0m:
+        == """\x1B[1mtests.rules.nested.example.rule_test_nested_example\x1B[0m:
     An example rule.
 
-\x1B[1mtests.rules.nested.example.rule_test_nested_example\x1B[0m:
+\x1B[1mtests.rules.rules.rule_test_example\x1B[0m:
     An example rule.
 
 """
@@ -28,25 +28,6 @@ def test_rule_catalog_markdown(capsys, default_config):
     assert (
         stdout
         == """# Doc for tests.rules
-
-## `rule_test_example`
-
-An example rule.
-
-??? quote  "Source code"
-    ```python
-    @rule()
-    def rule_test_example(model: Model) -> RuleViolation | None:
-        \"""An example rule.\"""
-
-    ```
-
-### Default configuration
-
-```toml title="pyproject.toml"
-[tool.dbt-score.rules."tests.rules.example.rule_test_example"]
-severity = 2
-```
 
 ## `rule_test_nested_example`
 
@@ -64,6 +45,25 @@ An example rule.
 
 ```toml title="pyproject.toml"
 [tool.dbt-score.rules."tests.rules.nested.example.rule_test_nested_example"]
+severity = 2
+```
+
+## `rule_test_example`
+
+An example rule.
+
+??? quote  "Source code"
+    ```python
+    @rule(rule_filters={skip_schemaX()})
+    def rule_test_example(model: Model) -> RuleViolation | None:
+        \"""An example rule.\"""
+
+    ```
+
+### Default configuration
+
+```toml title="pyproject.toml"
+[tool.dbt-score.rules."tests.rules.rules.rule_test_example"]
 severity = 2
 ```
 
