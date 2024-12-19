@@ -8,6 +8,8 @@ and this project adheres to
 
 ## [Unreleased]
 
+## [0.9.0] - 2024-12-19
+
 - Documenting support for python 3.13. (#86)
 - Only show failing rules per default in `HumanReadableFormatter`. Also added
   `--show` parameter in the CLI to change this behavior. (#77)
