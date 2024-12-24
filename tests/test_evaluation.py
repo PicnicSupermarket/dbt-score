@@ -37,6 +37,7 @@ def test_evaluation_low_medium_high(
         manifest_loader=manifest_loader,
         formatter=mock_formatter,
         scorer=mock_scorer,
+        config=default_config,
     )
     evaluation.evaluate()
 
@@ -79,6 +80,7 @@ def test_evaluation_critical(
         manifest_loader=manifest_loader,
         formatter=mock_formatter,
         scorer=mock_scorer,
+        config=default_config,
     )
 
     evaluation.evaluate()
@@ -103,6 +105,7 @@ def test_evaluation_no_rule(manifest_path, default_config):
         manifest_loader=manifest_loader,
         formatter=mock_formatter,
         scorer=mock_scorer,
+        config=default_config,
     )
     evaluation.evaluate()
 
@@ -122,6 +125,7 @@ def test_evaluation_no_model(manifest_empty_path, rule_severity_low, default_con
         manifest_loader=manifest_loader,
         formatter=Mock(),
         scorer=Mock(),
+        config=default_config,
     )
     evaluation.evaluate()
 
@@ -140,6 +144,7 @@ def test_evaluation_no_model_no_rule(manifest_empty_path, default_config):
         manifest_loader=manifest_loader,
         formatter=Mock(),
         scorer=Mock(),
+        config=default_config,
     )
     evaluation.evaluate()
 
@@ -148,7 +153,7 @@ def test_evaluation_no_model_no_rule(manifest_empty_path, default_config):
 
 
 def test_evaluation_rule_with_config(
-    manifest_path, rule_with_config, valid_config_path
+    manifest_path, rule_with_config, valid_config_path, default_config
 ):
     """Test rule evaluation with parameters."""
     manifest_loader = ManifestLoader(manifest_path)
@@ -170,6 +175,7 @@ def test_evaluation_rule_with_config(
         manifest_loader=manifest_loader,
         formatter=mock_formatter,
         scorer=mock_scorer,
+        config=default_config,
     )
     evaluation.evaluate()
 
@@ -201,6 +207,7 @@ def test_evaluation_with_filter(
         manifest_loader=manifest_loader,
         formatter=mock_formatter,
         scorer=mock_scorer,
+        config=default_config,
     )
     evaluation.evaluate()
 
@@ -241,6 +248,7 @@ def test_evaluation_with_class_filter(
         manifest_loader=manifest_loader,
         formatter=mock_formatter,
         scorer=mock_scorer,
+        config=default_config,
     )
     evaluation.evaluate()
 
@@ -280,6 +288,7 @@ def test_evaluation_with_models_and_sources(
         manifest_loader=manifest_loader,
         formatter=mock_formatter,
         scorer=mock_scorer,
+        config=default_config,
     )
     evaluation.evaluate()
 

@@ -44,6 +44,7 @@ def lint_dbt_project(
         manifest_loader=manifest_loader,
         formatter=formatter,
         scorer=scorer,
+        config=config,
     )
     evaluation.evaluate()
 
