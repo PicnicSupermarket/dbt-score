@@ -187,6 +187,7 @@ class Model(HasColumnsMixin):
     config: dict[str, Any]
     meta: dict[str, Any]
     columns: list[Column]
+    constraints: list[dict[str, Any]]
     package_name: str
     database: str
     schema: str
@@ -215,6 +216,7 @@ class Model(HasColumnsMixin):
             config=node_values["config"],
             meta=node_values["meta"],
             columns=cls._get_columns(node_values, test_values),
+            constraints=node_values["constraints"],
             package_name=node_values["package_name"],
             database=node_values["database"],
             schema=node_values["schema"],
