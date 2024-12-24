@@ -47,7 +47,49 @@ def sql_has_reasonable_number_of_lines(
 def has_example_sql(model: Model) -> RuleViolation | None:
     """The documentation of a model should have an example query."""
     if model.language == "sql":
-        if "```sql" not in model.description:
+        if "```sql" not in (model.description or ""):
             return RuleViolation(
                 "The model description does not include an example SQL query."
             )
+
+@rule
+def has_uniqueness_test(model: Model) -> RuleViolation | None:
+    """Model has uniqueness test for primary key."""
+    if model.config.get("materialized") not in {"table", "incremental"}:
+        return None
+
+    # Extract PK
+    pk_columns = None
+    # At column level?
+    for column in model.columns:
+        for constraint in column.constraints:
+            if constraint.type == "primary_key":
+                pk_columns = [column.name]
+                break
+        else:
+            continue
+        break
+    # Or at table level?
+    if pk_columns is None:
+        for constraint in model.constraints:
+            if constraint["type"] == "primary_key":
+                pk_columns = constraint["columns"]
+                break
+
+    if pk_columns is None: # No PK, no need for uniqueness test
+        return None
+
+    # Look for matching uniqueness test
+    if len(pk_columns) == 1:
+        for column in model.columns:
+            if column.name == pk_columns[0]:
+                for data_test in column.tests:
+                    if data_test.type == "unique":
+                        return None
+
+    for data_test in model.tests:
+        if data_test.type == "unique_combination_of_columns":
+            if set(data_test.kwargs.get("combination_of_columns")) == set(pk_columns):
+                return None
+
+    return RuleViolation("There is no uniqueness test defined and matching the PK.")
