@@ -8,6 +8,8 @@ and this project adheres to
 
 ## [Unreleased]
 
+- Add debug mode to help writing new rules. (#91)
+
 ## [0.9.0] - 2024-12-19
 
 - Documenting support for python 3.13. (#86)
