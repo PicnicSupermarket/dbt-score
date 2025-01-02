@@ -106,8 +106,16 @@ def cli() -> None:
     is_flag=False,
     default="failing-rules",
 )
+@click.option(
+    "--debug",
+    "-d",
+    help="Jump in a debugger in case of rule failure to evaluate.",
+    type=bool,
+    is_flag=True,
+    default=False,
+)
 @click.pass_context
-def lint(  # noqa: PLR0913, C901
+def lint(  # noqa: PLR0912, PLR0913, C901
     ctx: click.Context,
     format: Literal["plain", "manifest", "ascii"],
     select: tuple[str],
@@ -118,6 +126,7 @@ def lint(  # noqa: PLR0913, C901
     fail_project_under: float,
     fail_any_item_under: float,
     show: Literal["all", "failing-items", "failing-rules"],
+    debug: bool,
 ) -> None:
     """Lint dbt metadata."""
     manifest_provided = (
@@ -139,6 +148,8 @@ def lint(  # noqa: PLR0913, C901
         config.overload({"fail_any_item_under": fail_any_item_under})
     if show:
         config.overload({"show": show})
+    if debug:
+        config.overload({"debug": debug})
 
     try:
         if run_dbt_parse:

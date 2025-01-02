@@ -2,9 +2,12 @@
 
 from __future__ import annotations
 
+import pdb
+import traceback
 from itertools import chain
 from typing import Type, cast
 
+from dbt_score.config import Config
 from dbt_score.formatters import Formatter
 from dbt_score.models import Evaluable, ManifestLoader
 from dbt_score.rule import Rule, RuleViolation
@@ -27,6 +30,7 @@ class Evaluation:
         manifest_loader: ManifestLoader,
         formatter: Formatter,
         scorer: Scorer,
+        config: Config,
     ) -> None:
         """Create an Evaluation object.
 
@@ -35,11 +39,13 @@ class Evaluation:
             manifest_loader: A manifest loader to access dbt metadata.
             formatter: A formatter to display results.
             scorer: A scorer to compute scores.
+            config: A configuration.
         """
         self._rule_registry = rule_registry
         self._manifest_loader = manifest_loader
         self._formatter = formatter
         self._scorer = scorer
+        self._config = config
 
         # For each evaluable, its results
         self.results: dict[Evaluable, EvaluableResultsType] = {}
@@ -67,6 +73,9 @@ class Evaluation:
                         result = rule.evaluate(evaluable, **rule.config)
                         self.results[evaluable][rule.__class__] = result
                 except Exception as e:
+                    if self._config.debug:
+                        traceback.print_exc()
+                        pdb.post_mortem()
                     self.results[evaluable][rule.__class__] = e
 
             self.scores[evaluable] = self._scorer.score_evaluable(

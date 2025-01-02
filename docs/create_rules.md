@@ -170,3 +170,22 @@ def models_in_x_follow_naming_standard(model: Model) -> RuleViolation | None:
     if some_regex_fails(model.name):
         return RuleViolation("Invalid model name.")
 ```
+
+### Debugging rules
+
+When writing new rules, or investigating failing ones, you can make use of a
+debug mode, which will automatically give you a debugger in case of an exception
+occurring.
+
+Run dbt-score with the debugger:
+
+```shell
+dbt-score lint --debug
+# --debug and -d are equivalent
+```
+
+The debugger is the standard `pdb`, see
+[its available commands](https://docs.python.org/3/library/pdb.html#debugger-commands).
+
+Naturally, you're free to use your debugger of choice, this option exists to
+enable quick debugging in any environment.
