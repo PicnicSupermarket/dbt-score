@@ -58,6 +58,7 @@ class Config:
         "fail_project_under",
         "fail_any_item_under",
         "show",
+        "debug",
     ]
     _rules_section: Final[str] = "rules"
     _badges_section: Final[str] = "badges"
@@ -73,6 +74,7 @@ class Config:
         self.fail_project_under: float = 5.0
         self.fail_any_item_under: float = 5.0
         self.show: str = "failing-rules"
+        self.debug: bool = False
 
     def set_option(self, option: str, value: Any) -> None:
         """Set an option in the config."""
