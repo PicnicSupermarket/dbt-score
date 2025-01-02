@@ -63,8 +63,8 @@ class Test:
         """Create a test object from a test node in the manifest."""
         return cls(
             name=test_node["name"],
-            type=test_node["test_metadata"]["name"],
-            kwargs=test_node["test_metadata"].get("kwargs", {}),
+            type=test_node.get("test_metadata", {}).get("name", "generic"),
+            kwargs=test_node.get("test_metadata", {}).get("kwargs", {}),
             tags=test_node.get("tags", []),
             _raw_values=test_node,
         )
@@ -141,7 +141,10 @@ class HasColumnsMixin:
                 [
                     test
                     for test in test_values
-                    if test["test_metadata"]["kwargs"].get("column_name") == name
+                    if test.get("test_metadata", {})
+                    .get("kwargs", {})
+                    .get("column_name")
+                    == name
                 ],
             )
             for name, values in node_values.get("columns", {}).items()
@@ -224,7 +227,9 @@ class Model(HasColumnsMixin):
             tests=[
                 Test.from_node(test)
                 for test in test_values
-                if not test["test_metadata"]["kwargs"].get("column_name")
+                if not test.get("test_metadata", {})
+                .get("kwargs", {})
+                .get("column_name")
             ],
             depends_on=node_values["depends_on"],
             _raw_values=node_values,
@@ -359,7 +364,9 @@ class Source(HasColumnsMixin):
             tests=[
                 Test.from_node(test)
                 for test in test_values
-                if not test["test_metadata"]["kwargs"].get("column_name")
+                if not test.get("test_metadata", {})
+                .get("kwargs", {})
+                .get("column_name")
             ],
             _raw_values=node_values,
             _raw_test_values=test_values,
@@ -428,20 +435,17 @@ class ManifestLoader:
         """Index tests based on their associated evaluable."""
         for node_values in self.raw_nodes.values():
             if node_values.get("resource_type") == "test":
-                # tests for models have a non-null value for `attached_node`
+                # Tests for models have a non-null value for `attached_node`
                 if attached_node := node_values.get("attached_node"):
                     self.tests[attached_node].append(node_values)
 
-                # Tests for sources will have a null `attached_node`,
-                # and a non-empty list for `sources`.
-                # They need to be attributed to the source id
+                # Tests for sources or separate tests will have `attached_node` == null.
+                # They need to be attributed to the node id
                 # based on the `depends_on` field.
-                elif node_values.get("sources") and (
-                    source_unique_id := next(
-                        iter(node_values.get("depends_on", {}).get("nodes", [])), None
-                    )
+                elif node_unique_id := next(
+                    iter(node_values.get("depends_on", {}).get("nodes", [])), None
                 ):
-                    self.tests[source_unique_id].append(node_values)
+                    self.tests[node_unique_id].append(node_values)
 
     def _filter_evaluables(self, select: Iterable[str]) -> None:
         """Filter evaluables like dbt's --select."""
