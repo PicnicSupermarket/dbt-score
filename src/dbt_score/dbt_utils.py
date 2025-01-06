@@ -9,7 +9,7 @@ from typing import Any, Callable, Iterable, Iterator, cast
 # Conditionally import dbt objects.
 try:
     DBT_INSTALLED = True
-    from dbt.cli.main import dbtRunner, dbtRunnerResult
+    from dbt.cli.main import dbtRunner, dbtRunnerResult  # type: ignore
 except ImportError:
     DBT_INSTALLED = False
 
