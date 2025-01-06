@@ -1,6 +1,7 @@
 """All generic rules."""
 
 from dbt_score import Model, RuleViolation, Severity, rule
+from dbt_score.rules.filters import is_table
 
 
 @rule
@@ -52,11 +53,11 @@ def has_example_sql(model: Model) -> RuleViolation | None:
                 "The model description does not include an example SQL query."
             )
 
-@rule
+@rule(rule_filters={is_table()})
 def has_uniqueness_test(model: Model) -> RuleViolation | None:
     """Model has uniqueness test for primary key."""
-    if model.config.get("materialized") not in {"table", "incremental"}:
-        return None
+    # ruff: noqa: C901 [too-complex]
+    # ruff: noqa: PLR0912 [too-many-branches]
 
     # Extract PK
     pk_columns = None
