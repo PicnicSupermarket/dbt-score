@@ -63,8 +63,8 @@ def has_uniqueness_test(model: Model) -> RuleViolation | None:
     pk_columns = None
     # At column level?
     for column in model.columns:
-        for constraint in column.constraints:
-            if constraint.type == "primary_key":
+        for column_constraint in column.constraints:
+            if column_constraint.type == "primary_key":
                 pk_columns = [column.name]
                 break
         else:
@@ -72,9 +72,9 @@ def has_uniqueness_test(model: Model) -> RuleViolation | None:
         break
     # Or at table level?
     if pk_columns is None:
-        for constraint in model.constraints:
-            if constraint["type"] == "primary_key":
-                pk_columns = constraint["columns"]
+        for model_constraint in model.constraints:
+            if model_constraint["type"] == "primary_key":
+                pk_columns = model_constraint["columns"]
                 break
 
     if pk_columns is None: # No PK, no need for uniqueness test
@@ -90,7 +90,7 @@ def has_uniqueness_test(model: Model) -> RuleViolation | None:
 
     for data_test in model.tests:
         if data_test.type == "unique_combination_of_columns":
-            if set(data_test.kwargs.get("combination_of_columns")) == set(pk_columns):
+            if set(data_test.kwargs.get("combination_of_columns")) == set(pk_columns): # type: ignore
                 return None
 
     return RuleViolation("There is no uniqueness test defined and matching the PK.")
