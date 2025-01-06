@@ -125,6 +125,13 @@
       "resource_type": "test",
       "package_name": "package"
     },
+    "test.package.test4": {
+      "resource_type": "test",
+      "depends_on": { "nodes": ["model.package.model1"] },
+      "name": "test4",
+      "package_name": "package",
+      "tags": []
+    },
     "test.package.source_test1": {
       "resource_type": "test",
       "package_name": "package",

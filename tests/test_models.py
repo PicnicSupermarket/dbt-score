@@ -20,6 +20,7 @@ def test_manifest_load(mock_read_text, raw_manifest):
             ]
         )
         assert loader.models[0].tests[0].name == "test2"
+        assert loader.models[0].tests[1].name == "test4"
         assert loader.models[0].columns[0].tests[0].name == "test1"
 
         assert len(loader.sources) == len(
