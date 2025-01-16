@@ -15,18 +15,20 @@ logger = logging.getLogger(__name__)
 
 @dataclass
 class Constraint:
-    """Constraint for a column.
+    """Constraint for a model or a column.
 
     Attributes:
         type: The type of the constraint, e.g. `foreign_key`.
         name: The name of the constraint.
         expression: The expression of the constraint, e.g. `schema.other_table`.
+        columns: The columns for the constraint (only for model-level constraints).
         _raw_values: The raw values of the constraint in the manifest.
     """
 
     type: str
     name: str | None = None
     expression: str | None = None
+    columns: list[str] | None = None
     _raw_values: dict[str, Any] = field(default_factory=dict)
 
     @classmethod
@@ -36,6 +38,7 @@ class Constraint:
             type=raw_values["type"],
             name=raw_values["name"],
             expression=raw_values["expression"],
+            columns=raw_values.get("columns"),
             _raw_values=raw_values,
         )
 
@@ -187,7 +190,6 @@ class Model(HasColumnsMixin):
     config: dict[str, Any]
     meta: dict[str, Any]
     columns: list[Column]
-    constraints: list[dict[str, Any]]
     package_name: str
     database: str
     schema: str
@@ -199,6 +201,7 @@ class Model(HasColumnsMixin):
     tags: list[str] = field(default_factory=list)
     tests: list[Test] = field(default_factory=list)
     depends_on: dict[str, list[str]] = field(default_factory=dict)
+    constraints: list[Constraint] = field(default_factory=list)
     _raw_values: dict[str, Any] = field(default_factory=dict)
     _raw_test_values: list[dict[str, Any]] = field(default_factory=list)
 
@@ -216,7 +219,6 @@ class Model(HasColumnsMixin):
             config=node_values["config"],
             meta=node_values["meta"],
             columns=cls._get_columns(node_values, test_values),
-            constraints=node_values["constraints"],
             package_name=node_values["package_name"],
             database=node_values["database"],
             schema=node_values["schema"],
@@ -234,6 +236,10 @@ class Model(HasColumnsMixin):
                 .get("column_name")
             ],
             depends_on=node_values["depends_on"],
+            constraints=[
+                Constraint.from_raw_values(constraint)
+                for constraint in node_values["constraints"]
+            ],
             _raw_values=node_values,
             _raw_test_values=test_values,
         )

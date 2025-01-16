@@ -73,8 +73,8 @@ def has_uniqueness_test(model: Model) -> RuleViolation | None:
     # Or at table level?
     if pk_columns is None:
         for model_constraint in model.constraints:
-            if model_constraint["type"] == "primary_key":
-                pk_columns = model_constraint["columns"]
+            if model_constraint.type == "primary_key":
+                pk_columns = model_constraint.columns
                 break
 
     if pk_columns is None: # No PK, no need for uniqueness test
