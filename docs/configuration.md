@@ -90,7 +90,7 @@ Every rule can be configured with the following option:
   be found in the same namespace as the rules (see
   [Package rules](package_rules.md)).
 
-Example: the generic rule `has_example_sql` shall apply only to frontend models.
+  Example: the generic rule `has_example_sql` shall apply only to frontend models.
   ```toml
   [tool.dbt-score.rules."dbt_score.rules.generic.has_example_sql"]
   rule_filter_names=["dbt_score_rules.my_project_rules.only_frontend_models"]
