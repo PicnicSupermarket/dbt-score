@@ -90,17 +90,10 @@ Every rule can be configured with the following option:
   be found in the same namespace as the rules (see
   [Package rules](package_rules.md)).
 
-  Example: the generic rule `has_example_sql` shall apply only to frontend models.
+  Example: the generic rule `has_example_sql` shall apply only to models materializing a table.
   ```toml
   [tool.dbt-score.rules."dbt_score.rules.generic.has_example_sql"]
-  rule_filter_names=["dbt_score_rules.my_project_rules.only_frontend_models"]
-  ```
-  With `only_frontend_models` defined in `my_project_rules.py` as:
-  ```python
-  @rule_filter
-  def only_frontend_models(model: Model) -> bool:
-    -- condition which defines a frontend model
-  ```
+  rule_filter_names=["rules.filters.is_table"] 
   
 Some rules have additional configuration options, e.g.
 [sql_has_reasonable_number_of_lines](rules/generic.md#sql_has_reasonable_number_of_lines).
