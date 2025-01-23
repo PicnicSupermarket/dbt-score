@@ -53,44 +53,60 @@ def has_example_sql(model: Model) -> RuleViolation | None:
                 "The model description does not include an example SQL query."
             )
 
+
+@rule(rule_filters={is_table()})
+def single_pk_defined_at_column_level(model: Model) -> RuleViolation | None:
+    """Single-column PK must be defined as a column constraint."""
+    for constraint in model.constraints:
+        if constraint.type == "primary_key":
+            if len(constraint.columns) == 1:
+                return RuleViolation(
+                    f"Single-column PK {constraint.columns[0]} must be defined as a "
+                    f"column constraint."
+                )
+
+
+@rule(rule_filters={is_table()})
+def single_column_uniqueness_at_column_level(model: Model) -> RuleViolation | None:
+    """Single-column uniqueness test must be defined as a column test."""
+    for data_test in model.tests:
+        if data_test.type == "unique_combination_of_columns":
+            if len(data_test.kwargs.get("combination_of_columns")) == 1:
+                return RuleViolation(
+                    f"Single-column uniqueness test must be defined as a column test."
+                )
+
+
 @rule(rule_filters={is_table()})
 def has_uniqueness_test(model: Model) -> RuleViolation | None:
     """Model has uniqueness test for primary key."""
     # ruff: noqa: C901 [too-complex]
-    # ruff: noqa: PLR0912 [too-many-branches]
 
-    # Extract PK
-    pk_columns = None
-    # At column level?
+    # Single-column PK
     for column in model.columns:
         for column_constraint in column.constraints:
             if column_constraint.type == "primary_key":
-                pk_columns = [column.name]
-                break
-        else:
-            continue
-        break
-    # Or at table level?
-    if pk_columns is None:
-        for model_constraint in model.constraints:
-            if model_constraint.type == "primary_key":
-                pk_columns = model_constraint.columns
-                break
-
-    if pk_columns is None: # No PK, no need for uniqueness test
-        return None
-
-    # Look for matching uniqueness test
-    if len(pk_columns) == 1:
-        for column in model.columns:
-            if column.name == pk_columns[0]:
                 for data_test in column.tests:
                     if data_test.type == "unique":
                         return None
+                return RuleViolation(
+                    f"No unique constraint defined on PK column {column.name}."
+                )
+
+    # Composite PK
+    pk_columns = []
+    for model_constraint in model.constraints:
+        if model_constraint.type == "primary_key":
+            pk_columns = model_constraint.columns
+            break
+
+    if not pk_columns: # No PK, no need for uniqueness test
+        return None
 
     for data_test in model.tests:
         if data_test.type == "unique_combination_of_columns":
             if set(data_test.kwargs.get("combination_of_columns")) == set(pk_columns): # type: ignore
                 return None
-
-    return RuleViolation("There is no uniqueness test defined and matching the PK.")
+    return RuleViolation(
+        f"No uniqueness test defined and matching PK {','.join(pk_columns)}."
+    )
