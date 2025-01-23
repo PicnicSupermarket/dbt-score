@@ -12,7 +12,8 @@ and this project adheres to
 - Fix tests without metadata. (#88)
 - Add new rule to enforce presence of uniqueness test. (#90)
 - Add new rule to enforce single-column PK to be defined at column level. (#90)
-- Add new rule to enforce 1 column uniqueness test to be defined at column level. (90)
+- Add new rule to enforce 1 column uniqueness test to be defined at column
+  level. (90)
 - Add `constraints` to the model schema. (#90)
 
 ## [0.9.0] - 2024-12-19
