@@ -2,9 +2,8 @@
 
 All notable changes to this project will be documented in this file.
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
-and this project adheres to
-[Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and
+this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
@@ -12,15 +11,14 @@ and this project adheres to
 - Fix tests without metadata. (#88)
 - Add new rule to enforce presence of uniqueness test. (#90)
 - Add new rule to enforce single-column PK to be defined at column level. (#90)
-- Add new rule to enforce 1 column uniqueness test to be defined at column
-  level. (90)
+- Add new rule to enforce 1 column uniqueness test to be defined at column level. (#90)
 - Add `constraints` to the model schema. (#90)
 
 ## [0.9.0] - 2024-12-19
 
 - Documenting support for python 3.13. (#86)
-- Only show failing rules per default in `HumanReadableFormatter`. Also added
-  `--show` parameter in the CLI to change this behavior. (#77)
+- Only show failing rules per default in `HumanReadableFormatter`. Also added `--show`
+  parameter in the CLI to change this behavior. (#77)
 - Ignore imported rules and filters when building the rule registry. (#87)
 
 ## [0.8.0] - 2024-11-12
@@ -32,8 +30,7 @@ and this project adheres to
   `@rule_filter` and `ModelFilter` becomes `RuleFilter`.
 - **Breaking**: Config option `model_filter_names` becomes `rule_filter_names`.
 - **Breaking**: CLI flag naming fixes: `--fail_any_model_under` becomes
-  `--fail-any-item-under` and `--fail_project_under` becomes
-  `--fail-project-under`.
+  `--fail-any-item-under` and `--fail_project_under` becomes `--fail-project-under`.
 
 ## [0.7.1] - 2024-11-01
 
@@ -43,14 +40,14 @@ and this project adheres to
 
 - **Breaking**: The rule `public_model_has_example_sql` has been renamed
   `has_example_sql` and applies by default to all models.
-- **Breaking**: Remove `dbt-core` from dependencies. Since it is not mandatory
-  for `dbt-score` to execute `dbt`, remove the dependency.
+- **Breaking**: Remove `dbt-core` from dependencies. Since it is not mandatory for
+  `dbt-score` to execute `dbt`, remove the dependency.
 - **Breaking**: Stop using `MultiOption` selection type.
 
 ## [0.6.0] - 2024-08-23
 
-- **Breaking**: Improve error handling in CLI. Log messages are written in
-  stderr, and exit code is 2 in case of anything going wrong. (#73)
+- **Breaking**: Improve error handling in CLI. Log messages are written in stderr, and
+  exit code is 2 in case of anything going wrong. (#73)
 - Auto-round scores down to align scores and medals. (#74)
 
 ## [0.5.0] - 2024-08-15
@@ -59,8 +56,8 @@ and this project adheres to
 
 ## [0.4.0] - 2024-08-08
 
-- Add null check before calling `project_evaluated` in the `evaluate` method to
-  prevent errors when no models are found. (#64)
+- Add null check before calling `project_evaluated` in the `evaluate` method to prevent
+  errors when no models are found. (#64)
 - Add JSON formatter for machine-readable output. (#68)
 
 ## [0.3.0] - 2024-06-20
