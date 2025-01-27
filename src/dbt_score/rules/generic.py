@@ -73,7 +73,7 @@ def single_column_uniqueness_at_column_level(model: Model) -> RuleViolation | No
         if data_test.type == "unique_combination_of_columns":
             if len(data_test.kwargs.get("combination_of_columns")) == 1:
                 return RuleViolation(
-                    f"Single-column uniqueness test must be defined as a column test."
+                    "Single-column uniqueness test must be defined as a column test."
                 )
 
 
