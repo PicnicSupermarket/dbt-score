@@ -8,6 +8,8 @@ and this project adheres to
 
 ## [Unreleased]
 
+## [0.10.0] - 2025-01-27
+
 - Add debug mode to help writing new rules. (#91)
 - Fix tests without metadata. (#88)
 - Add new rule to enforce presence of uniqueness test. (#90)
