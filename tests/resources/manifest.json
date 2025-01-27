@@ -26,6 +26,7 @@
           "tags": []
         }
       },
+      "constraints": [],
       "package_name": "package",
       "database": "db",
       "schema": "schema",
@@ -56,6 +57,7 @@
           "tags": []
         }
       },
+      "constraints": [],
       "package_name": "package",
       "database": "db",
       "schema": "schema",
@@ -86,6 +88,7 @@
           "tags": []
         }
       },
+      "constraints": [],
       "package_name": "package2",
       "database": "db",
       "schema": "schema",
