@@ -59,7 +59,7 @@ def single_pk_defined_at_column_level(model: Model) -> RuleViolation | None:
     """Single-column PK must be defined as a column constraint."""
     for constraint in model.constraints:
         if constraint.type == "primary_key":
-            if len(constraint.columns) == 1:
+            if constraint.columns is not None and len(constraint.columns) == 1:
                 return RuleViolation(
                     f"Single-column PK {constraint.columns[0]} must be defined as a "
                     f"column constraint."
@@ -71,7 +71,7 @@ def single_column_uniqueness_at_column_level(model: Model) -> RuleViolation | No
     """Single-column uniqueness test must be defined as a column test."""
     for data_test in model.tests:
         if data_test.type == "unique_combination_of_columns":
-            if len(data_test.kwargs.get("combination_of_columns")) == 1:
+            if len(data_test.kwargs.get("combination_of_columns", [])) == 1:
                 return RuleViolation(
                     "Single-column uniqueness test must be defined as a column test."
                 )
@@ -94,10 +94,10 @@ def has_uniqueness_test(model: Model) -> RuleViolation | None:
                 )
 
     # Composite PK
-    pk_columns = []
+    pk_columns: list[str] = []
     for model_constraint in model.constraints:
         if model_constraint.type == "primary_key":
-            pk_columns = model_constraint.columns
+            pk_columns = model_constraint.columns or []
             break
 
     if not pk_columns: # No PK, no need for uniqueness test
