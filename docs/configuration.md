@@ -91,10 +91,12 @@ Every rule can be configured with the following option:
   [Package rules](package_rules.md)).
 
   Example: the generic rule `has_example_sql` shall apply only to models materializing a table.
+
   ```toml
   [tool.dbt-score.rules."dbt_score.rules.generic.has_example_sql"]
   rule_filter_names=["rules.filters.is_table"] 
-  
+  ```
+
 Some rules have additional configuration options, e.g.
 [sql_has_reasonable_number_of_lines](rules/generic.md#sql_has_reasonable_number_of_lines).
 Depending on the rule, the options will have different names, types and default
