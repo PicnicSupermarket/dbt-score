@@ -94,7 +94,7 @@ Every rule can be configured with the following option:
 
   ```toml
   [tool.dbt-score.rules."dbt_score.rules.generic.has_example_sql"]
-  rule_filter_names=["rules.filters.is_table"] 
+  rule_filter_names=["dbt_score.rules.filters.is_table"] 
   ```
 
 Some rules have additional configuration options, e.g.
