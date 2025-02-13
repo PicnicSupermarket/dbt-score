@@ -4,7 +4,7 @@ import json
 from pathlib import Path
 from typing import Any, Type
 
-from dbt_score import Model, Rule, RuleViolation, Severity, Source, rule
+from dbt_score import Model, Rule, RuleViolation, Severity, Snapshot, Source, rule
 from dbt_score.config import Config
 from dbt_score.models import ManifestLoader
 from dbt_score.rule_filter import RuleFilter, rule_filter
@@ -92,7 +92,17 @@ def source2(raw_manifest) -> Source:
     )
 
 
-# Multiple ways to create rules
+# Snapshots
+
+
+# TODO: Implement snapshot fixtures
+@fixture
+def snapshot1(raw_manifest) -> Snapshot:
+    """Snapshot 1."""
+    return Snapshot.from_node(raw_manifest["nodes"]["snapshot.package.snapshot1"], [])
+
+
+# Multipl ways to create rules
 
 
 @fixture
