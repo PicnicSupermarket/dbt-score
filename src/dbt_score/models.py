@@ -45,7 +45,7 @@ class Constraint:
 
 @dataclass
 class Test:
-    """Test for a column, model or source.
+    """Test for a column, model, source or snapshot.
 
     Attributes:
         name: The name of the test.
@@ -388,11 +388,115 @@ class Source(HasColumnsMixin):
         return hash(self.unique_id)
 
 
-Evaluable: TypeAlias = Model | Source
+@dataclass
+class Snapshot(HasColumnsMixin):
+    """Represents a dbt snapshot.
+
+    Attributes:
+        unique_id: The id of the snapshot, e.g. `snapshot.package.snapshot_name`.
+        name: The name of the snapshot.
+        relation_name: The relation name of the snapshot,
+        e.g. `db.schema.snapshot_name`.
+        description: The full description of the snapshot.
+        original_file_path: The sql path of the snapshot,
+        `e.g. snapshot_dir/dir/file.sql`.
+        config: The config of the snapshot.
+        meta: The meta of the snapshot.
+        columns: The list of columns of the snapshot.
+        package_name: The package name of the snapshot.
+        database: The database name of the snapshot.
+        schema: The schema name of the snapshot.
+        raw_code: The raw code of the snapshot.
+        language: The language of the snapshot, e.g. sql.
+        access: The access level of the snapshot, e.g. public.
+        alias: The alias of the snapshot.
+        patch_path: The yml path of the snapshot, e.g.
+        `package://snapshot_dir/dir/file.yml`.
+        tags: The list of tags attached to the snapshot.
+        tests: The list of tests attached to the snapshot.
+        depends_on: Dictionary of models/sources/macros that the model depends on.
+        unique_key: The unique key of the snapshot. Can be a list of columns string.
+        strategy: The strategy of the snapshot. Can be `timestamp` or `check`.
+        _raw_values: The raw values of the snapshot (node) in the manifest.
+        _raw_test_values: The raw test values of the snapshot (node) in the manifest.
+    """
+
+    unique_id: str
+    name: str
+    relation_name: str
+    description: str
+    original_file_path: str
+    config: dict[str, Any]
+    meta: dict[str, Any]
+    columns: list[Column]
+    package_name: str
+    database: str
+    schema: str
+    raw_code: str
+    language: str
+    access: str
+    unique_key: list[str] | str
+    strategy: Literal["timestamp", "check"]
+    alias: str | None = None
+    patch_path: str | None = None
+    tags: list[str] = field(default_factory=list)
+    tests: list[Test] = field(default_factory=list)
+    depends_on: dict[str, list[str]] = field(default_factory=dict)
+    constraints: list[Constraint] = field(default_factory=list)
+    _raw_values: dict[str, Any] = field(default_factory=dict)
+    _raw_test_values: list[dict[str, Any]] = field(default_factory=list)
+
+    @classmethod
+    def from_node(
+        cls, node_values: dict[str, Any], test_values: list[dict[str, Any]]
+    ) -> "Snapshot":
+        """Create a model object from a node and it's tests in the manifest."""
+        return cls(
+            unique_id=node_values["unique_id"],
+            name=node_values["name"],
+            relation_name=node_values["relation_name"],
+            description=node_values["description"],
+            original_file_path=node_values["original_file_path"],
+            config=node_values["config"],
+            meta=node_values["meta"],
+            columns=cls._get_columns(node_values, test_values),
+            package_name=node_values["package_name"],
+            database=node_values["database"],
+            schema=node_values["schema"],
+            raw_code=node_values["raw_code"],
+            language=node_values["language"],
+            access=node_values["access"],
+            alias=node_values["alias"],
+            patch_path=node_values["patch_path"],
+            tags=node_values["tags"],
+            tests=[
+                Test.from_node(test)
+                for test in test_values
+                if not test.get("test_metadata", {})
+                .get("kwargs", {})
+                .get("column_name")
+            ],
+            depends_on=node_values["depends_on"],
+            constraints=[
+                Constraint.from_raw_values(constraint)
+                for constraint in node_values["constraints"]
+            ],
+            unique_key=node_values["unique_key"],
+            strategy=node_values["strategy"],
+            _raw_values=node_values,
+            _raw_test_values=test_values,
+        )
+
+    def __hash__(self) -> int:
+        """Compute a unique hash for a snapshot."""
+        return hash(self.unique_id)
+
+
+Evaluable: TypeAlias = Model | Source | Snapshot
 
 
 class ManifestLoader:
-    """Load the models, sources and tests from the manifest."""
+    """Load the models, sources, snapshots and tests from the manifest."""
 
     def __init__(self, file_path: Path, select: Iterable[str] | None = None):
         """Initialize the ManifestLoader.
@@ -417,15 +521,17 @@ class ManifestLoader:
         self.models: list[Model] = []
         self.tests: dict[str, list[dict[str, Any]]] = defaultdict(list)
         self.sources: list[Source] = []
+        self.snapshots: list[Snapshot] = []
 
         self._reindex_tests()
         self._load_models()
         self._load_sources()
+        self._load_snapshots()
 
         if select:
             self._filter_evaluables(select)
 
-        if (len(self.models) + len(self.sources)) == 0:
+        if (len(self.models) + len(self.sources) + len(self.snapshots)) == 0:
             logger.warning("Nothing to evaluate!")
 
     def _load_models(self) -> None:
@@ -441,6 +547,13 @@ class ManifestLoader:
             if source_values.get("resource_type") == "source":
                 source = Source.from_node(source_values, self.tests.get(source_id, []))
                 self.sources.append(source)
+
+    def _load_snapshots(self) -> None:
+        """Load the snapshots from the manifest."""
+        for node_id, node_values in self.raw_nodes.items():
+            if node_values.get("resource_type") == "snapshot":
+                snapshot = Snapshot.from_node(node_values, self.tests.get(node_id, []))
+                self.snapshots.append(snapshot)
 
     def _reindex_tests(self) -> None:
         """Index tests based on their associated evaluable."""
@@ -472,3 +585,4 @@ class ManifestLoader:
 
         self.models = [m for m in self.models if m.name in selected]
         self.sources = [s for s in self.sources if s.selector_name in selected]
+        self.snapshots = [s for s in self.snapshots if s.name in selected]
