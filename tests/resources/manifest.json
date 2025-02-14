@@ -36,7 +36,8 @@
       "tags": [],
       "depends_on": {},
       "language": "sql",
-      "access": "protected"
+      "access": "protected",
+      "group": null
     },
     "model.package.model2": {
       "resource_type": "model",
@@ -67,7 +68,8 @@
       "tags": [],
       "depends_on": {},
       "language": "sql",
-      "access": "public"
+      "access": "public",
+      "group": "them_over_there"
     },
     "model.package2.model1": {
       "resource_type": "model",
@@ -98,7 +100,8 @@
       "tags": [],
       "depends_on": {},
       "language": "sql",
-      "access": "public"
+      "access": "public",
+      "group": "them_over_there"
     },
     "test.package.test1": {
       "resource_type": "test",
