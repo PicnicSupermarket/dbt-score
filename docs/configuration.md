@@ -90,11 +90,12 @@ Every rule can be configured with the following option:
   be found in the same namespace as the rules (see
   [Package rules](package_rules.md)).
 
-  Example: the generic rule `has_example_sql` shall apply only to models materializing a table.
+  Example: the generic rule `has_example_sql` shall apply only to models
+  materializing a table.
 
   ```toml
   [tool.dbt-score.rules."dbt_score.rules.generic.has_example_sql"]
-  rule_filter_names=["dbt_score.rules.filters.is_table"] 
+  rule_filter_names=["dbt_score.rules.filters.is_table"]
   ```
 
 Some rules have additional configuration options, e.g.
