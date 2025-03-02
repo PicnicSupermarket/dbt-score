@@ -408,15 +408,12 @@ class Snapshot(HasColumnsMixin):
         schema: The schema name of the snapshot.
         raw_code: The raw code of the snapshot.
         language: The language of the snapshot, e.g. sql.
-        access: The access level of the snapshot, e.g. public.
         alias: The alias of the snapshot.
         patch_path: The yml path of the snapshot, e.g.
         `package://snapshot_dir/dir/file.yml`.
         tags: The list of tags attached to the snapshot.
         tests: The list of tests attached to the snapshot.
         depends_on: Dictionary of models/sources/macros that the model depends on.
-        unique_key: The unique key of the snapshot. Can be a list of columns string.
-        strategy: The strategy of the snapshot. Can be `timestamp` or `check`.
         _raw_values: The raw values of the snapshot (node) in the manifest.
         _raw_test_values: The raw test values of the snapshot (node) in the manifest.
     """
@@ -434,15 +431,11 @@ class Snapshot(HasColumnsMixin):
     schema: str
     raw_code: str
     language: str
-    access: str
-    unique_key: list[str] | str
-    strategy: Literal["timestamp", "check"]
     alias: str | None = None
     patch_path: str | None = None
     tags: list[str] = field(default_factory=list)
     tests: list[Test] = field(default_factory=list)
     depends_on: dict[str, list[str]] = field(default_factory=dict)
-    constraints: list[Constraint] = field(default_factory=list)
     _raw_values: dict[str, Any] = field(default_factory=dict)
     _raw_test_values: list[dict[str, Any]] = field(default_factory=list)
 
@@ -450,7 +443,7 @@ class Snapshot(HasColumnsMixin):
     def from_node(
         cls, node_values: dict[str, Any], test_values: list[dict[str, Any]]
     ) -> "Snapshot":
-        """Create a model object from a node and it's tests in the manifest."""
+        """Create a snapshot object from a node and its tests in the manifest."""
         return cls(
             unique_id=node_values["unique_id"],
             name=node_values["name"],
@@ -465,7 +458,6 @@ class Snapshot(HasColumnsMixin):
             schema=node_values["schema"],
             raw_code=node_values["raw_code"],
             language=node_values["language"],
-            access=node_values["access"],
             alias=node_values["alias"],
             patch_path=node_values["patch_path"],
             tags=node_values["tags"],
@@ -477,12 +469,6 @@ class Snapshot(HasColumnsMixin):
                 .get("column_name")
             ],
             depends_on=node_values["depends_on"],
-            constraints=[
-                Constraint.from_raw_values(constraint)
-                for constraint in node_values["constraints"]
-            ],
-            unique_key=node_values["unique_key"],
-            strategy=node_values["strategy"],
             _raw_values=node_values,
             _raw_test_values=test_values,
         )
