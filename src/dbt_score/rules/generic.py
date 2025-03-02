@@ -1,7 +1,14 @@
 """All generic rules."""
 
-from dbt_score import Model, RuleViolation, Severity, rule
+from dbt_score import Model, RuleViolation, Severity, Snapshot, rule
 from dbt_score.rules.filters import is_table
+
+
+@rule
+def snapshot_has_description(snapshot: Snapshot) -> RuleViolation | None:
+    """A snapshot should have a description."""
+    if not snapshot.description:
+        return RuleViolation(message="Snapshot lacks a description.")
 
 
 @rule
@@ -45,7 +52,7 @@ def sql_has_reasonable_number_of_lines(
 
 
 @rule(severity=Severity.LOW)
-def has_example_sql(model: Model) -> RuleViolation | None:
+def has_example_sql(model: Snapshot) -> RuleViolation | None:
     """The documentation of a model should have an example query."""
     if model.language == "sql":
         if "```sql" not in (model.description or ""):
