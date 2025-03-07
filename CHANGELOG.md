@@ -8,6 +8,10 @@ and this project adheres to
 
 ## [Unreleased]
 
+- Improve documentation on rule filters. (#93)
+- Add `group` to model definition. (#99)
+- Add rule: prevent use of is_incremental() in non-incremental models. (#103)
+
 ## [0.10.0] - 2025-01-27
 
 - Add debug mode to help writing new rules. (#91)
