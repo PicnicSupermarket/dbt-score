@@ -14,7 +14,7 @@ from typing import (
     overload,
 )
 
-from dbt_score.models import Evaluable, Model, Source
+from dbt_score.models import Evaluable, Model, Snapshot, Source
 from dbt_score.more_itertools import first_true
 from dbt_score.rule_filter import RuleFilter
 
@@ -65,6 +65,7 @@ class RuleViolation:
 
 ModelRuleEvaluationType: TypeAlias = Callable[[Model], RuleViolation | None]
 SourceRuleEvaluationType: TypeAlias = Callable[[Source], RuleViolation | None]
+SnapshotRuleEvaluationType: TypeAlias = Callable[[Snapshot], RuleViolation | None]
 RuleEvaluationType: TypeAlias = ModelRuleEvaluationType | SourceRuleEvaluationType
 
 
@@ -195,6 +196,11 @@ def rule(__func: ModelRuleEvaluationType) -> Type[Rule]:
 
 @overload
 def rule(__func: SourceRuleEvaluationType) -> Type[Rule]:
+    ...
+
+
+@overload
+def rule(__func: SnapshotRuleEvaluationType) -> Type[Rule]:
     ...
 
 
