@@ -4,7 +4,7 @@ from typing import Any
 
 from dbt_score.evaluation import EvaluableResultsType
 from dbt_score.formatters import Formatter
-from dbt_score.models import Evaluable, Model, Source
+from dbt_score.models import Evaluable, Model, Snapshot, Source
 from dbt_score.rule import RuleViolation
 from dbt_score.scoring import Score
 
@@ -35,6 +35,8 @@ class HumanReadableFormatter(Formatter):
                 return evaluable.name
             case Source():
                 return evaluable.selector_name
+            case Snapshot():
+                return evaluable.name
             case _:
                 raise NotImplementedError
 

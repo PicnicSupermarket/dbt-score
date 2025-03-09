@@ -414,6 +414,8 @@ class Snapshot(HasColumnsMixin):
         tags: The list of tags attached to the snapshot.
         tests: The list of tests attached to the snapshot.
         depends_on: Dictionary of models/sources/macros that the model depends on.
+        strategy: The strategy of the snapshot.
+        unique_key: The unique key of the snapshot.
         _raw_values: The raw values of the snapshot (node) in the manifest.
         _raw_test_values: The raw test values of the snapshot (node) in the manifest.
     """
@@ -436,6 +438,8 @@ class Snapshot(HasColumnsMixin):
     tags: list[str] = field(default_factory=list)
     tests: list[Test] = field(default_factory=list)
     depends_on: dict[str, list[str]] = field(default_factory=dict)
+    strategy: str | None = None
+    unique_key: list[str] | None = None
     _raw_values: dict[str, Any] = field(default_factory=dict)
     _raw_test_values: list[dict[str, Any]] = field(default_factory=list)
 
@@ -469,6 +473,8 @@ class Snapshot(HasColumnsMixin):
                 .get("column_name")
             ],
             depends_on=node_values["depends_on"],
+            strategy=node_values["strategy"],
+            unique_key=node_values["unique_key"],
             _raw_values=node_values,
             _raw_test_values=test_values,
         )

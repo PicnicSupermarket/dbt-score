@@ -5,10 +5,17 @@ from dbt_score.rules.filters import is_table
 
 
 @rule
-def snapshot_has_description(snapshot: Snapshot) -> RuleViolation | None:
-    """A snapshot should have a description."""
-    if not snapshot.description:
-        return RuleViolation(message="Snapshot lacks a description.")
+def snapshot_has_unique_key(snapshot: Snapshot) -> RuleViolation | None:
+    """A snapshot should have a unique key."""
+    if not snapshot.unique_key:
+        return RuleViolation(message="Snapshot lacks a unique key.")
+
+
+@rule
+def snapshot_has_strategy(snapshot: Snapshot) -> RuleViolation | None:
+    """A snapshot should have a strategy."""
+    if not snapshot.strategy:
+        return RuleViolation(message="Snapshot lacks a strategy.")
 
 
 @rule
@@ -52,7 +59,7 @@ def sql_has_reasonable_number_of_lines(
 
 
 @rule(severity=Severity.LOW)
-def has_example_sql(model: Snapshot) -> RuleViolation | None:
+def has_example_sql(model: Model) -> RuleViolation | None:
     """The documentation of a model should have an example query."""
     if model.language == "sql":
         if "```sql" not in (model.description or ""):

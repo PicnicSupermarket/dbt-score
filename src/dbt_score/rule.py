@@ -66,7 +66,9 @@ class RuleViolation:
 ModelRuleEvaluationType: TypeAlias = Callable[[Model], RuleViolation | None]
 SourceRuleEvaluationType: TypeAlias = Callable[[Source], RuleViolation | None]
 SnapshotRuleEvaluationType: TypeAlias = Callable[[Snapshot], RuleViolation | None]
-RuleEvaluationType: TypeAlias = ModelRuleEvaluationType | SourceRuleEvaluationType
+RuleEvaluationType: TypeAlias = (
+    ModelRuleEvaluationType | SourceRuleEvaluationType | SnapshotRuleEvaluationType
+)
 
 
 class Rule:

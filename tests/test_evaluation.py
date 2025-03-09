@@ -44,6 +44,10 @@ def test_evaluation_low_medium_high(
     model1 = manifest_loader.models[0]
     model2 = manifest_loader.models[1]
 
+    # TODO: Add snapshot tests?!?
+    # snapshot1 = manifest_loader.snapshots[0]
+    # snapshot2 = manifest_loader.snapshots[1]
+
     assert evaluation.results[model1][rule_severity_low] is None
     assert evaluation.results[model1][rule_severity_medium] is None
     assert evaluation.results[model1][rule_severity_high] is None
@@ -54,10 +58,10 @@ def test_evaluation_low_medium_high(
     assert isinstance(evaluation.results[model2][rule_severity_high], RuleViolation)
     assert isinstance(evaluation.results[model2][rule_error], Exception)
 
-    assert mock_formatter.evaluable_evaluated.call_count == 5
+    assert mock_formatter.evaluable_evaluated.call_count == 6
     assert mock_formatter.project_evaluated.call_count == 1
 
-    assert mock_scorer.score_evaluable.call_count == 5
+    assert mock_scorer.score_evaluable.call_count == 6
     assert mock_scorer.score_aggregate_evaluables.call_count == 1
 
 
