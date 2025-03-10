@@ -100,13 +100,23 @@ def has_uniqueness_test(model: Model) -> RuleViolation | None:
             pk_columns = model_constraint.columns or []
             break
 
-    if not pk_columns: # No PK, no need for uniqueness test
+    if not pk_columns:  # No PK, no need for uniqueness test
         return None
 
     for data_test in model.tests:
         if data_test.type == "unique_combination_of_columns":
-            if set(data_test.kwargs.get("combination_of_columns")) == set(pk_columns): # type: ignore
+            if set(data_test.kwargs.get("combination_of_columns")) == set(pk_columns):  # type: ignore
                 return None
     return RuleViolation(
         f"No uniqueness test defined and matching PK {','.join(pk_columns)}."
     )
+
+
+@rule(rule_filters={is_table()})
+def has_no_unused_is_incremental(model: Model) -> RuleViolation | None:
+    """Non-incremental model does not make use of is_incremental()."""
+    if (
+        model.config.get("materialized") != "incremental"
+        and "is_incremental()" in model.raw_code
+    ):
+        return RuleViolation("Non-incremental model makes use of is_incremental().")
