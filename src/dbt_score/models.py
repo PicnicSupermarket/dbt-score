@@ -473,8 +473,6 @@ class Snapshot(HasColumnsMixin):
                 .get("column_name")
             ],
             depends_on=node_values["depends_on"],
-            strategy=node_values["strategy"],
-            unique_key=node_values["unique_key"],
             _raw_values=node_values,
             _raw_test_values=test_values,
         )

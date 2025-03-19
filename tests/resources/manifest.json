@@ -11,7 +11,7 @@
       "relation_name": "database.schema.snapshot1",
       "description": "A great snapshot.",
       "original_file_path": "/path/to/snapshot1.sql",
-      "config": {},
+      "config": { "strategy": "timestamp", "unique_key": ["a"] },
       "meta": {},
       "columns": {
         "a": {
@@ -32,9 +32,38 @@
       "tags": [],
       "depends_on": {},
       "language": "sql",
-      "access": "protected",
-      "strategy": "timestamp",
-      "unique_key": ["a"]
+      "access": "protected"
+    },
+    "snapshot.package.snapshot2": {
+      "resource_type": "snapshot",
+      "package_name": "package",
+      "unique_id": "snapshot.package.snapshot2",
+      "name": "snapshot2",
+      "relation_name": "database.schema.snapshot2",
+      "description": "A great snapshot.",
+      "original_file_path": "/path/to/snapshot2.sql",
+      "config": { "strategy": "timestamp", "unique_key": ["a"] },
+      "meta": {},
+      "columns": {
+        "a": {
+          "name": "column_a",
+          "description": "Column A.",
+          "data_type": "string",
+          "meta": {},
+          "constraints": [],
+          "tags": []
+        }
+      },
+      "constraints": [],
+      "database": "db",
+      "schema": "schema",
+      "raw_code": "SELECT x FROM y",
+      "alias": "snapshot2_alias",
+      "patch_path": "/path/to/snapshot2.yml",
+      "tags": [],
+      "depends_on": {},
+      "language": "sql",
+      "access": "protected"
     },
     "analysis.package.analysis1": {
       "resource_type": "analysis",

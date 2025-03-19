@@ -55,7 +55,7 @@ class HumanReadableFormatter(Formatter):
             )
         ):
             resource_type = type(evaluable).__name__
-            name_formatted = f"{resource_type[0]}: {self.pretty_name(evaluable)}"
+            name_formatted = f"{resource_type}: {self.pretty_name(evaluable)}"
             header = (
                 f"{score.badge} "
                 f"{self.bold(name_formatted)} (score: {score.rounded_value!s})"
@@ -74,8 +74,7 @@ class HumanReadableFormatter(Formatter):
                     )
                 else:
                     print(
-                        f"{self.indent}{self.label_error} {rule.source()}: "
-                        f"{result!s}"
+                        f"{self.indent}{self.label_error} {rule.source()}: {result!s}"
                     )
             print()
 

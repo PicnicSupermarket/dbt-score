@@ -93,5 +93,9 @@ class Evaluation:
         )
 
         # Add null check before calling project_evaluated
-        if self._manifest_loader.models or self._manifest_loader.sources:
+        if (
+            self._manifest_loader.models
+            or self._manifest_loader.sources
+            or self._manifest_loader.snapshots
+        ):
             self._formatter.project_evaluated(self.project_score)
