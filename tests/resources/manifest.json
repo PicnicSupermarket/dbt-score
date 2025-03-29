@@ -33,7 +33,7 @@
       "raw_code": "SELECT x FROM {{ ref('model2') }} union all SELECT x from {{ source('table1') }}",
       "alias": "model1_alias",
       "patch_path": "/path/to/model1.yml",
-      "tags": [],
+      "tags": ["special"],
       "depends_on": {
         "nodes": ["model.package.model2", "source.package.my_source.table1"]
       },
