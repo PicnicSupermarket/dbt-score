@@ -300,3 +300,38 @@ def test_evaluation_with_models_and_sources(
 
     assert decorator_rule_source in evaluation.results[source1]
     assert decorator_rule not in evaluation.results[source1]
+
+
+def test_evalution_with_manifest(
+    rule_with_manifest,
+    default_config,
+    rule_severity_low,
+    rule_severity_critical,
+    manifest_path,
+):
+    """Test that manifest is provided when requested, and not otherwise."""
+    manifest_loader = ManifestLoader(manifest_path)
+    mock_formatter = Mock()
+    mock_scorer = Mock()
+
+    rule_registry = RuleRegistry(default_config)
+    rule_registry._add_rule(rule_severity_low)
+    rule_registry._add_rule(rule_severity_critical)
+    rule_registry._add_rule(rule_with_manifest)
+
+    mock_scorer.score_model.return_value = Score(10, "🥇")
+
+    evaluation = Evaluation(
+        rule_registry=rule_registry,
+        manifest_loader=manifest_loader,
+        formatter=mock_formatter,
+        scorer=mock_scorer,
+        config=default_config,
+    )
+    evaluation.evaluate()
+
+    model1 = manifest_loader.models[0]
+
+    assert rule_severity_critical in evaluation.results[model1]
+    assert rule_severity_low in evaluation.results[model1]
+    assert rule_with_manifest in evaluation.results[model1]

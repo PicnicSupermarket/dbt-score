@@ -9,9 +9,11 @@ def test_rule_decorator_and_class(
     decorator_rule,
     decorator_rule_no_parens,
     decorator_rule_args,
+    decorator_rule_manifest,
     class_rule,
     model1,
     model2,
+    manifest_loader,
 ):
     """Test rule creation with the rule decorator and class."""
     decorator_rule_instance = decorator_rule()
@@ -27,11 +29,22 @@ def test_rule_decorator_and_class(
             message="Model1 is a violation."
         )
         assert rule_instance.evaluate(model2) is None
+        assert not rule_instance.requests_manifest()
 
     assertions(decorator_rule_instance)
     assertions(decorator_rule_no_parens_instance)
     assertions(decorator_rule_args_instance)
     assertions(class_rule_instance)
+
+    def manifest_assertions(rule_instance):
+        assert rule_instance.requests_manifest()
+        assert rule_instance.evaluate(model1, manifest_loader) == RuleViolation(
+            message="Model1 is a violation."
+        )
+        assert rule_instance.evaluate(model2, manifest_loader) is None
+
+    decorator_rule_manifest_instance = decorator_rule_manifest()
+    manifest_assertions(decorator_rule_manifest_instance)
 
 
 def test_missing_description_rule_decorator():

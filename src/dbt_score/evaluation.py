@@ -70,7 +70,12 @@ class Evaluation:
             for rule in rules:
                 try:
                     if rule.should_evaluate(evaluable):
-                        result = rule.evaluate(evaluable, **rule.config)
+                        if rule.requests_manifest():
+                            result = rule.evaluate(
+                                evaluable, self._manifest_loader, **rule.config
+                            )
+                        else:
+                            result = rule.evaluate(evaluable, **rule.config)
                         self.results[evaluable][rule.__class__] = result
                 except Exception as e:
                     if self._config.debug:

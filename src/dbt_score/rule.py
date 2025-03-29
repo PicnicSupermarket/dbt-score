@@ -14,7 +14,7 @@ from typing import (
     overload,
 )
 
-from dbt_score.models import Evaluable, Model, Source
+from dbt_score.models import Evaluable, ManifestLoader, Model, Source
 from dbt_score.more_itertools import first_true
 from dbt_score.rule_filter import RuleFilter
 
@@ -63,8 +63,20 @@ class RuleViolation:
     message: str | None = None
 
 
-ModelRuleEvaluationType: TypeAlias = Callable[[Model], RuleViolation | None]
-SourceRuleEvaluationType: TypeAlias = Callable[[Source], RuleViolation | None]
+ModelRuleEvaluationTypeNoManifest: TypeAlias = Callable[[Model], RuleViolation | None]
+ModelRuleEvaluationTypeManifest: TypeAlias = Callable[
+    [Model, ManifestLoader], RuleViolation | None
+]
+ModelRuleEvaluationType: TypeAlias = (
+    ModelRuleEvaluationTypeNoManifest | ModelRuleEvaluationTypeManifest
+)
+SourceRuleEvaluationTypeNoManifest: TypeAlias = Callable[[Source], RuleViolation | None]
+SourceRuleEvaluationTypeManifest: TypeAlias = Callable[
+    [Source, ManifestLoader], RuleViolation | None
+]
+SourceRuleEvaluationType: TypeAlias = (
+    SourceRuleEvaluationTypeNoManifest | SourceRuleEvaluationTypeManifest
+)
 RuleEvaluationType: TypeAlias = ModelRuleEvaluationType | SourceRuleEvaluationType
 
 
@@ -143,7 +155,9 @@ class Rule:
         self.rule_filter_names = rule_config.rule_filter_names
         self.config = config
 
-    def evaluate(self, evaluable: Evaluable) -> RuleViolation | None:
+    def evaluate(
+        self, evaluable: Evaluable, manifest: ManifestLoader | None = None
+    ) -> RuleViolation | None:
         """Evaluates the rule."""
         raise NotImplementedError("Subclass must implement method `evaluate`.")
 
@@ -163,6 +177,21 @@ class Rule:
                 and resource_types_match
             )
         return resource_types_match
+
+    @classmethod
+    def requests_manifest(cls) -> bool:
+        """Checks if the rule requests the full manifest."""
+        evaluate_func = getattr(cls, "_orig_evaluate", cls.evaluate)
+
+        sig = inspect.signature(evaluate_func)
+        return (
+            inspect.Parameter(
+                "manifest",
+                kind=inspect.Parameter.POSITIONAL_OR_KEYWORD,
+                annotation=ManifestLoader,
+            )
+            in sig.parameters.values()
+        )
 
     @classmethod
     def set_severity(cls, severity: Severity) -> None:
