@@ -30,11 +30,13 @@
       "package_name": "package",
       "database": "db",
       "schema": "schema",
-      "raw_code": "SELECT x FROM y",
+      "raw_code": "SELECT x FROM {{ ref('model2') }} union all SELECT x from {{ source('table1') }}",
       "alias": "model1_alias",
       "patch_path": "/path/to/model1.yml",
       "tags": [],
-      "depends_on": {},
+      "depends_on": {
+        "nodes": ["model.package.model2", "source.package.my_source.table1"]
+      },
       "language": "sql",
       "access": "protected",
       "group": null
@@ -62,9 +64,41 @@
       "package_name": "package",
       "database": "db",
       "schema": "schema",
-      "raw_code": "SELECT x FROM y",
+      "raw_code": "SELECT x FROM {{ source('table1') }}",
       "alias": "model2_alias",
       "patch_path": "/path/to/model2.yml",
+      "tags": [],
+      "depends_on": { "nodes": ["source.package.my_source.table1"] },
+      "language": "sql",
+      "access": "public",
+      "group": "them_over_there"
+    },
+    "model.package.model3": {
+      "resource_type": "model",
+      "unique_id": "model.package.model3",
+      "name": "model3",
+      "relation_name": "database.schema.model3",
+      "description": "A great model.\nExample use:\n```sql\nselect 1;\n```",
+      "original_file_path": "/path/to/model3.sql",
+      "config": {},
+      "meta": {},
+      "columns": {
+        "a": {
+          "name": "column_a",
+          "description": "Column A.",
+          "data_type": "string",
+          "meta": {},
+          "constraints": [],
+          "tags": []
+        }
+      },
+      "constraints": [],
+      "package_name": "package",
+      "database": "db",
+      "schema": "schema",
+      "raw_code": "SELECT x FROM y",
+      "alias": "model2_alias",
+      "patch_path": "/path/to/model3.yml",
       "tags": [],
       "depends_on": {},
       "language": "sql",

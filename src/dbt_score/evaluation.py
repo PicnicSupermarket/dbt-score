@@ -61,7 +61,8 @@ class Evaluation:
         rules = self._rule_registry.rules.values()
 
         for evaluable in chain(
-            self._manifest_loader.models, self._manifest_loader.sources
+            self._manifest_loader.models.values(),
+            self._manifest_loader.sources.values(),
         ):
             # type inference on elements from `chain` is wonky
             # and resolves to superclass HasColumnsMixin
@@ -70,7 +71,13 @@ class Evaluation:
             for rule in rules:
                 try:
                     if rule.should_evaluate(evaluable):
-                        result = rule.evaluate(evaluable, **rule.config)
+                        result = rule.evaluate(
+                            evaluable,
+                            **rule.get_requested_relatives(
+                                evaluable, self._manifest_loader
+                            ),
+                            **rule.config,
+                        )
                         self.results[evaluable][rule.__class__] = result
                 except Exception as e:
                     if self._config.debug:

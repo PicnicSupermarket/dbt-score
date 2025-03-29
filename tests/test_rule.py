@@ -1,7 +1,8 @@
 """Test rule."""
 
+
 import pytest
-from dbt_score import Model, Rule, RuleViolation, Severity, Source, rule
+from dbt_score import Model, Parents, Rule, RuleViolation, Severity, Source, rule
 from dbt_score.rule_filter import RuleFilter, rule_filter
 
 
@@ -63,6 +64,27 @@ def test_missing_evaluate_rule_class(model1):
             """Bad example rule."""
 
             description = "Description of the rule."
+
+
+def test_get_requested_relatives(
+    decorator_rule,
+    decorator_rule_model_requesting_parents,
+    decorator_rule_source_requesting_parents,
+    model1,
+    source1,
+    manifest_loader,
+):
+    """Test that rules requesting relatives are provided with them."""
+    assert decorator_rule.get_requested_relatives(model1, manifest_loader) == {}
+
+    model2 = manifest_loader.models["model.package.model2"]
+    source1 = manifest_loader.sources["source.package.my_source.table1"]
+    assert decorator_rule_model_requesting_parents.get_requested_relatives(
+        model1, manifest_loader
+    ) == {"parents": Parents(models={model2}, sources={source1})}
+    assert decorator_rule_source_requesting_parents.get_requested_relatives(
+        source1, manifest_loader
+    ) == {"parents": Parents()}
 
 
 @pytest.mark.parametrize(

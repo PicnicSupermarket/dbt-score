@@ -14,7 +14,14 @@ from typing import (
     overload,
 )
 
-from dbt_score.models import Evaluable, Model, Source
+from dbt_score.models import (
+    Evaluable,
+    ManifestLoader,
+    Model,
+    Parents,
+    Relatives,
+    Source,
+)
 from dbt_score.more_itertools import first_true
 from dbt_score.rule_filter import RuleFilter
 
@@ -63,8 +70,20 @@ class RuleViolation:
     message: str | None = None
 
 
-ModelRuleEvaluationType: TypeAlias = Callable[[Model], RuleViolation | None]
-SourceRuleEvaluationType: TypeAlias = Callable[[Source], RuleViolation | None]
+ModelRuleEvaluationTypeBase: TypeAlias = Callable[[Model], RuleViolation | None]
+ModelRuleEvaluationTypeParents: TypeAlias = Callable[
+    [Model, Parents], RuleViolation | None
+]
+ModelRuleEvaluationType: TypeAlias = (
+    ModelRuleEvaluationTypeBase | ModelRuleEvaluationTypeParents
+)
+SourceRuleEvaluationTypeBase: TypeAlias = Callable[[Source], RuleViolation | None]
+SourceRuleEvaluationTypeParents: TypeAlias = Callable[
+    [Source, Parents], RuleViolation | None
+]
+SourceRuleEvaluationType: TypeAlias = (
+    SourceRuleEvaluationTypeBase | SourceRuleEvaluationTypeParents
+)
 RuleEvaluationType: TypeAlias = ModelRuleEvaluationType | SourceRuleEvaluationType
 
 
@@ -163,6 +182,32 @@ class Rule:
                 and resource_types_match
             )
         return resource_types_match
+
+    @classmethod
+    def get_requested_relatives(
+        cls, evaluable: Evaluable, manifest: ManifestLoader
+    ) -> dict[str, Relatives]:
+        """Identifies and provides requested relative types."""
+        evaluate_func = getattr(cls, "_orig_evaluate", cls.evaluate)
+
+        sig = inspect.signature(evaluate_func)
+
+        relatives_functions = {"parents": manifest.get_parents}
+
+        relatives_parameters = {}
+
+        for parameter, fn in relatives_functions.items():
+            if (
+                inspect.Parameter(
+                    parameter,
+                    kind=inspect.Parameter.POSITIONAL_OR_KEYWORD,
+                    annotation=Relatives,
+                )
+                in sig.parameters.values()
+            ):
+                relatives_parameters[parameter] = fn(evaluable)
+
+        return relatives_parameters
 
     @classmethod
     def set_severity(cls, severity: Severity) -> None:
