@@ -391,6 +391,17 @@ class Source(HasColumnsMixin):
 Evaluable: TypeAlias = Model | Source
 
 
+@dataclass
+class Relatives:
+    """Models and sources related to a given model or source."""
+
+    models: set[Model] = field(default_factory=set)
+    sources: set[Source] = field(default_factory=set)
+
+
+Parents: TypeAlias = Relatives
+
+
 class ManifestLoader:
     """Load the models, sources and tests from the manifest."""
 
@@ -414,9 +425,9 @@ class ManifestLoader:
             if source_values["package_name"] == self.project_name
         }
 
-        self.models: list[Model] = []
+        self.models: dict[str, Model] = {}
         self.tests: dict[str, list[dict[str, Any]]] = defaultdict(list)
-        self.sources: list[Source] = []
+        self.sources: dict[str, Source] = {}
 
         self._reindex_tests()
         self._load_models()
@@ -433,14 +444,14 @@ class ManifestLoader:
         for node_id, node_values in self.raw_nodes.items():
             if node_values.get("resource_type") == "model":
                 model = Model.from_node(node_values, self.tests.get(node_id, []))
-                self.models.append(model)
+                self.models[node_id] = model
 
     def _load_sources(self) -> None:
         """Load the sources from the manifest."""
         for source_id, source_values in self.raw_sources.items():
             if source_values.get("resource_type") == "source":
                 source = Source.from_node(source_values, self.tests.get(source_id, []))
-                self.sources.append(source)
+                self.sources[source_id] = source
 
     def _reindex_tests(self) -> None:
         """Index tests based on their associated evaluable."""
@@ -470,5 +481,18 @@ class ManifestLoader:
             # Use dbt's implementation of --select
             selected = dbt_ls(select)
 
-        self.models = [m for m in self.models if m.name in selected]
-        self.sources = [s for s in self.sources if s.selector_name in selected]
+        self.models = {k: v for k, v in self.models.items() if v.name in selected}
+        self.sources = {
+            k: v for k, v in self.sources.items() if v.selector_name in selected
+        }
+
+    def get_parents(self, evaluable: Evaluable) -> Parents:
+        """Return the parent models / sources of a given evaluable."""
+        parents = Parents()
+        if type(evaluable) is Model:
+            for fqn in evaluable.depends_on.get("nodes", []):
+                if fqn in self.models:
+                    parents.models.add(self.models[fqn])
+                if fqn in self.sources:
+                    parents.sources.add(self.sources[fqn])
+        return parents

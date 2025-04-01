@@ -4,7 +4,7 @@ import json
 from pathlib import Path
 from typing import Any, Type
 
-from dbt_score import Model, Rule, RuleViolation, Severity, Source, rule
+from dbt_score import Model, Parents, Rule, RuleViolation, Severity, Source, rule
 from dbt_score.config import Config
 from dbt_score.models import ManifestLoader
 from dbt_score.rule_filter import RuleFilter, rule_filter
@@ -106,6 +106,40 @@ def decorator_rule() -> Type[Rule]:
             return RuleViolation(message="Model1 is a violation.")
 
     return example_rule
+
+
+@fixture
+def decorator_rule_model_requesting_parents() -> Type[Rule]:
+    """An example rule that requests parents for a model."""
+
+    @rule
+    def rule_model_requesting_parents(
+        model: Model, parents: Parents
+    ) -> RuleViolation | None:
+        """Evaluate model."""
+        if len(parents.models) == 0:
+            return RuleViolation(message="Parents were not provided.")
+        else:
+            return None
+
+    return rule_model_requesting_parents
+
+
+@fixture
+def decorator_rule_source_requesting_parents() -> Type[Rule]:
+    """An example rule that requests parents for a source."""
+
+    @rule
+    def rule_source_requesting_parents(
+        source: Source, parents: Parents
+    ) -> RuleViolation | None:
+        """Evaluate model."""
+        if parents != Parents():
+            return RuleViolation(message="Source doesn't have parents")
+        else:
+            return None
+
+    return rule_source_requesting_parents
 
 
 @fixture

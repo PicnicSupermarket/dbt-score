@@ -41,8 +41,8 @@ def test_evaluation_low_medium_high(
     )
     evaluation.evaluate()
 
-    model1 = manifest_loader.models[0]
-    model2 = manifest_loader.models[1]
+    model1 = manifest_loader.models["model.package.model1"]
+    model2 = manifest_loader.models["model.package.model2"]
 
     assert evaluation.results[model1][rule_severity_low] is None
     assert evaluation.results[model1][rule_severity_medium] is None
@@ -54,10 +54,10 @@ def test_evaluation_low_medium_high(
     assert isinstance(evaluation.results[model2][rule_severity_high], RuleViolation)
     assert isinstance(evaluation.results[model2][rule_error], Exception)
 
-    assert mock_formatter.evaluable_evaluated.call_count == 5
+    assert mock_formatter.evaluable_evaluated.call_count == 6
     assert mock_formatter.project_evaluated.call_count == 1
 
-    assert mock_scorer.score_evaluable.call_count == 5
+    assert mock_scorer.score_evaluable.call_count == 6
     assert mock_scorer.score_aggregate_evaluables.call_count == 1
 
 
@@ -85,7 +85,7 @@ def test_evaluation_critical(
 
     evaluation.evaluate()
 
-    model2 = manifest_loader.models[1]
+    model2 = manifest_loader.models["model.package.model2"]
 
     assert isinstance(evaluation.results[model2][rule_severity_critical], RuleViolation)
 
@@ -157,8 +157,8 @@ def test_evaluation_rule_with_config(
 ):
     """Test rule evaluation with parameters."""
     manifest_loader = ManifestLoader(manifest_path)
-    model1 = manifest_loader.models[0]
-    model2 = manifest_loader.models[1]
+    model1 = manifest_loader.models["model.package.model1"]
+    model2 = manifest_loader.models["model.package.model2"]
 
     config = Config()
     config._load_toml_file(str(valid_config_path))
@@ -211,10 +211,10 @@ def test_evaluation_with_filter(
     )
     evaluation.evaluate()
 
-    model1 = manifest_loader.models[0]
-    model2 = manifest_loader.models[1]
-    source1 = manifest_loader.sources[0]
-    source2 = manifest_loader.sources[1]
+    model1 = manifest_loader.models["model.package.model1"]
+    model2 = manifest_loader.models["model.package.model2"]
+    source1 = manifest_loader.sources["source.package.my_source.table1"]
+    source2 = manifest_loader.sources["source.package.my_source.table2"]
 
     assert model_rule_with_filter not in evaluation.results[model1]
     assert isinstance(evaluation.results[model2][model_rule_with_filter], RuleViolation)
@@ -252,10 +252,10 @@ def test_evaluation_with_class_filter(
     )
     evaluation.evaluate()
 
-    model1 = manifest_loader.models[0]
-    model2 = manifest_loader.models[1]
-    source1 = manifest_loader.sources[0]
-    source2 = manifest_loader.sources[1]
+    model1 = manifest_loader.models["model.package.model1"]
+    model2 = manifest_loader.models["model.package.model2"]
+    source1 = manifest_loader.sources["source.package.my_source.table1"]
+    source2 = manifest_loader.sources["source.package.my_source.table2"]
 
     assert model_class_rule_with_filter not in evaluation.results[model1]
     assert isinstance(
@@ -292,11 +292,51 @@ def test_evaluation_with_models_and_sources(
     )
     evaluation.evaluate()
 
-    model1 = manifest_loader.models[0]
-    source1 = manifest_loader.sources[0]
+    model1 = manifest_loader.models["model.package.model1"]
+    source1 = manifest_loader.sources["source.package.my_source.table1"]
 
     assert decorator_rule in evaluation.results[model1]
     assert decorator_rule_source not in evaluation.results[model1]
 
     assert decorator_rule_source in evaluation.results[source1]
     assert decorator_rule not in evaluation.results[source1]
+
+
+def test_evaluation_with_requested_relatives(
+    manifest_path,
+    default_config,
+    decorator_rule,
+    decorator_rule_model_requesting_parents,
+    decorator_rule_source_requesting_parents,
+):
+    """Test that rules requesting relatives are provided with them."""
+    manifest_loader = ManifestLoader(manifest_path)
+    mock_formatter = Mock()
+    mock_scorer = Mock()
+
+    rule_registry = RuleRegistry(default_config)
+    rule_registry._add_rule(decorator_rule)
+    rule_registry._add_rule(decorator_rule_model_requesting_parents)
+    rule_registry._add_rule(decorator_rule_source_requesting_parents)
+
+    # Ensure we get a valid Score object from the Mock
+    mock_scorer.score_model.return_value = Score(10, "🥇")
+
+    evaluation = Evaluation(
+        rule_registry=rule_registry,
+        manifest_loader=manifest_loader,
+        formatter=mock_formatter,
+        scorer=mock_scorer,
+        config=default_config,
+    )
+    evaluation.evaluate()
+
+    model1 = manifest_loader.models["model.package.model1"]
+    source1 = manifest_loader.sources["source.package.my_source.table1"]
+
+    assert decorator_rule in evaluation.results[model1]
+    assert decorator_rule_model_requesting_parents in evaluation.results[model1]
+    assert decorator_rule_source_requesting_parents in evaluation.results[source1]
+    assert isinstance(evaluation.results[model1][decorator_rule], RuleViolation)
+    assert evaluation.results[model1][decorator_rule_model_requesting_parents] is None
+    assert evaluation.results[source1][decorator_rule_source_requesting_parents] is None
