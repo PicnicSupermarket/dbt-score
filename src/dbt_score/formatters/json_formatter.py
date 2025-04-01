@@ -20,7 +20,8 @@ Shape of the JSON output:
                     "severity": "medium",
                     "message": "Model lacks a description."
                 }
-            ]
+            },
+            "type": "model"
         },
         "model_bar": {
             "score": 0.0,
@@ -31,18 +32,30 @@ Shape of the JSON output:
                     "result": "ERR",
                     "message": "Exception message"
                 }
-            }
+            },
+            "type": "model"
+        },
+        "source_baz": {
+            "score": 10.0,
+            "badge": "🥇",
+            "pass": false,
+            "results": {
+                "rule1": {
+                    "result": "ERR",
+                    "message": "Exception message"
+                }
+            },
+            "type": "source"
         }
     },
     "project": {
-        "score": 2.5,
-        "badge": "🥉",
+        "score": 5.0,
+        "badge": "🥈",
         "pass": false
     }
 }
 ```
 """
-
 
 import json
 from typing import Any
@@ -72,6 +85,7 @@ class JSONFormatter(Formatter):
             "badge": score.badge,
             "pass": score.value >= self._config.fail_any_item_under,
             "results": {},
+            "type": type(evaluable).__name__.lower(),
         }
         for rule, result in results.items():
             severity = rule.severity.name.lower()
