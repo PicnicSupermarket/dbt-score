@@ -109,6 +109,21 @@ def decorator_rule() -> Type[Rule]:
 
 
 @fixture
+def decorator_rule_manifest() -> Type[Rule]:
+    """An example rule created with the rule decorator."""
+
+    @rule()
+    def example_rule_manifest(
+        model: Model, manifest: ManifestLoader
+    ) -> RuleViolation | None:
+        """Description of the rule."""
+        if model.name == "model1":
+            return RuleViolation(message="Model1 is a violation.")
+
+    return example_rule_manifest
+
+
+@fixture
 def decorator_rule_no_parens() -> Type[Rule]:
     """An example rule created with the rule decorator without parentheses."""
 
@@ -361,3 +376,23 @@ def source_class_rule_with_filter() -> Type[Rule]:
             return RuleViolation(message="I always fail.")
 
     return SourceRuleWithFilter
+
+
+@fixture
+def rule_with_manifest() -> Type[Rule]:
+    """An example rule that uses the manifest."""
+
+    @rule
+    def rule_with_manifest(
+        model: Model, manifest: ManifestLoader
+    ) -> RuleViolation | None:
+        """Rule using manifest."""
+        if model.name == "model1":
+            for node in model.depends_on["nodes"]:
+                if (
+                    "special" in model.tags
+                    and "special" not in manifest.raw_nodes[node]["tags"]
+                ):
+                    return RuleViolation(message="Model1 is a violation.")
+
+    return rule_with_manifest
