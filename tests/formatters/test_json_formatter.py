@@ -12,11 +12,12 @@ def test_json_formatter(
     default_config,
     manifest_loader,
     model1,
+    source1,
     rule_severity_low,
     rule_severity_medium,
     rule_severity_critical,
 ):
-    """Ensure the formatter has the correct output after model evaluation."""
+    """Ensure the formatter has the correct output after evaluation."""
     formatter = JSONFormatter(manifest_loader=manifest_loader, config=default_config)
     results: dict[Type[Rule], RuleViolation | Exception | None] = {
         rule_severity_low: None,
@@ -24,6 +25,7 @@ def test_json_formatter(
         rule_severity_critical: RuleViolation("Error"),
     }
     formatter.evaluable_evaluated(model1, results, Score(10.0, "🥇"))
+    formatter.evaluable_evaluated(source1, results, Score(10.0, "🥇"))
     formatter.project_evaluated(Score(10.0, "🥇"))
     stdout = capsys.readouterr().out
     assert (
@@ -50,7 +52,31 @@ def test_json_formatter(
           "severity": "critical",
           "message": "Error"
         }
-      }
+      },
+      "type": "model"
+    },
+    "table1": {
+      "score": 10.0,
+      "badge": "🥇",
+      "pass": true,
+      "results": {
+        "tests.conftest.rule_severity_low": {
+          "result": "OK",
+          "severity": "low",
+          "message": null
+        },
+        "tests.conftest.rule_severity_medium": {
+          "result": "ERR",
+          "severity": "medium",
+          "message": "Oh noes"
+        },
+        "tests.conftest.rule_severity_critical": {
+          "result": "WARN",
+          "severity": "critical",
+          "message": "Error"
+        }
+      },
+      "type": "source"
     }
   },
   "project": {
