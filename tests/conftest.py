@@ -4,7 +4,7 @@ import json
 from pathlib import Path
 from typing import Any, Type
 
-from dbt_score import Model, Rule, RuleViolation, Severity, Source, rule
+from dbt_score import Model, Rule, RuleViolation, Severity, Snapshot, Source, rule
 from dbt_score.config import Config
 from dbt_score.models import ManifestLoader
 from dbt_score.rule_filter import RuleFilter, rule_filter
@@ -92,6 +92,21 @@ def source2(raw_manifest) -> Source:
     )
 
 
+# Snapshots
+
+
+@fixture
+def snapshot1(raw_manifest) -> Snapshot:
+    """Snapshot 1."""
+    return Snapshot.from_node(raw_manifest["nodes"]["snapshot.package.snapshot1"], [])
+
+
+@fixture
+def snapshot2(raw_manifest) -> Snapshot:
+    """Snapshot 2."""
+    return Snapshot.from_node(raw_manifest["nodes"]["snapshot.package.snapshot2"], [])
+
+
 # Multiple ways to create rules
 
 
@@ -146,6 +161,61 @@ def class_rule() -> Type[Rule]:
             """Evaluate model."""
             if model.name == "model1":
                 return RuleViolation(message="Model1 is a violation.")
+
+    return ExampleRule
+
+
+@fixture
+def decorator_rule_snapshot() -> Type[Rule]:
+    """An example rule created with the rule decorator."""
+
+    @rule()
+    def example_rule_snapshot(snapshot: Snapshot) -> RuleViolation | None:
+        """Description of the rule."""
+        if snapshot.name == "snapshot`":
+            return RuleViolation(message="Snapshot1 is a violation.")
+
+    return example_rule_snapshot
+
+
+@fixture
+def decorator_rule_no_parens_snapshot() -> Type[Rule]:
+    """An example rule created with the rule decorator without parentheses."""
+
+    @rule
+    def example_rule(snapshot: Snapshot) -> RuleViolation | None:
+        """Description of the rule."""
+        if snapshot.name == "snapshot1":
+            return RuleViolation(message="Snapshot1 is a violation.")
+
+    return example_rule
+
+
+@fixture
+def decorator_rule_args_snapshot() -> Type[Rule]:
+    """An example rule created with the rule decorator with arguments."""
+
+    @rule(description="Description of the rule.")
+    def example_rule(snapshot: Snapshot) -> RuleViolation | None:
+        if snapshot.name == "Snapshot1":
+            return RuleViolation(message="Snapshot1 is a violation.")
+
+    return example_rule
+
+
+@fixture
+def class_rule_snapshot() -> Type[Rule]:
+    """An example rule created with a class."""
+
+    class ExampleRule(Rule):
+        """Example rule."""
+
+        description = "Description of the rule."
+
+        def evaluate(self, snapshot: Snapshot) -> RuleViolation | None:  # type: ignore[override]
+            """Evaluate snapshot."""
+            if snapshot.name == "snapshot1":
+                return RuleViolation(message="Snapshot1 is a violation.")
 
     return ExampleRule
 
@@ -322,6 +392,23 @@ def source_rule_with_filter() -> Type[Rule]:
 
 
 @fixture
+def snapshot_rule_with_filter() -> Type[Rule]:
+    """An example rule that skips through a filter."""
+
+    @rule_filter
+    def skip_snapshot1(snapshot: Snapshot) -> bool:
+        """Skips for snapshot1, passes for snapshot2."""
+        return snapshot.name != "snapshot1"
+
+    @rule(rule_filters={skip_snapshot1()})
+    def snapshot_rule_with_filter(snapshot: Snapshot) -> RuleViolation | None:
+        """Rule that always fails when not filtered."""
+        return RuleViolation(message="I always fail.")
+
+    return snapshot_rule_with_filter
+
+
+@fixture
 def model_class_rule_with_filter() -> Type[Rule]:
     """Using class definitions for filters and rules."""
 
@@ -361,3 +448,24 @@ def source_class_rule_with_filter() -> Type[Rule]:
             return RuleViolation(message="I always fail.")
 
     return SourceRuleWithFilter
+
+
+@fixture
+def snapshot_class_rule_with_filter() -> Type[Rule]:
+    """Using class definitions for filters and rules."""
+
+    class SkipSnapshot1(RuleFilter):
+        description = "Filter defined by a class."
+
+        def evaluate(self, snapshot: Snapshot) -> bool:  # type: ignore[override]
+            """Skips for snapshot1, passes for snapshot2."""
+            return snapshot.name != "snapshot1"
+
+    class SnapshotRuleWithFilter(Rule):
+        description = "Filter defined by a class."
+        rule_filters = frozenset({SkipSnapshot1()})
+
+        def evaluate(self, snapshot: Snapshot) -> RuleViolation | None:  # type: ignore[override]
+            return RuleViolation(message="I always fail.")
+
+    return SnapshotRuleWithFilter

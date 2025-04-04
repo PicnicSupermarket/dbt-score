@@ -2,12 +2,18 @@
 
 `dbt-score` is a linter for [dbt](https://www.getdbt.com/) metadata.
 
-dbt allows data practitioners to organize their data in to _models_ and
+dbt allows data practitioners to organize their data into _models_ and
 _sources_. Those models and sources have metadata associated with them:
-documentation, tests, types, etc.
+documentation, tests, types, etc. dbt supports more types of entities, e.g.
+snapshots, analysis, seeds and more.
 
 `dbt-score` allows to lint and score this metadata, in order to enforce (or
-encourage) good practices.
+encourage) good practices. The dbt entities that `dbt-score` is able to lint
+(currently) are:
+
+- Models
+- Sources
+- Snapshots
 
 ## Example
 
@@ -22,20 +28,20 @@ Score: 10.0 🥇
 
 In this example, the model `customers` scores the maximum value of `10.0` as it
 passes all the rules. It also is awarded a golden medal because of the perfect
-score. By default a passing model or source with or without rule violations will
-not be shown, unless we pass the `--show-all` flag.
+score. By default a passing dbt entity with or without rule violations will not
+be shown, unless we pass the `--show-all` flag.
 
 ## Philosophy
 
-dbt models/sources are often used as metadata containers: either in YAML files
-or through the use of `{{ config() }}` blocks, they are associated with a lot of
+dbt entities are often used as metadata containers: either in YAML files or
+through the use of `{{ config() }}` blocks, they are associated with a lot of
 information. At scale, it becomes tedious to enforce good practices in large
-data teams dealing with many models/sources.
+data teams dealing with many dbt entities.
 
 To that end, `dbt-score` has 2 main features:
 
-- It runs rules on dbt models and sources, and displays any rule violations.
-  These can be used in interactive environments or in CI.
+- It runs rules on dbt entities, and displays any rule violations. These can be
+  used in interactive environments or in CI.
 - Using those run results, it scores items, to ascribe them a measure of their
   maturity. This score can help gamify metadata improvements/coverage, and be
   reflected in data catalogs.

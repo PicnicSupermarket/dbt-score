@@ -1,7 +1,21 @@
 """All generic rules."""
 
-from dbt_score import Model, RuleViolation, Severity, rule
+from dbt_score import Model, RuleViolation, Severity, Snapshot, rule
 from dbt_score.rules.filters import is_table
+
+
+@rule
+def snapshot_has_unique_key(snapshot: Snapshot) -> RuleViolation | None:
+    """A snapshot should have a unique key."""
+    if not snapshot.config.get("unique_key"):
+        return RuleViolation(message="Snapshot lacks a unique key.")
+
+
+@rule
+def snapshot_has_strategy(snapshot: Snapshot) -> RuleViolation | None:
+    """A snapshot should have a strategy."""
+    if not snapshot.config.get("strategy"):
+        return RuleViolation(message="Snapshot lacks a strategy.")
 
 
 @rule

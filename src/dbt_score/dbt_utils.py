@@ -69,7 +69,7 @@ def dbt_parse() -> "dbtRunnerResult":
 @dbt_required
 def dbt_ls(select: Iterable[str] | None) -> Iterable[str]:
     """Run dbt ls."""
-    cmd = ["ls", "--resource-types", "model", "source", "--output", "name"]
+    cmd = ["ls", "--resource-types", "model", "source", "snapshot", "--output", "name"]
     if select:
         cmd += ["--select", *select]
 
