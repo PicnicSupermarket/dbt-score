@@ -61,9 +61,9 @@ When `dbt-score` terminates, it exists with one of the following exit codes:
   project being linted either doesn't raise any warning, or the warnings are
   small enough to be above the thresholds. This generally means "successful
   linting".
-- `1` in case of linting errors. This is the unhappy case: some models or
-  sources in the project raise enough warnings to have a score below the defined
-  thresholds. This generally means "linting doesn't pass".
+- `1` in case of linting errors. This is the unhappy case: some entities in the
+  project raise enough warnings to have a score below the defined thresholds.
+  This generally means "linting doesn't pass".
 - `2` in case of an unexpected error. This happens for example if something is
   misconfigured (for example a faulty dbt project), or the wrong parameters are
   given to the CLI. This generally means "setup needs to be fixed".

@@ -4,7 +4,7 @@ from typing import Any
 
 from dbt_score.evaluation import EvaluableResultsType
 from dbt_score.formatters import Formatter
-from dbt_score.models import Evaluable, Model, Source
+from dbt_score.models import Evaluable, Model, Snapshot, Source
 from dbt_score.rule import RuleViolation
 from dbt_score.scoring import Score
 
@@ -35,6 +35,8 @@ class HumanReadableFormatter(Formatter):
                 return evaluable.name
             case Source():
                 return evaluable.selector_name
+            case Snapshot():
+                return evaluable.name
             case _:
                 raise NotImplementedError
 
@@ -53,7 +55,7 @@ class HumanReadableFormatter(Formatter):
             )
         ):
             resource_type = type(evaluable).__name__
-            name_formatted = f"{resource_type[0]}: {self.pretty_name(evaluable)}"
+            name_formatted = f"{resource_type}: {self.pretty_name(evaluable)}"
             header = (
                 f"{score.badge} "
                 f"{self.bold(name_formatted)} (score: {score.rounded_value!s})"
@@ -72,8 +74,7 @@ class HumanReadableFormatter(Formatter):
                     )
                 else:
                     print(
-                        f"{self.indent}{self.label_error} {rule.source()}: "
-                        f"{result!s}"
+                        f"{self.indent}{self.label_error} {rule.source()}: {result!s}"
                     )
             print()
 

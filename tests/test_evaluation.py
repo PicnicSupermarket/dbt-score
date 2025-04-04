@@ -54,10 +54,10 @@ def test_evaluation_low_medium_high(
     assert isinstance(evaluation.results[model2][rule_severity_high], RuleViolation)
     assert isinstance(evaluation.results[model2][rule_error], Exception)
 
-    assert mock_formatter.evaluable_evaluated.call_count == 5
+    assert mock_formatter.evaluable_evaluated.call_count == 7
     assert mock_formatter.project_evaluated.call_count == 1
 
-    assert mock_scorer.score_evaluable.call_count == 5
+    assert mock_scorer.score_evaluable.call_count == 7
     assert mock_scorer.score_aggregate_evaluables.call_count == 1
 
 
@@ -188,7 +188,11 @@ def test_evaluation_rule_with_config(
 
 
 def test_evaluation_with_filter(
-    manifest_path, default_config, model_rule_with_filter, source_rule_with_filter
+    manifest_path,
+    default_config,
+    model_rule_with_filter,
+    source_rule_with_filter,
+    snapshot_rule_with_filter,
 ):
     """Test rule with filter."""
     manifest_loader = ManifestLoader(manifest_path)
@@ -198,6 +202,7 @@ def test_evaluation_with_filter(
     rule_registry = RuleRegistry(default_config)
     rule_registry._add_rule(model_rule_with_filter)
     rule_registry._add_rule(source_rule_with_filter)
+    rule_registry._add_rule(snapshot_rule_with_filter)
 
     # Ensure we get a valid Score object from the Mock
     mock_scorer.score_model.return_value = Score(10, "🥇")
@@ -215,6 +220,8 @@ def test_evaluation_with_filter(
     model2 = manifest_loader.models[1]
     source1 = manifest_loader.sources[0]
     source2 = manifest_loader.sources[1]
+    snapshot1 = manifest_loader.snapshots[0]
+    snapshot2 = manifest_loader.snapshots[1]
 
     assert model_rule_with_filter not in evaluation.results[model1]
     assert isinstance(evaluation.results[model2][model_rule_with_filter], RuleViolation)
@@ -224,12 +231,18 @@ def test_evaluation_with_filter(
         evaluation.results[source2][source_rule_with_filter], RuleViolation
     )
 
+    assert snapshot_rule_with_filter not in evaluation.results[snapshot1]
+    assert isinstance(
+        evaluation.results[snapshot2][snapshot_rule_with_filter], RuleViolation
+    )
+
 
 def test_evaluation_with_class_filter(
     manifest_path,
     default_config,
     model_class_rule_with_filter,
     source_class_rule_with_filter,
+    snapshot_class_rule_with_filter,
 ):
     """Test rule with filters and filtered rules defined by classes."""
     manifest_loader = ManifestLoader(manifest_path)
@@ -239,6 +252,7 @@ def test_evaluation_with_class_filter(
     rule_registry = RuleRegistry(default_config)
     rule_registry._add_rule(model_class_rule_with_filter)
     rule_registry._add_rule(source_class_rule_with_filter)
+    rule_registry._add_rule(snapshot_class_rule_with_filter)
 
     # Ensure we get a valid Score object from the Mock
     mock_scorer.score_model.return_value = Score(10, "🥇")
@@ -256,6 +270,8 @@ def test_evaluation_with_class_filter(
     model2 = manifest_loader.models[1]
     source1 = manifest_loader.sources[0]
     source2 = manifest_loader.sources[1]
+    snapshot1 = manifest_loader.snapshots[0]
+    snapshot2 = manifest_loader.snapshots[1]
 
     assert model_class_rule_with_filter not in evaluation.results[model1]
     assert isinstance(
@@ -267,11 +283,20 @@ def test_evaluation_with_class_filter(
         evaluation.results[source2][source_class_rule_with_filter], RuleViolation
     )
 
+    assert snapshot_class_rule_with_filter not in evaluation.results[snapshot1]
+    assert isinstance(
+        evaluation.results[snapshot2][snapshot_class_rule_with_filter], RuleViolation
+    )
+
 
 def test_evaluation_with_models_and_sources(
-    manifest_path, default_config, decorator_rule, decorator_rule_source
+    manifest_path,
+    default_config,
+    decorator_rule,
+    decorator_rule_source,
+    decorator_rule_snapshot,
 ):
-    """Test that model rules apply to models and source rules apply to sources."""
+    """Test that model rules apply to models and vice versa."""
     manifest_loader = ManifestLoader(manifest_path)
     mock_formatter = Mock()
     mock_scorer = Mock()
@@ -279,6 +304,7 @@ def test_evaluation_with_models_and_sources(
     rule_registry = RuleRegistry(default_config)
     rule_registry._add_rule(decorator_rule)
     rule_registry._add_rule(decorator_rule_source)
+    rule_registry._add_rule(decorator_rule_snapshot)
 
     # Ensure we get a valid Score object from the Mock
     mock_scorer.score_model.return_value = Score(10, "🥇")
@@ -294,9 +320,16 @@ def test_evaluation_with_models_and_sources(
 
     model1 = manifest_loader.models[0]
     source1 = manifest_loader.sources[0]
+    snapshot1 = manifest_loader.snapshots[0]
 
     assert decorator_rule in evaluation.results[model1]
     assert decorator_rule_source not in evaluation.results[model1]
+    assert decorator_rule_snapshot not in evaluation.results[model1]
 
     assert decorator_rule_source in evaluation.results[source1]
     assert decorator_rule not in evaluation.results[source1]
+    assert decorator_rule_snapshot not in evaluation.results[source1]
+
+    assert decorator_rule_snapshot in evaluation.results[snapshot1]
+    assert decorator_rule_source not in evaluation.results[snapshot1]
+    assert decorator_rule not in evaluation.results[snapshot1]

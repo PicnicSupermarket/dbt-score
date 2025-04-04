@@ -61,7 +61,9 @@ class Evaluation:
         rules = self._rule_registry.rules.values()
 
         for evaluable in chain(
-            self._manifest_loader.models, self._manifest_loader.sources
+            self._manifest_loader.models,
+            self._manifest_loader.sources,
+            self._manifest_loader.snapshots,
         ):
             # type inference on elements from `chain` is wonky
             # and resolves to superclass HasColumnsMixin
@@ -91,5 +93,9 @@ class Evaluation:
         )
 
         # Add null check before calling project_evaluated
-        if self._manifest_loader.models or self._manifest_loader.sources:
+        if (
+            self._manifest_loader.models
+            or self._manifest_loader.sources
+            or self._manifest_loader.snapshots
+        ):
             self._formatter.project_evaluated(self.project_score)
