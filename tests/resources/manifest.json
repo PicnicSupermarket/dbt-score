@@ -97,7 +97,11 @@
       "patch_path": "/path/to/model1.yml",
       "tags": [],
       "depends_on": {
-        "nodes": ["model.package.model2", "source.package.my_source.table1"]
+        "nodes": [
+          "model.package.model2",
+          "source.package.my_source.table1",
+          "snapshot.package.snapshot2"
+        ]
       },
       "language": "sql",
       "access": "protected",
@@ -130,7 +134,7 @@
       "alias": "model2_alias",
       "patch_path": "/path/to/model2.yml",
       "tags": [],
-      "depends_on": { "nodes": ["snapshot.package.snapshot2"] },
+      "depends_on": {},
       "language": "sql",
       "access": "public",
       "group": "them_over_there"

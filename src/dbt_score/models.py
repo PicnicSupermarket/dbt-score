@@ -180,7 +180,6 @@ class Model(HasColumnsMixin):
         tests: The list of tests attached to the model.
         depends_on: Dictionary of models/sources/macros that the model depends on.
         parents: The list of models, sources, and snapshot this model depends on.
-        children: The list of models and snapshot that depend on on this model.
         _raw_values: The raw values of the model (node) in the manifest.
         _raw_test_values: The raw test values of the model (node) in the manifest.
     """
@@ -207,7 +206,6 @@ class Model(HasColumnsMixin):
     depends_on: dict[str, list[str]] = field(default_factory=dict)
     constraints: list[Constraint] = field(default_factory=list)
     parents: list[HasColumnsMixin] = field(default_factory=list)
-    children: list[HasColumnsMixin] = field(default_factory=list)
     _raw_values: dict[str, Any] = field(default_factory=dict)
     _raw_test_values: list[dict[str, Any]] = field(default_factory=list)
 
@@ -316,7 +314,6 @@ class Source(HasColumnsMixin):
         patch_path: The yml path of the source definition.
         tags: The list of tags attached to the source table.
         tests: The list of tests attached to the source table.
-        children: The list of models and snapshots that depend on on this source.
         _raw_values: The raw values of the source definition in the manifest.
         _raw_test_values: The raw test values of the source definition in the manifest.
     """
@@ -340,7 +337,6 @@ class Source(HasColumnsMixin):
     patch_path: str | None = None
     tags: list[str] = field(default_factory=list)
     tests: list[Test] = field(default_factory=list)
-    children: list[HasColumnsMixin] = field(default_factory=list)
     _raw_values: dict[str, Any] = field(default_factory=dict)
     _raw_test_values: list[dict[str, Any]] = field(default_factory=list)
 
@@ -423,7 +419,6 @@ class Snapshot(HasColumnsMixin):
         strategy: The strategy of the snapshot.
         unique_key: The unique key of the snapshot.
         parents: The list of models, sources, and snapshot this snapshot depends on.
-        children: The list of models and snapshots that depend on on this snapshot.
         _raw_values: The raw values of the snapshot (node) in the manifest.
         _raw_test_values: The raw test values of the snapshot (node) in the manifest.
     """
@@ -449,7 +444,6 @@ class Snapshot(HasColumnsMixin):
     strategy: str | None = None
     unique_key: list[str] | None = None
     parents: list[HasColumnsMixin] = field(default_factory=list)
-    children: list[HasColumnsMixin] = field(default_factory=list)
     _raw_values: dict[str, Any] = field(default_factory=dict)
     _raw_test_values: list[dict[str, Any]] = field(default_factory=list)
 
@@ -528,7 +522,6 @@ class ManifestLoader:
         self._load_sources()
         self._load_snapshots()
         self._populate_parents()
-        self._populate_children()
 
         if select:
             self._filter_evaluables(select)
@@ -597,31 +590,6 @@ class ManifestLoader:
                     node.parents.append(
                         Source.from_node(
                             self.raw_sources[parent_id], self.tests.get(parent_id, [])
-                        )
-                    )
-
-    def _populate_children(self) -> None:
-        """Populate `children` for all models, snapshots, and sources."""
-        children: dict[str, list[str]] = defaultdict(list)
-        for node_id, node_values in self.raw_nodes.items():
-            if node_values.get("resource_type") in ["model", "snapshot"]:
-                for parent in node_values.get("depends_on", {}).get("nodes", []):
-                    children[parent].append(node_id)
-
-        for node in self.models + self.sources + self.snapshots:
-            for child_id in children[node.unique_id]:
-                if self.raw_nodes.get(child_id, {}).get("resource_type") == "model":
-                    node.children.append(
-                        Model.from_node(
-                            self.raw_nodes[child_id], self.tests.get(child_id, [])
-                        )
-                    )
-                elif (
-                    self.raw_nodes.get(child_id, {}).get("resource_type") == "snapshot"
-                ):
-                    node.children.append(
-                        Snapshot.from_node(
-                            self.raw_nodes[child_id], self.tests.get(child_id, [])
                         )
                     )
 

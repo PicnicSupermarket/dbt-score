@@ -40,29 +40,21 @@ def test_manifest_load(mock_read_text, raw_manifest):
         for model in loader.models:
             _model = deepcopy(model)
             _model.parents = []
-            _model.children = []
             _models.append(_model)
-        _sources = []
-        for source in loader.sources:
-            _source = deepcopy(source)
-            _source.children = []
-            _sources.append(_source)
         _snapshots = []
         for snapshot in loader.snapshots:
             _snapshot = deepcopy(snapshot)
             _snapshot.parents = []
-            _snapshot.children = []
             _snapshots.append(_snapshot)
 
         assert loader.snapshots[0].parents == [_models[0]]
-        assert loader.snapshots[0].children == []
-        assert loader.snapshots[1].children == [_models[1]]
-        assert loader.models[0].parents == [_models[1], _sources[0]]
-        assert loader.models[1].parents == [_snapshots[1]]
-        assert loader.sources[0].children == [_snapshots[1], _models[0]]
-        assert loader.models[0].children == [_snapshots[0]]
-        assert loader.models[1].children == [_models[0]]
-        assert loader.sources[1].children == []
+        assert loader.models[0].parents == [
+            _models[1],
+            loader.sources[0],
+            _snapshots[1],
+        ]
+        assert loader.models[1].parents == []
+        assert loader.snapshots[1].parents == [loader.sources[0]]
 
 
 @patch("dbt_score.models.Path.read_text")
