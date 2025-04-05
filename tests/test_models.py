@@ -1,6 +1,5 @@
 """Test models."""
 
-from copy import deepcopy
 from pathlib import Path
 from unittest.mock import patch
 
@@ -20,9 +19,9 @@ def test_manifest_load(mock_read_text, raw_manifest):
                 and node["package_name"] == raw_manifest["metadata"]["project_name"]
             ]
         )
-        assert loader.models[0].tests[0].name == "test2"
-        assert loader.models[0].tests[1].name == "test4"
-        assert loader.models[0].columns[0].tests[0].name == "test1"
+        assert loader.models["model.package.model1"].tests[0].name == "test2"
+        assert loader.models["model.package.model1"].tests[1].name == "test4"
+        assert loader.models["model.package.model1"].columns[0].tests[0].name == "test1"
 
         assert len(loader.sources) == len(
             [
@@ -31,30 +30,23 @@ def test_manifest_load(mock_read_text, raw_manifest):
                 if source["package_name"] == raw_manifest["metadata"]["project_name"]
             ]
         )
-        assert loader.sources[0].tests[0].name == "source_test1"
+        assert (
+            loader.sources["source.package.my_source.table1"].tests[0].name
+            == "source_test1"
+        )
 
-        # models in `parents` / `children` do not themselves have `parents`
-        # or `children` populated, so we need to compare against an instance
-        # with those removed
-        _models = []
-        for model in loader.models:
-            _model = deepcopy(model)
-            _model.parents = []
-            _models.append(_model)
-        _snapshots = []
-        for snapshot in loader.snapshots:
-            _snapshot = deepcopy(snapshot)
-            _snapshot.parents = []
-            _snapshots.append(_snapshot)
-
-        assert loader.snapshots[0].parents == [_models[0]]
-        assert loader.models[0].parents == [
-            _models[1],
-            loader.sources[0],
-            _snapshots[1],
+        assert loader.snapshots["snapshot.package.snapshot1"].parents == [
+            loader.models["model.package.model1"]
         ]
-        assert loader.models[1].parents == []
-        assert loader.snapshots[1].parents == [loader.sources[0]]
+        assert loader.models["model.package.model1"].parents == [
+            loader.models["model.package.model2"],
+            loader.sources["source.package.my_source.table1"],
+            loader.snapshots["snapshot.package.snapshot2"],
+        ]
+        assert loader.models["model.package.model2"].parents == []
+        assert loader.snapshots["snapshot.package.snapshot2"].parents == [
+            loader.sources["source.package.my_source.table1"]
+        ]
 
 
 @patch("dbt_score.models.Path.read_text")
@@ -63,7 +55,7 @@ def test_manifest_select_models_simple(mock_read_text, raw_manifest):
     with patch("dbt_score.models.json.loads", return_value=raw_manifest):
         manifest_loader = ManifestLoader(Path("some.json"), select=["model1"])
 
-    assert [x.name for x in manifest_loader.models] == ["model1"]
+    assert [x.name for x in manifest_loader.models.values()] == ["model1"]
 
 
 @patch("dbt_score.models.Path.read_text")
@@ -74,7 +66,7 @@ def test_manifest_select_models_dbt_ls(mock_dbt_ls, mock_read_text, raw_manifest
     with patch("dbt_score.models.json.loads", return_value=raw_manifest):
         manifest_loader = ManifestLoader(Path("some.json"), select=["+model1"])
 
-    assert [x.name for x in manifest_loader.models] == ["model1"]
+    assert [x.name for x in manifest_loader.models.values()] == ["model1"]
     mock_dbt_ls.assert_called_once_with(["+model1"])
 
 

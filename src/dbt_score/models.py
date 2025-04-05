@@ -512,10 +512,10 @@ class ManifestLoader:
             if source_values["package_name"] == self.project_name
         }
 
-        self.models: list[Model] = []
+        self.models: dict[str, Model] = {}
         self.tests: dict[str, list[dict[str, Any]]] = defaultdict(list)
-        self.sources: list[Source] = []
-        self.snapshots: list[Snapshot] = []
+        self.sources: dict[str, Source] = {}
+        self.snapshots: dict[str, Snapshot] = {}
 
         self._reindex_tests()
         self._load_models()
@@ -534,21 +534,21 @@ class ManifestLoader:
         for node_id, node_values in self.raw_nodes.items():
             if node_values.get("resource_type") == "model":
                 model = Model.from_node(node_values, self.tests.get(node_id, []))
-                self.models.append(model)
+                self.models[node_id] = model
 
     def _load_sources(self) -> None:
         """Load the sources from the manifest."""
         for source_id, source_values in self.raw_sources.items():
             if source_values.get("resource_type") == "source":
                 source = Source.from_node(source_values, self.tests.get(source_id, []))
-                self.sources.append(source)
+                self.sources[source_id] = source
 
     def _load_snapshots(self) -> None:
         """Load the snapshots from the manifest."""
         for node_id, node_values in self.raw_nodes.items():
             if node_values.get("resource_type") == "snapshot":
                 snapshot = Snapshot.from_node(node_values, self.tests.get(node_id, []))
-                self.snapshots.append(snapshot)
+                self.snapshots[node_id] = snapshot
 
     def _reindex_tests(self) -> None:
         """Index tests based on their associated evaluable."""
@@ -568,30 +568,46 @@ class ManifestLoader:
 
     def _populate_parents(self) -> None:
         """Populate `parents` for all models and snapshots."""
-        for node in self.models + self.snapshots:
-            for parent_id in node.depends_on.get("nodes", []):
-                if self.raw_nodes.get(parent_id, {}).get("resource_type") == "model":
-                    node.parents.append(
-                        Model.from_node(
-                            self.raw_nodes[parent_id], self.tests.get(parent_id, [])
-                        )
-                    )
-                elif (
-                    self.raw_nodes.get(parent_id, {}).get("resource_type") == "snapshot"
-                ):
-                    node.parents.append(
-                        Snapshot.from_node(
-                            self.raw_nodes[parent_id], self.tests.get(parent_id, [])
-                        )
-                    )
-                elif (
-                    self.raw_sources.get(parent_id, {}).get("resource_type") == "source"
-                ):
-                    node.parents.append(
-                        Source.from_node(
-                            self.raw_sources[parent_id], self.tests.get(parent_id, [])
-                        )
-                    )
+        # We need to only add parents that themselves already have their own
+        # parents populated. This is likely not a particularly efficient
+        # topological sort, but should work.
+
+        # We'll start with nodes with the fewest upstream dependencies,
+        # just to reduce cycles a bit.
+        nodes = sorted(
+            list(self.models.values()) + list(self.snapshots.values()),
+            key=lambda x: len(x.depends_on),
+        )
+        # Sources can't have parents, so they start out "done"
+        complete_nodes = set(self.sources.keys())
+
+        while len(nodes) > 0:
+            node = nodes.pop(0)
+            if len(node.depends_on.get("nodes", [])) == 0:
+                # Nodes without parents can be counted as complete,
+                # and their `parents` need not be populated.
+                complete_nodes.add(node.unique_id)
+            elif all(
+                [
+                    parent in complete_nodes
+                    for parent in node.depends_on.get("nodes", [])
+                ]
+            ):
+                # Nodes whose parents are all already completed can
+                # have their `parents` populated from already complete
+                # upstream nodes.
+                for parent_id in node.depends_on["nodes"]:
+                    if parent_id in self.models:
+                        node.parents.append(self.models[parent_id])
+                    elif parent_id in self.snapshots:
+                        node.parents.append(self.snapshots[parent_id])
+                    elif parent_id in self.sources:
+                        node.parents.append(self.sources[parent_id])
+                complete_nodes.add(node.unique_id)
+            else:
+                # Otherwise, we just put the node back on the list
+                # and keep trying.
+                nodes.append(node)
 
     def _filter_evaluables(self, select: Iterable[str]) -> None:
         """Filter evaluables like dbt's --select."""
@@ -605,6 +621,8 @@ class ManifestLoader:
             # Use dbt's implementation of --select
             selected = dbt_ls(select)
 
-        self.models = [m for m in self.models if m.name in selected]
-        self.sources = [s for s in self.sources if s.selector_name in selected]
-        self.snapshots = [s for s in self.snapshots if s.name in selected]
+        self.models = {k: m for k, m in self.models.items() if m.name in selected}
+        self.sources = {
+            k: s for k, s in self.sources.items() if s.selector_name in selected
+        }
+        self.snapshots = {k: s for k, s in self.snapshots.items() if s.name in selected}
