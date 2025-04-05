@@ -6,7 +6,7 @@ import re
 from collections import defaultdict
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any, Iterable, Literal, TypeAlias
+from typing import Any, Iterable, Literal, TypeAlias, Union
 
 from dbt_score.dbt_utils import dbt_ls
 
@@ -205,7 +205,7 @@ class Model(HasColumnsMixin):
     tests: list[Test] = field(default_factory=list)
     depends_on: dict[str, list[str]] = field(default_factory=dict)
     constraints: list[Constraint] = field(default_factory=list)
-    parents: list[HasColumnsMixin] = field(default_factory=list)
+    parents: list[Union["Model", "Source", "Snapshot"]] = field(default_factory=list)
     _raw_values: dict[str, Any] = field(default_factory=dict)
     _raw_test_values: list[dict[str, Any]] = field(default_factory=list)
 
@@ -443,7 +443,7 @@ class Snapshot(HasColumnsMixin):
     depends_on: dict[str, list[str]] = field(default_factory=dict)
     strategy: str | None = None
     unique_key: list[str] | None = None
-    parents: list[HasColumnsMixin] = field(default_factory=list)
+    parents: list[Union["Model", "Source", "Snapshot"]] = field(default_factory=list)
     _raw_values: dict[str, Any] = field(default_factory=dict)
     _raw_test_values: list[dict[str, Any]] = field(default_factory=list)
 
