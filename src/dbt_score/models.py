@@ -568,49 +568,14 @@ class ManifestLoader:
 
     def _populate_parents(self) -> None:
         """Populate `parents` for all models and snapshots."""
-        # We need to only add parents that themselves already have their own
-        # parents populated. This is likely not a particularly efficient
-        # topological sort, but should work.
-
-        # We'll start with nodes with the fewest upstream dependencies,
-        # just to reduce cycles a bit.
-        nodes = sorted(
-            list(self.models.values()) + list(self.snapshots.values()),
-            key=lambda x: len(x.depends_on.get("nodes", [])),
-        )
-        # Sources can't have parents, so they start out "done"
-        complete_nodes = set(self.sources.keys())
-
-        while len(nodes) > 0:
-            node = nodes.pop(0)
-            # A node is ready if all of its parents (of the types that
-            # are represented) are already fully populated
-            if all(
-                [
-                    parent in complete_nodes
-                    for parent in node.depends_on.get("nodes", [])
-                    if (
-                        parent in self.models
-                        or parent in self.snapshots
-                        or parent in self.sources
-                    )
-                ]
-            ):
-                # Nodes whose parents are all already completed can
-                # have their `parents` populated from already complete
-                # upstream nodes.
-                for parent_id in node.depends_on.get("nodes", []):
-                    if parent_id in self.models:
-                        node.parents.append(self.models[parent_id])
-                    elif parent_id in self.snapshots:
-                        node.parents.append(self.snapshots[parent_id])
-                    elif parent_id in self.sources:
-                        node.parents.append(self.sources[parent_id])
-                complete_nodes.add(node.unique_id)
-            else:
-                # Otherwise, we just put the node back on the list
-                # and keep trying.
-                nodes.append(node)
+        for node in list(self.models.values()) + list(self.snapshots.values()):
+            for parent_id in node.depends_on.get("nodes", []):
+                if parent_id in self.models:
+                    node.parents.append(self.models[parent_id])
+                elif parent_id in self.snapshots:
+                    node.parents.append(self.snapshots[parent_id])
+                elif parent_id in self.sources:
+                    node.parents.append(self.sources[parent_id])
 
     def _filter_evaluables(self, select: Iterable[str]) -> None:
         """Filter evaluables like dbt's --select."""
