@@ -576,27 +576,28 @@ class ManifestLoader:
         # just to reduce cycles a bit.
         nodes = sorted(
             list(self.models.values()) + list(self.snapshots.values()),
-            key=lambda x: len(x.depends_on),
+            key=lambda x: len(x.depends_on.get("nodes", [])),
         )
         # Sources can't have parents, so they start out "done"
         complete_nodes = set(self.sources.keys())
 
         while len(nodes) > 0:
             node = nodes.pop(0)
-            if len(node.depends_on.get("nodes", [])) == 0:
-                # Nodes without parents can be counted as complete,
-                # and their `parents` need not be populated.
-                complete_nodes.add(node.unique_id)
-            elif all(
+            if all(
                 [
                     parent in complete_nodes
                     for parent in node.depends_on.get("nodes", [])
+                    if (
+                        parent in self.models
+                        or parent in self.snapshots
+                        or parent in self.sources
+                    )
                 ]
             ):
                 # Nodes whose parents are all already completed can
                 # have their `parents` populated from already complete
                 # upstream nodes.
-                for parent_id in node.depends_on["nodes"]:
+                for parent_id in node.depends_on.get("nodes", []):
                     if parent_id in self.models:
                         node.parents.append(self.models[parent_id])
                     elif parent_id in self.snapshots:
