@@ -30,7 +30,7 @@
       "alias": "snapshot1_alias",
       "patch_path": "/path/to/snapshot1.yml",
       "tags": [],
-      "depends_on": {},
+      "depends_on": { "nodes": ["model.package.model1"] },
       "language": "sql",
       "access": "protected"
     },
@@ -61,7 +61,7 @@
       "alias": "snapshot2_alias",
       "patch_path": "/path/to/snapshot2.yml",
       "tags": [],
-      "depends_on": {},
+      "depends_on": { "nodes": ["source.package.my_source.table1"] },
       "language": "sql",
       "access": "protected"
     },
@@ -96,7 +96,13 @@
       "alias": "model1_alias",
       "patch_path": "/path/to/model1.yml",
       "tags": [],
-      "depends_on": {},
+      "depends_on": {
+        "nodes": [
+          "model.package.model2",
+          "source.package.my_source.table1",
+          "snapshot.package.snapshot2"
+        ]
+      },
       "language": "sql",
       "access": "protected",
       "group": null
