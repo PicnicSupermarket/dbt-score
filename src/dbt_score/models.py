@@ -583,6 +583,8 @@ class ManifestLoader:
 
         while len(nodes) > 0:
             node = nodes.pop(0)
+            # A node is ready if all of its parents (of the types that
+            # are represented) are already fully populated
             if all(
                 [
                     parent in complete_nodes
