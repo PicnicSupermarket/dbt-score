@@ -12,7 +12,8 @@ The following rules are included for seeds:
   purpose and contents.
 - **seed_columns_have_description**: All columns in a seed should have
   descriptions.
-- **seed_has_tests**: Seeds should have appropriate tests to ensure data quality.
+- **seed_has_tests**: Seeds should have appropriate tests to ensure data
+  quality.
 - **seed_has_owner**: Seeds should have a defined owner for accountability.
 
 ## Example
@@ -22,3 +23,4 @@ The following rules are included for seeds:
 🥉 Seed: my_seed (score: 6.6)
     WARN (medium) dbt_score.rules.generic.seed_has_description: Seed lacks a description.
     WARN (medium) dbt_score.rules.generic.seed_has_owner: Seed lacks an owner.
+```
