@@ -1,6 +1,6 @@
 """All generic rules."""
 
-from dbt_score import Model, RuleViolation, Severity, Snapshot, rule
+from dbt_score import Model, Seed, RuleViolation, Severity, Snapshot, rule
 from dbt_score.rules.filters import is_table
 
 
@@ -134,3 +134,37 @@ def has_no_unused_is_incremental(model: Model) -> RuleViolation | None:
         and "is_incremental()" in model.raw_code
     ):
         return RuleViolation("Non-incremental model makes use of is_incremental().")
+
+@rule
+def seed_has_description(seed: Seed) -> RuleViolation | None:
+    """A seed should have a description."""
+    if not seed.description:
+        return RuleViolation(message="Seed lacks a description.")
+
+
+@rule
+def seed_columns_have_description(seed: Seed) -> RuleViolation | None:
+    """All columns of a seed should have a description."""
+    invalid_column_names = [
+        column.name for column in seed.columns if not column.description
+    ]
+    if invalid_column_names:
+        max_length = 60
+        message = f"Columns lack a description: {', '.join(invalid_column_names)}."
+        if len(message) > max_length:
+            message = f"{message[:60]}…"
+        return RuleViolation(message=message)
+
+
+@rule
+def seed_has_tests(seed: Seed) -> RuleViolation | None:
+    """A seed should have at least one test."""
+    if not seed.tests and not any(column.tests for column in seed.columns):
+        return RuleViolation(message="Seed has no tests.")
+
+
+@rule
+def seed_has_owner(seed: Seed) -> RuleViolation | None:
+    """A seed should have an owner."""
+    if not seed.meta.get("owner"):
+        return RuleViolation(message="Seed lacks an owner.")
