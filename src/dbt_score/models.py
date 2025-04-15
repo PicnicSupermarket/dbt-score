@@ -481,12 +481,88 @@ class Snapshot(HasColumnsMixin):
         """Compute a unique hash for a snapshot."""
         return hash(self.unique_id)
 
+@dataclass
+class Seed(HasColumnsMixin):
+    """Represents a dbt seed.
 
-Evaluable: TypeAlias = Model | Source | Snapshot
+    Attributes:
+        unique_id: The id of the seed, e.g. `seed.package.seed_name`.
+        name: The name of the seed.
+        relation_name: The relation name of the seed, e.g. `db.schema.seed_name`.
+        description: The full description of the seed.
+        original_file_path: The file path of the seed CSV.
+        config: The config of the seed.
+        meta: The meta of the seed.
+        columns: The list of columns of the seed.
+        package_name: The package name of the seed.
+        database: The database name of the seed.
+        schema: The schema name of the seed.
+        alias: The alias of the seed.
+        patch_path: The yml path of the seed.
+        tags: The list of tags attached to the seed.
+        tests: The list of tests attached to the seed.
+        _raw_values: The raw values of the seed (node) in the manifest.
+        _raw_test_values: The raw test values of the seed (node) in the manifest.
+    """
 
+    unique_id: str
+    name: str
+    relation_name: str
+    description: str
+    original_file_path: str
+    config: dict[str, Any]
+    meta: dict[str, Any]
+    columns: list[Column]
+    package_name: str
+    database: str
+    schema: str
+    alias: str | None = None
+    patch_path: str | None = None
+    tags: list[str] = field(default_factory=list)
+    tests: list[Test] = field(default_factory=list)
+    _raw_values: dict[str, Any] = field(default_factory=dict)
+    _raw_test_values: list[dict[str, Any]] = field(default_factory=list)
+
+    @classmethod
+    def from_node(
+        cls, node_values: dict[str, Any], test_values: list[dict[str, Any]]
+    ) -> "Seed":
+        """Create a seed object from a node and its tests in the manifest."""
+        return cls(
+            unique_id=node_values["unique_id"],
+            name=node_values["name"],
+            relation_name=node_values["relation_name"],
+            description=node_values["description"],
+            original_file_path=node_values["original_file_path"],
+            config=node_values["config"],
+            meta=node_values["meta"],
+            columns=cls._get_columns(node_values, test_values),
+            package_name=node_values["package_name"],
+            database=node_values["database"],
+            schema=node_values["schema"],
+            alias=node_values["alias"],
+            patch_path=node_values["patch_path"],
+            tags=node_values["tags"],
+            tests=[
+                Test.from_node(test)
+                for test in test_values
+                if not test.get("test_metadata", {})
+                .get("kwargs", {})
+                .get("column_name")
+            ],
+            _raw_values=node_values,
+            _raw_test_values=test_values,
+        )
+
+    def __hash__(self) -> int:
+        """Compute a unique hash for a seed."""
+        return hash(self.unique_id)
+
+
+Evaluable: TypeAlias = Model | Source | Snapshot | Seed
 
 class ManifestLoader:
-    """Load the models, sources, snapshots and tests from the manifest."""
+    """Load the models, sources, snapshots, seeds and tests from the manifest."""
 
     def __init__(self, file_path: Path, select: Iterable[str] | None = None):
         """Initialize the ManifestLoader.
@@ -512,16 +588,18 @@ class ManifestLoader:
         self.tests: dict[str, list[dict[str, Any]]] = defaultdict(list)
         self.sources: list[Source] = []
         self.snapshots: list[Snapshot] = []
+        self.seeds: list[Seed] = []
 
         self._reindex_tests()
         self._load_models()
         self._load_sources()
         self._load_snapshots()
+        self._load_seeds()
 
         if select:
             self._filter_evaluables(select)
 
-        if (len(self.models) + len(self.sources) + len(self.snapshots)) == 0:
+        if (len(self.models) + len(self.sources) + len(self.snapshots) + len(self.seeds)) == 0:
             logger.warning("Nothing to evaluate!")
 
     def _load_models(self) -> None:
@@ -544,6 +622,13 @@ class ManifestLoader:
             if node_values.get("resource_type") == "snapshot":
                 snapshot = Snapshot.from_node(node_values, self.tests.get(node_id, []))
                 self.snapshots.append(snapshot)
+    
+    def _load_seeds(self) -> None:
+        """Load the seeds from the manifest."""
+        for node_id, node_values in self.raw_nodes.items():
+            if node_values.get("resource_type") == "seed":
+                seed = Seed.from_node(node_values, self.tests.get(node_id, []))
+                self.seeds.append(seed)
 
     def _reindex_tests(self) -> None:
         """Index tests based on their associated evaluable."""
@@ -576,3 +661,4 @@ class ManifestLoader:
         self.models = [m for m in self.models if m.name in selected]
         self.sources = [s for s in self.sources if s.selector_name in selected]
         self.snapshots = [s for s in self.snapshots if s.name in selected]
+        self.seeds = [s for s in self.seeds if s.name in selected]
