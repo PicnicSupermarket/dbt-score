@@ -418,7 +418,7 @@ class Snapshot(HasColumnsMixin):
         depends_on: Dictionary of models/sources/macros that the model depends on.
         strategy: The strategy of the snapshot.
         unique_key: The unique key of the snapshot.
-        parents: The list of models, sources, and snapshot this snapshot depends on.
+        parents: The list of models, sources, and snapshots this snapshot depends on.
         _raw_values: The raw values of the snapshot (node) in the manifest.
         _raw_test_values: The raw test values of the snapshot (node) in the manifest.
     """
