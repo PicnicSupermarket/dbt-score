@@ -599,7 +599,8 @@ class ManifestLoader:
         if select:
             self._filter_evaluables(select)
 
-        if (len(self.models) + len(self.sources) + len(self.snapshots) + len(self.seeds)) == 0:
+        if (len(self.models) + len(self.sources) + len(self.snapshots)
+            + len(self.seeds)) == 0:
             logger.warning("Nothing to evaluate!")
 
     def _load_models(self) -> None:
@@ -622,7 +623,7 @@ class ManifestLoader:
             if node_values.get("resource_type") == "snapshot":
                 snapshot = Snapshot.from_node(node_values, self.tests.get(node_id, []))
                 self.snapshots.append(snapshot)
-    
+
     def _load_seeds(self) -> None:
         """Load the seeds from the manifest."""
         for node_id, node_values in self.raw_nodes.items():
@@ -651,8 +652,8 @@ class ManifestLoader:
         single_model_select = re.compile(r"[a-zA-Z0-9_]+")
 
         if all(single_model_select.fullmatch(x) for x in select):
-            # Using '--select my_model' is a common case, which can easily be sped up by
-            # not invoking dbt
+            # Using '--select my_model' is a common case, which
+            #  can easily be sped up by not invoking dbt
             selected = select
         else:
             # Use dbt's implementation of --select

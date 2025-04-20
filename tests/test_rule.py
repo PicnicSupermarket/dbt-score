@@ -1,7 +1,7 @@
 """Test rule."""
 
 import pytest
-from dbt_score import Model, Rule, RuleViolation, Severity, Snapshot, Seed, Source, rule
+from dbt_score import Model, Rule, RuleViolation, Seed, Severity, Snapshot, Source, rule
 from dbt_score.rule_filter import RuleFilter, rule_filter
 
 

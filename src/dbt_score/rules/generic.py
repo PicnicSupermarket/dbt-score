@@ -1,6 +1,6 @@
 """All generic rules."""
 
-from dbt_score import Model, Seed, RuleViolation, Severity, Snapshot, rule
+from dbt_score import Model, RuleViolation, Seed, Severity, Snapshot, rule
 from dbt_score.rules.filters import is_table
 
 

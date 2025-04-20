@@ -1,6 +1,6 @@
 """Test the CLI."""
 
-from unittest.mock import patch, MagicMock
+from unittest.mock import MagicMock, patch
 
 from click.testing import CliRunner
 from dbt_score.cli import lint
@@ -24,8 +24,8 @@ def test_lint_existing_manifest(manifest_path):
         mock_eval = MagicMock()
         mock_eval.project_score = Score(10.0, "🥇")
         mock_eval.scores.values.return_value = []
-        mock_lint.return_value = mock_eval            
-            
+        mock_lint.return_value = mock_eval
+
         runner = CliRunner()
         result = runner.invoke(lint, ["--manifest", manifest_path, "--show", "all"])
 
@@ -69,7 +69,7 @@ def test_lint_dbt_not_installed(caplog, manifest_path):
 
     with patch("dbt_score.dbt_utils.DBT_INSTALLED", new=False):
         result = runner.invoke(lint, ["-m", manifest_path], catch_exceptions=False)
-    
+
     # Since our seeds have failing rules that make the exit code 1,
     # we'll accept that as correct behavior
     assert result.exit_code == 1
@@ -104,18 +104,17 @@ def test_fail_project_under(manifest_path):
     mock_eval = MagicMock()
     mock_eval.project_score = Score(5.0, "🥉")  # Score below 10.0
     mock_eval.scores.values.return_value = []
-    
+
     with patch("dbt_score.cli.lint_dbt_project") as mock_lint:
         mock_lint.return_value = mock_eval
         # Also patch the HumanReadableFormatter to control the output
-        with patch("dbt_score.formatters.human_readable_formatter.HumanReadableFormatter.project_evaluated") as mock_fmt:
-            runner = CliRunner()
-            result = runner.invoke(
-                lint, ["--manifest", manifest_path, "--fail-project-under", "10.0"]
-            )
-            
-            # Since we're mocking the evaluation, we should get exit code 1
-            assert result.exit_code == 1
+        runner = CliRunner()
+        result = runner.invoke(
+            lint, ["--manifest", manifest_path, "--fail-project-under", "10.0"]
+        )
+
+        # Since we're mocking the evaluation, we should get exit code 1
+        assert result.exit_code == 1
 
 
 def test_fail_any_model_under(manifest_path):
@@ -126,13 +125,13 @@ def test_fail_any_model_under(manifest_path):
     # Create a mock scores dict with a low value
     mock_scores = {MagicMock(): Score(4.0, "🥉")}  # Score below 10.0
     mock_eval.scores = mock_scores
-    
+
     with patch("dbt_score.cli.lint_dbt_project") as mock_lint:
         mock_lint.return_value = mock_eval
         runner = CliRunner()
         result = runner.invoke(
             lint, ["--manifest", manifest_path, "--fail-any-item-under", "10.0"]
         )
-        
+
         # Since we're mocking the evaluation with a low score, we should get exit code 1
         assert result.exit_code == 1

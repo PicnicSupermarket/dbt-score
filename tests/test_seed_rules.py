@@ -1,11 +1,11 @@
-import pytest
+"""Tests for seed rules."""
 
 from dbt_score.rule import RuleViolation
 from dbt_score.rules.generic import (
-    seed_has_description,
     seed_columns_have_description,
-    seed_has_tests,
+    seed_has_description,
     seed_has_owner,
+    seed_has_tests,
 )
 
 
@@ -30,7 +30,7 @@ def test_seed_has_tests(seed1, seed2):
     # Mock test data
     seed1.tests = [{"name": "test1"}]  # Add a fake test
     seed2.tests = []  # No tests
-    
+
     rule = seed_has_tests()
     assert rule.evaluate(seed1) is None
     assert isinstance(rule.evaluate(seed2), RuleViolation)
@@ -40,7 +40,7 @@ def test_seed_has_owner(seed1, seed2):
     """Test seed_has_owner rule."""
     # Add owner to seed1, not to seed2
     seed1.meta["owner"] = "Data Team"
-    
+
     rule = seed_has_owner()
     assert rule.evaluate(seed1) is None
     assert isinstance(rule.evaluate(seed2), RuleViolation)

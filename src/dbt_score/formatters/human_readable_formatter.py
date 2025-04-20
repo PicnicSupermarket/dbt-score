@@ -4,7 +4,7 @@ from typing import Any
 
 from dbt_score.evaluation import EvaluableResultsType
 from dbt_score.formatters import Formatter
-from dbt_score.models import Evaluable, Model, Snapshot, Seed, Source
+from dbt_score.models import Evaluable, Model, Seed, Snapshot, Source
 from dbt_score.rule import RuleViolation
 from dbt_score.scoring import Score
 

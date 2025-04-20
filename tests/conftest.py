@@ -4,7 +4,7 @@ import json
 from pathlib import Path
 from typing import Any, Type
 
-from dbt_score import Model, Rule, RuleViolation, Severity, Snapshot, Seed, Source, rule
+from dbt_score import Model, Rule, RuleViolation, Seed, Severity, Snapshot, Source, rule
 from dbt_score.config import Config
 from dbt_score.models import ManifestLoader
 from dbt_score.rule_filter import RuleFilter, rule_filter
