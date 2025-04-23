@@ -481,6 +481,7 @@ class Snapshot(HasColumnsMixin):
         """Compute a unique hash for a snapshot."""
         return hash(self.unique_id)
 
+
 @dataclass
 class Seed(HasColumnsMixin):
     """Represents a dbt seed.
@@ -561,6 +562,7 @@ class Seed(HasColumnsMixin):
 
 Evaluable: TypeAlias = Model | Source | Snapshot | Seed
 
+
 class ManifestLoader:
     """Load the models, sources, snapshots, seeds and tests from the manifest."""
 
@@ -599,8 +601,9 @@ class ManifestLoader:
         if select:
             self._filter_evaluables(select)
 
-        if (len(self.models) + len(self.sources) + len(self.snapshots)
-            + len(self.seeds)) == 0:
+        if (
+            len(self.models) + len(self.sources) + len(self.snapshots) + len(self.seeds)
+        ) == 0:
             logger.warning("Nothing to evaluate!")
 
     def _load_models(self) -> None:

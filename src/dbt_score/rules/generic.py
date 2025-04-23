@@ -3,6 +3,8 @@
 from dbt_score import Model, RuleViolation, Seed, Severity, Snapshot, rule
 from dbt_score.rules.filters import is_table
 
+MAX_DESCRIPTION_MESSAGE_LENGTH = 60
+
 
 @rule
 def snapshot_has_unique_key(snapshot: Snapshot) -> RuleViolation | None:
@@ -135,6 +137,7 @@ def has_no_unused_is_incremental(model: Model) -> RuleViolation | None:
     ):
         return RuleViolation("Non-incremental model makes use of is_incremental().")
 
+
 @rule
 def seed_has_description(seed: Seed) -> RuleViolation | None:
     """A seed should have a description."""
@@ -149,14 +152,13 @@ def seed_columns_have_description(seed: Seed) -> RuleViolation | None:
         column.name for column in seed.columns if not column.description
     ]
     if invalid_column_names:
-        max_length = 60
         message = f"Columns lack a description: {', '.join(invalid_column_names)}."
-        if len(message) > max_length:
-            message = f"{message[:60]}…"
+        if len(message) > MAX_DESCRIPTION_MESSAGE_LENGTH:
+            message = f"{message[:MAX_DESCRIPTION_MESSAGE_LENGTH]}…"
         return RuleViolation(message=message)
 
 
-@rule
+@rule(severity=Severity.LOW)
 def seed_has_tests(seed: Seed) -> RuleViolation | None:
     """A seed should have at least one test."""
     if not seed.tests and not any(column.tests for column in seed.columns):

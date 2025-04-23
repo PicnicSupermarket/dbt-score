@@ -8,7 +8,7 @@ and this project adheres to
 
 ## [Unreleased]
 
-- Add support for linting and scoring dbt seeds (#104)
+- Add support for linting and scoring dbt seeds (#110)
 
 ## [0.11.0] - 2025-04-04
 

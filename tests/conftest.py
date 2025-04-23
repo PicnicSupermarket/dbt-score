@@ -470,6 +470,7 @@ def snapshot_class_rule_with_filter() -> Type[Rule]:
 
     return SnapshotRuleWithFilter
 
+
 @fixture
 def seed1(raw_manifest) -> Seed:
     """Seed 1."""
