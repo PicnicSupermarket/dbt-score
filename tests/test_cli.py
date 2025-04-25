@@ -20,16 +20,11 @@ def test_invalid_options():
 
 def test_lint_existing_manifest(manifest_path):
     """Test lint with an existing manifest."""
-    with patch("dbt_score.cli.lint_dbt_project") as mock_lint:
-        mock_eval = MagicMock()
-        mock_eval.project_score = Score(10.0, "🥇")
-        mock_eval.scores.values.return_value = []
-        mock_lint.return_value = mock_eval
-
-        runner = CliRunner()
+    runner = CliRunner()
+    # We want to actually test linting the manifest
+    with patch("dbt_score.cli.Config._load_toml_file"):
         result = runner.invoke(lint, ["--manifest", manifest_path, "--show", "all"])
-
-        assert result.exit_code == 0
+        assert result.exit_code == 1  # Expected to fail due to rules in test data
 
 
 def test_lint_non_existing_manifest(caplog):
@@ -107,7 +102,6 @@ def test_fail_project_under(manifest_path):
 
     with patch("dbt_score.cli.lint_dbt_project") as mock_lint:
         mock_lint.return_value = mock_eval
-        # Also patch the HumanReadableFormatter to control the output
         runner = CliRunner()
         result = runner.invoke(
             lint, ["--manifest", manifest_path, "--fail-project-under", "10.0"]
