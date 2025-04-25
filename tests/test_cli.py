@@ -117,7 +117,7 @@ def test_fail_project_under(manifest_path):
         assert result.exit_code == 1
 
 
-def test_fail_any_model_under(manifest_path):
+def test_fail_any_item_under(manifest_path):
     """Test `fail_any_item_under`."""
     # Create a mock evaluation with a low model score
     mock_eval = MagicMock()
