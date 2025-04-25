@@ -158,13 +158,6 @@ def seed_columns_have_description(seed: Seed) -> RuleViolation | None:
         return RuleViolation(message=message)
 
 
-@rule(severity=Severity.LOW)
-def seed_has_tests(seed: Seed) -> RuleViolation | None:
-    """A seed should have at least one test."""
-    if not seed.tests and not any(column.tests for column in seed.columns):
-        return RuleViolation(message="Seed has no tests.")
-
-
 @rule
 def seed_has_owner(seed: Seed) -> RuleViolation | None:
     """A seed should have an owner."""
