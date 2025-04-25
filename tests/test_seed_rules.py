@@ -27,7 +27,7 @@ def test_seed_columns_have_description(seed1, seed2):
 def test_seed_has_owner(seed1, seed2):
     """Test seed_has_owner rule."""
     # Add owner to seed1, not to seed2
-    seed1.meta["owner"] = "Data Team"
+    seed1.config["meta"] = {"owner": "Data Team"}
 
     rule = seed_has_owner()
     assert rule.evaluate(seed1) is None

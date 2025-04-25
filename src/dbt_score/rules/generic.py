@@ -161,5 +161,6 @@ def seed_columns_have_description(seed: Seed) -> RuleViolation | None:
 @rule
 def seed_has_owner(seed: Seed) -> RuleViolation | None:
     """A seed should have an owner."""
-    if not seed.meta.get("owner"):
+    meta = seed.config.get("meta", {})
+    if not meta.get("owner"):
         return RuleViolation(message="Seed lacks an owner.")
