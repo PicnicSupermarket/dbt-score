@@ -500,9 +500,11 @@ class Exposure:
         original_file_path: The path to the exposure file
             (e.g. `models/exposures/exposures.yml`).
         type: The type of the exposure, e.g. `application`.
-        owner: The owner of the exposure.
+        owner: The owner of the exposure,
+            e.g. `{"name": "owner", "email": "owner@email.com"}`.
         config: The config of the exposure.
         meta: The meta of the exposure.
+        tags: The list of tags attached to the exposure.
         depends_on: The depends_on of the exposure.
         parents: The list of models, sources, and snapshot this exposure depends on.
         _raw_values: The raw values of the exposure in the manifest.
@@ -516,9 +518,10 @@ class Exposure:
     maturity: str
     original_file_path: str
     type: str
-    owner: str
+    owner: dict[str, Any]
     config: dict[str, Any]
     meta: dict[str, Any]
+    tags: list[str]
     depends_on: dict[str, list[str]] = field(default_factory=dict)
     parents: list[Union["Model", "Source", "Snapshot"]] = field(default_factory=list)
     _raw_values: dict[str, Any] = field(default_factory=dict)
@@ -538,6 +541,7 @@ class Exposure:
             owner=node_values["owner"],
             config=node_values["config"],
             meta=node_values["meta"],
+            tags=node_values["tags"],
             depends_on=node_values["depends_on"],
             _raw_values=node_values,
         )
