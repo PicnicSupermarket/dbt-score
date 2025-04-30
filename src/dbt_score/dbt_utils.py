@@ -74,6 +74,7 @@ def dbt_ls(select: Iterable[str] | None) -> Iterable[str]:
         "--resource-types",
         "model",
         "source",
+        "snapshot",
         "exposure",
         "--output",
         "name",
