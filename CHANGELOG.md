@@ -8,7 +8,7 @@ and this project adheres to
 
 ## [Unreleased]
 
-- Support linting of exposures
+- Support linting of exposures (#112)
 - Add `parents` to models and snapshots, allowing access to parent nodes. (#109)
 
 ## [0.11.0] - 2025-04-04
