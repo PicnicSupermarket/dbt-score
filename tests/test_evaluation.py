@@ -251,6 +251,7 @@ def test_evaluation_with_class_filter(
     model_class_rule_with_filter,
     source_class_rule_with_filter,
     snapshot_class_rule_with_filter,
+    exposure_class_rule_with_filter,
 ):
     """Test rule with filters and filtered rules defined by classes."""
     manifest_loader = ManifestLoader(manifest_path)
@@ -261,7 +262,7 @@ def test_evaluation_with_class_filter(
     rule_registry._add_rule(model_class_rule_with_filter)
     rule_registry._add_rule(source_class_rule_with_filter)
     rule_registry._add_rule(snapshot_class_rule_with_filter)
-
+    rule_registry._add_rule(exposure_class_rule_with_filter)
     # Ensure we get a valid Score object from the Mock
     mock_scorer.score_model.return_value = Score(10, "🥇")
 
@@ -280,6 +281,8 @@ def test_evaluation_with_class_filter(
     source2 = manifest_loader.sources["source.package.my_source.table2"]
     snapshot1 = manifest_loader.snapshots["snapshot.package.snapshot1"]
     snapshot2 = manifest_loader.snapshots["snapshot.package.snapshot2"]
+    exposure1 = manifest_loader.exposures["exposure.package.exposure1"]
+    exposure2 = manifest_loader.exposures["exposure.package.exposure2"]
 
     assert model_class_rule_with_filter not in evaluation.results[model1]
     assert isinstance(
@@ -296,6 +299,11 @@ def test_evaluation_with_class_filter(
         evaluation.results[snapshot2][snapshot_class_rule_with_filter], RuleViolation
     )
 
+    assert exposure_class_rule_with_filter not in evaluation.results[exposure1]
+    assert isinstance(
+        evaluation.results[exposure2][exposure_class_rule_with_filter], RuleViolation
+    )
+
 
 def test_evaluation_with_models_and_sources(
     manifest_path,
@@ -303,6 +311,7 @@ def test_evaluation_with_models_and_sources(
     decorator_rule,
     decorator_rule_source,
     decorator_rule_snapshot,
+    decorator_rule_exposure,
 ):
     """Test that model rules apply to models and vice versa."""
     manifest_loader = ManifestLoader(manifest_path)
@@ -313,6 +322,7 @@ def test_evaluation_with_models_and_sources(
     rule_registry._add_rule(decorator_rule)
     rule_registry._add_rule(decorator_rule_source)
     rule_registry._add_rule(decorator_rule_snapshot)
+    rule_registry._add_rule(decorator_rule_exposure)
 
     # Ensure we get a valid Score object from the Mock
     mock_scorer.score_model.return_value = Score(10, "🥇")
@@ -329,15 +339,24 @@ def test_evaluation_with_models_and_sources(
     model1 = manifest_loader.models["model.package.model1"]
     source1 = manifest_loader.sources["source.package.my_source.table1"]
     snapshot1 = manifest_loader.snapshots["snapshot.package.snapshot1"]
+    exposure1 = manifest_loader.exposures["exposure.package.exposure1"]
 
     assert decorator_rule in evaluation.results[model1]
     assert decorator_rule_source not in evaluation.results[model1]
     assert decorator_rule_snapshot not in evaluation.results[model1]
+    assert decorator_rule_exposure not in evaluation.results[model1]
 
     assert decorator_rule_source in evaluation.results[source1]
     assert decorator_rule not in evaluation.results[source1]
     assert decorator_rule_snapshot not in evaluation.results[source1]
+    assert decorator_rule_exposure not in evaluation.results[source1]
 
     assert decorator_rule_snapshot in evaluation.results[snapshot1]
     assert decorator_rule_source not in evaluation.results[snapshot1]
     assert decorator_rule not in evaluation.results[snapshot1]
+    assert decorator_rule_exposure not in evaluation.results[snapshot1]
+
+    assert decorator_rule_exposure in evaluation.results[exposure1]
+    assert decorator_rule not in evaluation.results[exposure1]
+    assert decorator_rule_source not in evaluation.results[exposure1]
+    assert decorator_rule_snapshot not in evaluation.results[exposure1]

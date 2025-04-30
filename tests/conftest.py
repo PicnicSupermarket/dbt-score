@@ -248,13 +248,13 @@ def class_rule_snapshot() -> Type[Rule]:
 def decorator_rule_exposure() -> Type[Rule]:
     """An example rule created with the rule decorator."""
 
-    @rule
-    def example_rule(exposure: Exposure) -> RuleViolation | None:
+    @rule()
+    def example_rule_exposure(exposure: Exposure) -> RuleViolation | None:
         """Description of the rule."""
         if exposure.name == "exposure1":
             return RuleViolation(message="Exposure1 is a violation.")
 
-    return example_rule
+    return example_rule_exposure
 
 
 @fixture
@@ -262,12 +262,12 @@ def decorator_rule_no_parens_exposure() -> Type[Rule]:
     """An example rule created with the rule decorator without parentheses."""
 
     @rule
-    def example_rule(exposure: Exposure) -> RuleViolation | None:
+    def example_rule_exposure(exposure: Exposure) -> RuleViolation | None:
         """Description of the rule."""
         if exposure.name == "exposure1":
             return RuleViolation(message="Exposure1 is a violation.")
 
-    return example_rule
+    return example_rule_exposure
 
 
 @fixture
@@ -275,11 +275,11 @@ def decorator_rule_args_exposure() -> Type[Rule]:
     """An example rule created with the rule decorator with arguments."""
 
     @rule(description="Description of the rule.")
-    def example_rule(exposure: Exposure) -> RuleViolation | None:
+    def example_rule_exposure(exposure: Exposure) -> RuleViolation | None:
         if exposure.name == "exposure1":
             return RuleViolation(message="Exposure1 is a violation.")
 
-    return example_rule
+    return example_rule_exposure
 
 
 @fixture
@@ -488,6 +488,23 @@ def snapshot_rule_with_filter() -> Type[Rule]:
 
 
 @fixture
+def exposure_rule_with_filter() -> Type[Rule]:
+    """An example rule that skips through a filter."""
+
+    @rule_filter
+    def skip_exposure1(exposure: Exposure) -> bool:
+        """Skips for exposure1, passes for exposure2."""
+        return exposure.name != "exposure1"
+
+    @rule(rule_filters={skip_exposure1()})
+    def exposure_rule_with_filter(exposure: Exposure) -> RuleViolation | None:
+        """Rule that always fails when not filtered."""
+        return RuleViolation(message="I always fail.")
+
+    return exposure_rule_with_filter
+
+
+@fixture
 def model_class_rule_with_filter() -> Type[Rule]:
     """Using class definitions for filters and rules."""
 
@@ -551,17 +568,21 @@ def snapshot_class_rule_with_filter() -> Type[Rule]:
 
 
 @fixture
-def exposure_rule_with_filter() -> Type[Rule]:
-    """An example rule that skips through a filter."""
+def exposure_class_rule_with_filter() -> Type[Rule]:
+    """Using class definitions for filters and rules."""
 
-    @rule_filter
-    def skip_exposure1(exposure: Exposure) -> bool:
-        """Skips for exposure1, passes for exposure2."""
-        return exposure.name != "exposure1"
+    class SkipExposure1(RuleFilter):
+        description = "Filter defined by a class."
 
-    @rule(rule_filters={skip_exposure1()})
-    def exposure_rule_with_filter(exposure: Exposure) -> RuleViolation | None:
-        """Rule that always fails when not filtered."""
-        return RuleViolation(message="I always fail.")
+        def evaluate(self, exposure: Exposure) -> bool:  # type: ignore[override]
+            """Skips for exposure1, passes for exposure2."""
+            return exposure.name != "exposure1"
 
-    return exposure_rule_with_filter
+    class ExposureRuleWithFilter(Rule):
+        description = "Filter defined by a class."
+        rule_filters = frozenset({SkipExposure1()})
+
+        def evaluate(self, exposure: Exposure) -> RuleViolation | None:  # type: ignore[override]
+            return RuleViolation(message="I always fail.")
+
+    return ExposureRuleWithFilter
