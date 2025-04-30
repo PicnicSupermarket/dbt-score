@@ -4,7 +4,16 @@ import json
 from pathlib import Path
 from typing import Any, Type
 
-from dbt_score import Model, Rule, RuleViolation, Severity, Snapshot, Source, rule
+from dbt_score import (
+    Exposure,
+    Model,
+    Rule,
+    RuleViolation,
+    Severity,
+    Snapshot,
+    Source,
+    rule,
+)
 from dbt_score.config import Config
 from dbt_score.models import ManifestLoader
 from dbt_score.rule_filter import RuleFilter, rule_filter
@@ -105,6 +114,21 @@ def snapshot1(raw_manifest) -> Snapshot:
 def snapshot2(raw_manifest) -> Snapshot:
     """Snapshot 2."""
     return Snapshot.from_node(raw_manifest["nodes"]["snapshot.package.snapshot2"], [])
+
+
+# Exposures
+
+
+@fixture
+def exposure1(raw_manifest) -> Exposure:
+    """Exposure 1."""
+    return Exposure.from_node(raw_manifest["nodes"]["exposure.package.exposure1"])
+
+
+@fixture
+def exposure2(raw_manifest) -> Exposure:
+    """Exposure 2."""
+    return Exposure.from_node(raw_manifest["nodes"]["exposure.package.exposure2"])
 
 
 # Multiple ways to create rules
@@ -216,6 +240,61 @@ def class_rule_snapshot() -> Type[Rule]:
             """Evaluate snapshot."""
             if snapshot.name == "snapshot1":
                 return RuleViolation(message="Snapshot1 is a violation.")
+
+    return ExampleRule
+
+
+@fixture
+def decorator_rule_exposure() -> Type[Rule]:
+    """An example rule created with the rule decorator."""
+
+    @rule
+    def example_rule(exposure: Exposure) -> RuleViolation | None:
+        """Description of the rule."""
+        if exposure.name == "exposure1":
+            return RuleViolation(message="Exposure1 is a violation.")
+
+    return example_rule
+
+
+@fixture
+def decorator_rule_no_parens_exposure() -> Type[Rule]:
+    """An example rule created with the rule decorator without parentheses."""
+
+    @rule
+    def example_rule(exposure: Exposure) -> RuleViolation | None:
+        """Description of the rule."""
+        if exposure.name == "exposure1":
+            return RuleViolation(message="Exposure1 is a violation.")
+
+    return example_rule
+
+
+@fixture
+def decorator_rule_args_exposure() -> Type[Rule]:
+    """An example rule created with the rule decorator with arguments."""
+
+    @rule(description="Description of the rule.")
+    def example_rule(exposure: Exposure) -> RuleViolation | None:
+        if exposure.name == "exposure1":
+            return RuleViolation(message="Exposure1 is a violation.")
+
+    return example_rule
+
+
+@fixture
+def class_rule_exposure() -> Type[Rule]:
+    """An example rule created with a class."""
+
+    class ExampleRule(Rule):
+        """Example rule."""
+
+        description = "Description of the rule."
+
+        def evaluate(self, exposure: Exposure) -> RuleViolation | None:  # type: ignore[override]
+            """Evaluate exposure."""
+            if exposure.name == "exposure1":
+                return RuleViolation(message="Exposure1 is a violation.")
 
     return ExampleRule
 
@@ -469,3 +548,20 @@ def snapshot_class_rule_with_filter() -> Type[Rule]:
             return RuleViolation(message="I always fail.")
 
     return SnapshotRuleWithFilter
+
+
+@fixture
+def exposure_rule_with_filter() -> Type[Rule]:
+    """An example rule that skips through a filter."""
+
+    @rule_filter
+    def skip_exposure1(exposure: Exposure) -> bool:
+        """Skips for exposure1, passes for exposure2."""
+        return exposure.name != "exposure1"
+
+    @rule(rule_filters={skip_exposure1()})
+    def exposure_rule_with_filter(exposure: Exposure) -> RuleViolation | None:
+        """Rule that always fails when not filtered."""
+        return RuleViolation(message="I always fail.")
+
+    return exposure_rule_with_filter

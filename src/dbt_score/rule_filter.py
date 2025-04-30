@@ -4,16 +4,18 @@ import inspect
 import typing
 from typing import Any, Callable, Type, TypeAlias, cast, overload
 
-from dbt_score.models import Evaluable, Model, Snapshot, Source
+from dbt_score.models import Evaluable, Exposure, Model, Snapshot, Source
 from dbt_score.more_itertools import first_true
 
 ModelFilterEvaluationType: TypeAlias = Callable[[Model], bool]
 SourceFilterEvaluationType: TypeAlias = Callable[[Source], bool]
 SnapshotFilterEvaluationType: TypeAlias = Callable[[Snapshot], bool]
+ExposureFilterEvaluationType: TypeAlias = Callable[[Exposure], bool]
 FilterEvaluationType: TypeAlias = (
     ModelFilterEvaluationType
     | SourceFilterEvaluationType
     | SnapshotFilterEvaluationType
+    | ExposureFilterEvaluationType
 )
 
 
@@ -48,7 +50,7 @@ class RuleFilter:
         if not resource_type_argument:
             raise TypeError(
                 "Subclass must implement method `evaluate` with an "
-                "annotated Model, Snapshot or Source argument."
+                "annotated Model, Snapshot, Source or Exposure argument."
             )
 
         resource_type = cast(type[Evaluable], resource_type_argument.annotation)
@@ -84,6 +86,11 @@ def rule_filter(__func: SourceFilterEvaluationType) -> Type[RuleFilter]:
 
 @overload
 def rule_filter(__func: SnapshotFilterEvaluationType) -> Type[RuleFilter]:
+    ...
+
+
+@overload
+def rule_filter(__func: ExposureFilterEvaluationType) -> Type[RuleFilter]:
     ...
 
 

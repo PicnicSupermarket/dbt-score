@@ -48,6 +48,10 @@ def test_manifest_load(mock_read_text, raw_manifest):
             loader.sources["source.package.my_source.table1"]
         ]
 
+        assert loader.exposures["exposure.package.exposure1"].parents == [
+            loader.models["model.package.model1"]
+        ]
+
 
 @patch("dbt_score.models.Path.read_text")
 def test_manifest_select_models_simple(mock_read_text, raw_manifest):

@@ -385,5 +385,83 @@
       "relation_name": "\"package\".\"my_other_source\".\"table1\"",
       "created_at": 1728529440.4206917
     }
+  },
+  "exposures": {
+    "exposure.package.exposure1": {
+      "name": "exposure1",
+      "resource_type": "exposure",
+      "package_name": "package",
+      "path": "models/exposures/exposures.yml",
+      "original_file_path": "models/exposures/exposures.yml",
+      "unique_id": "exposure.package.exposure1",
+      "fqn": ["package", "exposures", "exposure1"],
+      "type": "application",
+      "owner": {
+        "email": null,
+        "name": "owner"
+      },
+      "description": "This is a description.",
+      "label": null,
+      "maturity": null,
+      "meta": {},
+      "tags": ["tag1", "tag2"],
+      "config": {
+        "enabled": true
+      },
+      "unrendered_config": {},
+      "url": null,
+      "depends_on": {
+        "macros": [],
+        "nodes": ["model.package.model1"]
+      },
+      "refs": [
+        {
+          "name": "model1",
+          "package": null,
+          "version": null
+        }
+      ],
+      "sources": [],
+      "metrics": [],
+      "created_at": 1744832856.199685
+    },
+    "exposure.package.exposure2": {
+      "name": "exposure2",
+      "resource_type": "exposure",
+      "package_name": "package",
+      "path": "models/exposures/exposures.yml",
+      "original_file_path": "models/exposures/exposures.yml",
+      "unique_id": "exposure.package.exposure2",
+      "fqn": ["package", "exposures", "exposure2"],
+      "type": "application",
+      "owner": {
+        "email": null,
+        "name": "owner"
+      },
+      "description": "This is a description.",
+      "label": null,
+      "maturity": null,
+      "meta": {},
+      "tags": ["tag1", "tag2"],
+      "config": {
+        "enabled": true
+      },
+      "unrendered_config": {},
+      "url": null,
+      "depends_on": {
+        "macros": [],
+        "nodes": ["model.package.model2"]
+      },
+      "refs": [
+        {
+          "name": "model2",
+          "package": null,
+          "version": null
+        }
+      ],
+      "sources": [],
+      "metrics": [],
+      "created_at": 1744832856.199685
+    }
   }
 }

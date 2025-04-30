@@ -54,10 +54,10 @@ def test_evaluation_low_medium_high(
     assert isinstance(evaluation.results[model2][rule_severity_high], RuleViolation)
     assert isinstance(evaluation.results[model2][rule_error], Exception)
 
-    assert mock_formatter.evaluable_evaluated.call_count == 7
+    assert mock_formatter.evaluable_evaluated.call_count == 9
     assert mock_formatter.project_evaluated.call_count == 1
 
-    assert mock_scorer.score_evaluable.call_count == 7
+    assert mock_scorer.score_evaluable.call_count == 9
     assert mock_scorer.score_aggregate_evaluables.call_count == 1
 
 
@@ -193,6 +193,7 @@ def test_evaluation_with_filter(
     model_rule_with_filter,
     source_rule_with_filter,
     snapshot_rule_with_filter,
+    exposure_rule_with_filter,
 ):
     """Test rule with filter."""
     manifest_loader = ManifestLoader(manifest_path)
@@ -203,7 +204,7 @@ def test_evaluation_with_filter(
     rule_registry._add_rule(model_rule_with_filter)
     rule_registry._add_rule(source_rule_with_filter)
     rule_registry._add_rule(snapshot_rule_with_filter)
-
+    rule_registry._add_rule(exposure_rule_with_filter)
     # Ensure we get a valid Score object from the Mock
     mock_scorer.score_model.return_value = Score(10, "🥇")
 
@@ -222,6 +223,8 @@ def test_evaluation_with_filter(
     source2 = manifest_loader.sources["source.package.my_source.table2"]
     snapshot1 = manifest_loader.snapshots["snapshot.package.snapshot1"]
     snapshot2 = manifest_loader.snapshots["snapshot.package.snapshot2"]
+    exposure1 = manifest_loader.exposures["exposure.package.exposure1"]
+    exposure2 = manifest_loader.exposures["exposure.package.exposure2"]
 
     assert model_rule_with_filter not in evaluation.results[model1]
     assert isinstance(evaluation.results[model2][model_rule_with_filter], RuleViolation)
@@ -234,6 +237,11 @@ def test_evaluation_with_filter(
     assert snapshot_rule_with_filter not in evaluation.results[snapshot1]
     assert isinstance(
         evaluation.results[snapshot2][snapshot_rule_with_filter], RuleViolation
+    )
+
+    assert exposure_rule_with_filter not in evaluation.results[exposure1]
+    assert isinstance(
+        evaluation.results[exposure2][exposure_rule_with_filter], RuleViolation
     )
 
 

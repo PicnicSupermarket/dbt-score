@@ -32,7 +32,7 @@ function is its description. Therefore, it is important to use a
 self-explanatory name for the function and document it well.
 
 The type annotation for the rule's argument dictates whether the rule should be
-applied to dbt models, sources or snapshots.
+applied to dbt models, sources, snapshots, or exposures.
 
 Here is the same example rule, applied to sources:
 
@@ -139,8 +139,8 @@ class SkipSchemaY(RuleFilter):
       return model.schema.lower() != 'y'
 ```
 
-Filters also rely on type-annotations to dictate whether they apply to models
-sources or snapshots:
+Filters also rely on type-annotations to dictate whether they apply to models,
+sources, snapshots, or exposures:
 
 ```python
 from dbt_score import RuleFilter, rule_filter, Source
