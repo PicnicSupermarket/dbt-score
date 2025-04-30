@@ -41,8 +41,8 @@ def test_evaluation_low_medium_high(
     )
     evaluation.evaluate()
 
-    model1 = manifest_loader.models[0]
-    model2 = manifest_loader.models[1]
+    model1 = manifest_loader.models["model.package.model1"]
+    model2 = manifest_loader.models["model.package.model2"]
 
     assert evaluation.results[model1][rule_severity_low] is None
     assert evaluation.results[model1][rule_severity_medium] is None
@@ -85,7 +85,7 @@ def test_evaluation_critical(
 
     evaluation.evaluate()
 
-    model2 = manifest_loader.models[1]
+    model2 = manifest_loader.models["model.package.model2"]
 
     assert isinstance(evaluation.results[model2][rule_severity_critical], RuleViolation)
 
@@ -157,8 +157,8 @@ def test_evaluation_rule_with_config(
 ):
     """Test rule evaluation with parameters."""
     manifest_loader = ManifestLoader(manifest_path)
-    model1 = manifest_loader.models[0]
-    model2 = manifest_loader.models[1]
+    model1 = manifest_loader.models["model.package.model1"]
+    model2 = manifest_loader.models["model.package.model2"]
 
     config = Config()
     config._load_toml_file(str(valid_config_path))
@@ -216,12 +216,12 @@ def test_evaluation_with_filter(
     )
     evaluation.evaluate()
 
-    model1 = manifest_loader.models[0]
-    model2 = manifest_loader.models[1]
-    source1 = manifest_loader.sources[0]
-    source2 = manifest_loader.sources[1]
-    snapshot1 = manifest_loader.snapshots[0]
-    snapshot2 = manifest_loader.snapshots[1]
+    model1 = manifest_loader.models["model.package.model1"]
+    model2 = manifest_loader.models["model.package.model2"]
+    source1 = manifest_loader.sources["source.package.my_source.table1"]
+    source2 = manifest_loader.sources["source.package.my_source.table2"]
+    snapshot1 = manifest_loader.snapshots["snapshot.package.snapshot1"]
+    snapshot2 = manifest_loader.snapshots["snapshot.package.snapshot2"]
 
     assert model_rule_with_filter not in evaluation.results[model1]
     assert isinstance(evaluation.results[model2][model_rule_with_filter], RuleViolation)
@@ -266,12 +266,12 @@ def test_evaluation_with_class_filter(
     )
     evaluation.evaluate()
 
-    model1 = manifest_loader.models[0]
-    model2 = manifest_loader.models[1]
-    source1 = manifest_loader.sources[0]
-    source2 = manifest_loader.sources[1]
-    snapshot1 = manifest_loader.snapshots[0]
-    snapshot2 = manifest_loader.snapshots[1]
+    model1 = manifest_loader.models["model.package.model1"]
+    model2 = manifest_loader.models["model.package.model2"]
+    source1 = manifest_loader.sources["source.package.my_source.table1"]
+    source2 = manifest_loader.sources["source.package.my_source.table2"]
+    snapshot1 = manifest_loader.snapshots["snapshot.package.snapshot1"]
+    snapshot2 = manifest_loader.snapshots["snapshot.package.snapshot2"]
 
     assert model_class_rule_with_filter not in evaluation.results[model1]
     assert isinstance(
@@ -318,9 +318,9 @@ def test_evaluation_with_models_and_sources(
     )
     evaluation.evaluate()
 
-    model1 = manifest_loader.models[0]
-    source1 = manifest_loader.sources[0]
-    snapshot1 = manifest_loader.snapshots[0]
+    model1 = manifest_loader.models["model.package.model1"]
+    source1 = manifest_loader.sources["source.package.my_source.table1"]
+    snapshot1 = manifest_loader.snapshots["snapshot.package.snapshot1"]
 
     assert decorator_rule in evaluation.results[model1]
     assert decorator_rule_source not in evaluation.results[model1]
