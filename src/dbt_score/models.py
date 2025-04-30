@@ -156,6 +156,7 @@ class HasColumnsMixin:
 
 # Type annotation for parent references
 ParentType = Union["Model", "Source", "Snapshot", "Seed"]
+ChildType = Union["Model", "Snapshot"]
 
 
 @dataclass
@@ -184,6 +185,7 @@ class Model(HasColumnsMixin):
         tests: The list of tests attached to the model.
         depends_on: Dictionary of models/sources/macros that the model depends on.
         parents: The list of models, sources, and snapshots this model depends on.
+        children: The list of models and snapshots that depend on this model.
         _raw_values: The raw values of the model (node) in the manifest.
         _raw_test_values: The raw test values of the model (node) in the manifest.
     """
@@ -209,7 +211,8 @@ class Model(HasColumnsMixin):
     tests: list[Test] = field(default_factory=list)
     depends_on: dict[str, list[str]] = field(default_factory=dict)
     constraints: list[Constraint] = field(default_factory=list)
-    parents: List[ParentType] = field(default_factory=list)
+    parents: list[ParentType] = field(default_factory=list)
+    children: list[ChildType] = field(default_factory=list)
     _raw_values: dict[str, Any] = field(default_factory=dict)
     _raw_test_values: list[dict[str, Any]] = field(default_factory=list)
 
@@ -319,6 +322,7 @@ class Source(HasColumnsMixin):
         patch_path: The yml path of the source definition.
         tags: The list of tags attached to the source table.
         tests: The list of tests attached to the source table.
+        children: The list of models and snapshots that depend on this source.
         _raw_values: The raw values of the source definition in the manifest.
         _raw_test_values: The raw test values of the source definition in the manifest.
     """
@@ -342,6 +346,7 @@ class Source(HasColumnsMixin):
     patch_path: str | None = None
     tags: list[str] = field(default_factory=list)
     tests: list[Test] = field(default_factory=list)
+    children: list[ChildType] = field(default_factory=list)
     _raw_values: dict[str, Any] = field(default_factory=dict)
     _raw_test_values: list[dict[str, Any]] = field(default_factory=list)
 
@@ -424,6 +429,7 @@ class Snapshot(HasColumnsMixin):
         strategy: The strategy of the snapshot.
         unique_key: The unique key of the snapshot.
         parents: The list of models, sources, and snapshots this snapshot depends on.
+        children: The list of models and snapshots that depend on this snapshot.
         _raw_values: The raw values of the snapshot (node) in the manifest.
         _raw_test_values: The raw test values of the snapshot (node) in the manifest.
     """
@@ -448,7 +454,8 @@ class Snapshot(HasColumnsMixin):
     depends_on: dict[str, list[str]] = field(default_factory=dict)
     strategy: str | None = None
     unique_key: list[str] | None = None
-    parents: List[ParentType] = field(default_factory=list)
+    parents: list[ParentType] = field(default_factory=list)
+    children: list[ChildType] = field(default_factory=list)
     _raw_values: dict[str, Any] = field(default_factory=dict)
     _raw_test_values: list[dict[str, Any]] = field(default_factory=list)
 
@@ -512,6 +519,7 @@ class Seed(HasColumnsMixin):
         patch_path: The yml path of the seed, e.g. `seeds.yml`.
         tags: The list of tags attached to the seed.
         tests: The list of tests attached to the seed.
+        children: The list of models and snapshots that depend on this seed.
         _raw_values: The raw values of the seed (node) in the manifest.
         _raw_test_values: The raw test values of the seed (node) in the manifest.
     """
@@ -531,6 +539,7 @@ class Seed(HasColumnsMixin):
     patch_path: str | None = None
     tags: list[str] = field(default_factory=list)
     tests: list[Test] = field(default_factory=list)
+    children: list[ChildType] = field(default_factory=list)
     _raw_values: dict[str, Any] = field(default_factory=dict)
     _raw_test_values: list[dict[str, Any]] = field(default_factory=list)
 
@@ -607,7 +616,7 @@ class ManifestLoader:
         self._load_sources()
         self._load_snapshots()
         self._load_seeds()
-        self._populate_parents()
+        self._populate_relatives()
 
         if select:
             self._filter_evaluables(select)
@@ -661,18 +670,22 @@ class ManifestLoader:
                 ):
                     self.tests[node_unique_id].append(node_values)
 
-    def _populate_parents(self) -> None:
-        """Populate `parents` for all models and snapshots."""
+    def _populate_relatives(self) -> None:
+        """Populate `parents` and `children` for all models, sources and snapshots."""
         for node in list(self.models.values()) + list(self.snapshots.values()):
             for parent_id in node.depends_on.get("nodes", []):
                 if parent_id in self.models:
                     node.parents.append(self.models[parent_id])
+                    self.models[parent_id].children.append(node)
                 elif parent_id in self.snapshots:
                     node.parents.append(self.snapshots[parent_id])
+                    self.snapshots[parent_id].children.append(node)
                 elif parent_id in self.sources:
                     node.parents.append(self.sources[parent_id])
+                    self.sources[parent_id].children.append(node)
                 elif parent_id in self.seeds:
                     node.parents.append(self.seeds[parent_id])
+                    self.seeds[parent_id].children.append(node)
 
     def _filter_evaluables(self, select: Iterable[str]) -> None:
         """Filter evaluables like dbt's --select."""

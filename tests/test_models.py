@@ -40,14 +40,24 @@ def test_manifest_load(mock_read_text, raw_manifest):
         assert loader.snapshots["snapshot.package.snapshot1"].parents == [
             loader.models["model.package.model1"]
         ]
+        assert loader.models["model.package.model1"].children == [
+            loader.snapshots["snapshot.package.snapshot1"]
+        ]
         assert loader.models["model.package.model1"].parents == [
             loader.models["model.package.model2"],
             loader.sources["source.package.my_source.table1"],
             loader.snapshots["snapshot.package.snapshot2"],
         ]
+        assert loader.models["model.package.model2"].children == [
+            loader.models["model.package.model1"]
+        ]
         assert loader.models["model.package.model2"].parents == []
         assert loader.snapshots["snapshot.package.snapshot2"].parents == [
             loader.sources["source.package.my_source.table1"]
+        ]
+        assert loader.sources["source.package.my_source.table1"].children == [
+            loader.models["model.package.model1"],
+            loader.snapshots["snapshot.package.snapshot2"],
         ]
 
 
