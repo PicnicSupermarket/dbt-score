@@ -6,7 +6,7 @@ import re
 from collections import defaultdict
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any, Iterable, Literal, TypeAlias
+from typing import Any, Iterable, Literal, TypeAlias, Union
 
 from dbt_score.dbt_utils import dbt_ls
 
@@ -179,6 +179,7 @@ class Model(HasColumnsMixin):
         tags: The list of tags attached to the model.
         tests: The list of tests attached to the model.
         depends_on: Dictionary of models/sources/macros that the model depends on.
+        parents: The list of models, sources, and snapshots this model depends on.
         _raw_values: The raw values of the model (node) in the manifest.
         _raw_test_values: The raw test values of the model (node) in the manifest.
     """
@@ -204,6 +205,7 @@ class Model(HasColumnsMixin):
     tests: list[Test] = field(default_factory=list)
     depends_on: dict[str, list[str]] = field(default_factory=dict)
     constraints: list[Constraint] = field(default_factory=list)
+    parents: list[Union["Model", "Source", "Snapshot"]] = field(default_factory=list)
     _raw_values: dict[str, Any] = field(default_factory=dict)
     _raw_test_values: list[dict[str, Any]] = field(default_factory=list)
 
@@ -416,6 +418,7 @@ class Snapshot(HasColumnsMixin):
         depends_on: Dictionary of models/sources/macros that the model depends on.
         strategy: The strategy of the snapshot.
         unique_key: The unique key of the snapshot.
+        parents: The list of models, sources, and snapshots this snapshot depends on.
         _raw_values: The raw values of the snapshot (node) in the manifest.
         _raw_test_values: The raw test values of the snapshot (node) in the manifest.
     """
@@ -440,6 +443,7 @@ class Snapshot(HasColumnsMixin):
     depends_on: dict[str, list[str]] = field(default_factory=dict)
     strategy: str | None = None
     unique_key: list[str] | None = None
+    parents: list[Union["Model", "Source", "Snapshot"]] = field(default_factory=list)
     _raw_values: dict[str, Any] = field(default_factory=dict)
     _raw_test_values: list[dict[str, Any]] = field(default_factory=list)
 
@@ -508,15 +512,16 @@ class ManifestLoader:
             if source_values["package_name"] == self.project_name
         }
 
-        self.models: list[Model] = []
+        self.models: dict[str, Model] = {}
         self.tests: dict[str, list[dict[str, Any]]] = defaultdict(list)
-        self.sources: list[Source] = []
-        self.snapshots: list[Snapshot] = []
+        self.sources: dict[str, Source] = {}
+        self.snapshots: dict[str, Snapshot] = {}
 
         self._reindex_tests()
         self._load_models()
         self._load_sources()
         self._load_snapshots()
+        self._populate_parents()
 
         if select:
             self._filter_evaluables(select)
@@ -529,21 +534,21 @@ class ManifestLoader:
         for node_id, node_values in self.raw_nodes.items():
             if node_values.get("resource_type") == "model":
                 model = Model.from_node(node_values, self.tests.get(node_id, []))
-                self.models.append(model)
+                self.models[node_id] = model
 
     def _load_sources(self) -> None:
         """Load the sources from the manifest."""
         for source_id, source_values in self.raw_sources.items():
             if source_values.get("resource_type") == "source":
                 source = Source.from_node(source_values, self.tests.get(source_id, []))
-                self.sources.append(source)
+                self.sources[source_id] = source
 
     def _load_snapshots(self) -> None:
         """Load the snapshots from the manifest."""
         for node_id, node_values in self.raw_nodes.items():
             if node_values.get("resource_type") == "snapshot":
                 snapshot = Snapshot.from_node(node_values, self.tests.get(node_id, []))
-                self.snapshots.append(snapshot)
+                self.snapshots[node_id] = snapshot
 
     def _reindex_tests(self) -> None:
         """Index tests based on their associated evaluable."""
@@ -561,6 +566,17 @@ class ManifestLoader:
                 ):
                     self.tests[node_unique_id].append(node_values)
 
+    def _populate_parents(self) -> None:
+        """Populate `parents` for all models and snapshots."""
+        for node in list(self.models.values()) + list(self.snapshots.values()):
+            for parent_id in node.depends_on.get("nodes", []):
+                if parent_id in self.models:
+                    node.parents.append(self.models[parent_id])
+                elif parent_id in self.snapshots:
+                    node.parents.append(self.snapshots[parent_id])
+                elif parent_id in self.sources:
+                    node.parents.append(self.sources[parent_id])
+
     def _filter_evaluables(self, select: Iterable[str]) -> None:
         """Filter evaluables like dbt's --select."""
         single_model_select = re.compile(r"[a-zA-Z0-9_]+")
@@ -573,6 +589,8 @@ class ManifestLoader:
             # Use dbt's implementation of --select
             selected = dbt_ls(select)
 
-        self.models = [m for m in self.models if m.name in selected]
-        self.sources = [s for s in self.sources if s.selector_name in selected]
-        self.snapshots = [s for s in self.snapshots if s.name in selected]
+        self.models = {k: m for k, m in self.models.items() if m.name in selected}
+        self.sources = {
+            k: s for k, s in self.sources.items() if s.selector_name in selected
+        }
+        self.snapshots = {k: s for k, s in self.snapshots.items() if s.name in selected}

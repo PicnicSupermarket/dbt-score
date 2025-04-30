@@ -8,6 +8,8 @@ and this project adheres to
 
 ## [Unreleased]
 
+- Add `parents` to models and snapshots, allowing access to parent nodes. (#109)
+
 ## [0.11.0] - 2025-04-04
 
 - Improve documentation on rule filters. (#93)
