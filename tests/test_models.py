@@ -33,10 +33,23 @@ def test_manifest_load(mock_read_text, raw_manifest):
                 if source["package_name"] == raw_manifest["metadata"]["project_name"]
             ]
         )
+        assert (
+            loader.sources["source.package.my_source.table1"].tests[0].name
+            == "source_test1"
+        )
 
-        source1 = loader.get_first_source()
-        assert source1 is not None
-        assert source1.tests[0].name == "source_test1"
+        assert loader.snapshots["snapshot.package.snapshot1"].parents == [
+            loader.models["model.package.model1"]
+        ]
+        assert loader.models["model.package.model1"].parents == [
+            loader.models["model.package.model2"],
+            loader.sources["source.package.my_source.table1"],
+            loader.snapshots["snapshot.package.snapshot2"],
+        ]
+        assert loader.models["model.package.model2"].parents == []
+        assert loader.snapshots["snapshot.package.snapshot2"].parents == [
+            loader.sources["source.package.my_source.table1"]
+        ]
 
 
 @patch("dbt_score.models.Path.read_text")
