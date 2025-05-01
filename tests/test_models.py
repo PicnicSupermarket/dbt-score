@@ -113,3 +113,72 @@ def test_helper_methods(mock_read_text, raw_manifest):
         assert loader.get_model_by_name("non_existent") is None
         assert loader.get_source_by_name("non_existent") is None
         assert loader.get_snapshot_by_name("non_existent") is None
+
+
+@patch("dbt_score.models.Path.read_text")
+def test_parent_references(mock_read_text, raw_manifest):
+    """Test that parent references are correctly populated."""
+    with patch("dbt_score.models.json.loads", return_value=raw_manifest):
+        loader = ManifestLoader(Path("some.json"))
+
+        # Get models to check parent relationships
+        model2 = loader.get_model_by_name("model2")
+        snapshot1 = loader.get_snapshot_by_name("snapshot1")
+
+        assert model2 is not None
+        assert snapshot1 is not None
+
+        # Check if the depends_on relationship exists in the raw manifest
+        if "model.package.model1" in raw_manifest["nodes"]["model.package.model2"][
+            "depends_on"
+        ].get("nodes", []):
+            # Then verify model1 is in model2's parents
+            model1 = loader.get_model_by_name("model1")
+            assert model1 is not None
+            assert model1 in model2.parents
+
+        # Check parent relationships for snapshot1
+        if "source.package.my_source.table1" in raw_manifest["nodes"][
+            "snapshot.package.snapshot1"
+        ]["depends_on"].get("nodes", []):
+            # Verify the source is in the snapshot's parents
+            source1 = loader.get_source_by_name("table1")
+            assert source1 is not None
+            assert source1 in snapshot1.parents
+
+        # Test a model with multiple parents
+        # Assuming we have a model with multiple parents in the test manifest
+        for node_id in raw_manifest["nodes"].keys():
+            if (
+                node_id.startswith("model.")
+                and len(raw_manifest["nodes"][node_id]["depends_on"].get("nodes", []))
+                > 1
+            ):
+                model_with_deps = loader.models.get(node_id)
+                assert model_with_deps is not None
+                # Verify all dependencies are in the parents list
+                for dep_id in raw_manifest["nodes"][node_id]["depends_on"].get(
+                    "nodes", []
+                ):
+                    # Use different variable names to avoid type issues
+                    parent_found = False
+
+                    if dep_id in loader.models:
+                        parent_model = loader.models[dep_id]
+                        assert parent_model in model_with_deps.parents
+                        parent_found = True
+                    elif dep_id in loader.sources:
+                        parent_source = loader.sources[dep_id]
+                        assert parent_source in model_with_deps.parents
+                        parent_found = True
+                    elif dep_id in loader.snapshots:
+                        parent_snapshot = loader.snapshots[dep_id]
+                        assert parent_snapshot in model_with_deps.parents
+                        parent_found = True
+                    elif dep_id in loader.seeds:
+                        parent_seed = loader.seeds[dep_id]
+                        assert parent_seed in model_with_deps.parents
+                        parent_found = True
+
+                    if dep_id.startswith(("model.", "source.", "snapshot.", "seed.")):
+                        assert parent_found, f"Dependency {dep_id} should be in parents"

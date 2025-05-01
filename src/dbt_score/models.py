@@ -6,7 +6,10 @@ import re
 from collections import defaultdict
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any, Iterable, Literal, TypeAlias
+from typing import TYPE_CHECKING, Any, Iterable, List, Literal, TypeAlias, Union
+
+if TYPE_CHECKING:
+    from typing import Union
 
 from dbt_score.dbt_utils import dbt_ls
 
@@ -154,6 +157,10 @@ class HasColumnsMixin:
         ]
 
 
+# Type annotation for parent references
+ParentType = Union["Model", "Source", "Snapshot", "Seed"]
+
+
 @dataclass
 class Model(HasColumnsMixin):
     """Represents a dbt model.
@@ -179,7 +186,7 @@ class Model(HasColumnsMixin):
         tags: The list of tags attached to the model.
         tests: The list of tests attached to the model.
         depends_on: Dictionary of models/sources/macros that the model depends on.
-        parents: List of parent node IDs.
+        parents: The list of models, sources, and snapshots this model depends on.
         _raw_values: The raw values of the model (node) in the manifest.
         _raw_test_values: The raw test values of the model (node) in the manifest.
     """
@@ -205,7 +212,7 @@ class Model(HasColumnsMixin):
     tests: list[Test] = field(default_factory=list)
     depends_on: dict[str, list[str]] = field(default_factory=dict)
     constraints: list[Constraint] = field(default_factory=list)
-    parents: list[str] = field(default_factory=list)
+    parents: List[ParentType] = field(default_factory=list)
     _raw_values: dict[str, Any] = field(default_factory=dict)
     _raw_test_values: list[dict[str, Any]] = field(default_factory=list)
 
@@ -419,7 +426,7 @@ class Snapshot(HasColumnsMixin):
         depends_on: Dictionary of models/sources/macros that the model depends on.
         strategy: The strategy of the snapshot.
         unique_key: The unique key of the snapshot.
-        parents: List of parent node IDs.
+        parents: The list of models, sources, and snapshots this model depends on.
         _raw_values: The raw values of the snapshot (node) in the manifest.
         _raw_test_values: The raw test values of the snapshot (node) in the manifest.
     """
@@ -444,7 +451,7 @@ class Snapshot(HasColumnsMixin):
     depends_on: dict[str, list[str]] = field(default_factory=dict)
     strategy: str | None = None
     unique_key: list[str] | None = None
-    parents: list[str] = field(default_factory=list)
+    parents: List[ParentType] = field(default_factory=list)
     _raw_values: dict[str, Any] = field(default_factory=dict)
     _raw_test_values: list[dict[str, Any]] = field(default_factory=list)
 
@@ -641,29 +648,36 @@ class ManifestLoader:
                 seed = Seed.from_node(node_values, self.tests.get(node_id, []))
                 self.seeds[node_id] = seed
 
+    def _add_parent_if_exists(
+        self, node: Union[Model, Snapshot], parent_id: str
+    ) -> None:
+        """Add a parent reference to the node if the parent exists.
+
+        Args:
+            node: The model or snapshot to add parent to
+            parent_id: The ID of the potential parent node
+        """
+        # Check each potential parent collection
+        if parent_id in self.models:
+            node.parents.append(self.models[parent_id])
+        elif parent_id in self.sources:
+            node.parents.append(self.sources[parent_id])
+        elif parent_id in self.snapshots:
+            node.parents.append(self.snapshots[parent_id])
+        elif parent_id in self.seeds:
+            node.parents.append(self.seeds[parent_id])
+
     def _populate_parents(self) -> None:
-        """Populate parent references for models and snapshots."""
-        # For models: add parent IDs from depends_on.nodes
+        """Populate models and snapshots with references to their parent objects."""
+        # For models: add parent object references
         for _, model in self.models.items():
             for node_id in model.depends_on.get("nodes", []):
-                if (
-                    node_id in self.models
-                    or node_id in self.sources
-                    or node_id in self.snapshots
-                    or node_id in self.seeds
-                ):
-                    model.parents.append(node_id)
+                self._add_parent_if_exists(model, node_id)
 
-        # For snapshots: add parent IDs from depends_on.nodes
+        # For snapshots: add parent object references
         for _, snapshot in self.snapshots.items():
             for node_id in snapshot.depends_on.get("nodes", []):
-                if (
-                    node_id in self.models
-                    or node_id in self.sources
-                    or node_id in self.snapshots
-                    or node_id in self.seeds
-                ):
-                    snapshot.parents.append(node_id)
+                self._add_parent_if_exists(snapshot, node_id)
 
     def _reindex_tests(self) -> None:
         """Index tests based on their associated evaluable."""
