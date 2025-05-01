@@ -19,9 +19,12 @@ def test_manifest_load(mock_read_text, raw_manifest):
                 and node["package_name"] == raw_manifest["metadata"]["project_name"]
             ]
         )
-        assert loader.models[0].tests[0].name == "test2"
-        assert loader.models[0].tests[1].name == "test4"
-        assert loader.models[0].columns[0].tests[0].name == "test1"
+
+        model1 = loader.get_first_model()
+        assert model1 is not None
+        assert model1.tests[0].name == "test2"
+        assert model1.tests[1].name == "test4"
+        assert model1.columns[0].tests[0].name == "test1"
 
         assert len(loader.sources) == len(
             [
@@ -30,7 +33,10 @@ def test_manifest_load(mock_read_text, raw_manifest):
                 if source["package_name"] == raw_manifest["metadata"]["project_name"]
             ]
         )
-        assert loader.sources[0].tests[0].name == "source_test1"
+
+        source1 = loader.get_first_source()
+        assert source1 is not None
+        assert source1.tests[0].name == "source_test1"
 
 
 @patch("dbt_score.models.Path.read_text")
@@ -39,7 +45,7 @@ def test_manifest_select_models_simple(mock_read_text, raw_manifest):
     with patch("dbt_score.models.json.loads", return_value=raw_manifest):
         manifest_loader = ManifestLoader(Path("some.json"), select=["model1"])
 
-    assert [x.name for x in manifest_loader.models] == ["model1"]
+    assert [x.name for x in manifest_loader.models.values()] == ["model1"]
 
 
 @patch("dbt_score.models.Path.read_text")
@@ -50,7 +56,7 @@ def test_manifest_select_models_dbt_ls(mock_dbt_ls, mock_read_text, raw_manifest
     with patch("dbt_score.models.json.loads", return_value=raw_manifest):
         manifest_loader = ManifestLoader(Path("some.json"), select=["+model1"])
 
-    assert [x.name for x in manifest_loader.models] == ["model1"]
+    assert [x.name for x in manifest_loader.models.values()] == ["model1"]
     mock_dbt_ls.assert_called_once_with(["+model1"])
 
 
@@ -63,3 +69,47 @@ def test_manifest_no_model(mock_dbt_ls, mock_read_text, raw_manifest, caplog):
 
     assert len(manifest_loader.models) == 0
     assert "Nothing to evaluate!" in caplog.text
+
+
+@patch("dbt_score.models.Path.read_text")
+def test_helper_methods(mock_read_text, raw_manifest):
+    """Test the helper methods to find models by name."""
+    with patch("dbt_score.models.json.loads", return_value=raw_manifest):
+        loader = ManifestLoader(Path("some.json"))
+
+        # Test get_model_by_name
+        model1 = loader.get_model_by_name("model1")
+        model2 = loader.get_model_by_name("model2")
+        assert model1 is not None
+        assert model2 is not None
+        assert model1.name == "model1"
+        assert model2.name == "model2"
+
+        # Test get_first_model
+        first_model = loader.get_first_model()
+        assert first_model is not None
+        assert first_model.name in ["model1", "model2"]
+
+        # Test get_source_by_name
+        source1 = loader.get_source_by_name("table1")
+        source2 = loader.get_source_by_name("table2")
+        assert source1 is not None
+        assert source2 is not None
+        assert source1.name == "table1"
+        assert source2.name == "table2"
+
+        # Test get_source_by_selector_name
+        source1_sel = loader.get_source_by_selector_name("my_source.table1")
+        assert source1_sel is not None
+        assert source1_sel.name == "table1"
+        assert source1_sel.source_name == "my_source"
+
+        # Test get_snapshot_by_name
+        snapshot1 = loader.get_snapshot_by_name("snapshot1")
+        assert snapshot1 is not None
+        assert snapshot1.name == "snapshot1"
+
+        # Test with non-existent names
+        assert loader.get_model_by_name("non_existent") is None
+        assert loader.get_source_by_name("non_existent") is None
+        assert loader.get_snapshot_by_name("non_existent") is None

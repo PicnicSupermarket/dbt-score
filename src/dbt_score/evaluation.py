@@ -61,10 +61,10 @@ class Evaluation:
         rules = self._rule_registry.rules.values()
 
         for evaluable in chain(
-            self._manifest_loader.models,
-            self._manifest_loader.sources,
-            self._manifest_loader.snapshots,
-            self._manifest_loader.seeds,
+            self._manifest_loader.models.values(),
+            self._manifest_loader.sources.values(),
+            self._manifest_loader.snapshots.values(),
+            self._manifest_loader.seeds.values(),
         ):
             # type inference on elements from `chain` is wonky
             # and resolves to superclass HasColumnsMixin

@@ -41,9 +41,11 @@ def test_evaluation_low_medium_high(
     )
     evaluation.evaluate()
 
-    model1 = manifest_loader.models[0]
-    model2 = manifest_loader.models[1]
+    model1 = manifest_loader.get_first_model()
+    model2 = manifest_loader.get_model_by_name("model2")
 
+    assert model1 is not None
+    assert model2 is not None
     assert evaluation.results[model1][rule_severity_low] is None
     assert evaluation.results[model1][rule_severity_medium] is None
     assert evaluation.results[model1][rule_severity_high] is None
@@ -54,8 +56,7 @@ def test_evaluation_low_medium_high(
     assert isinstance(evaluation.results[model2][rule_severity_high], RuleViolation)
     assert isinstance(evaluation.results[model2][rule_error], Exception)
 
-    # Count expected evaluables: 2 models + 2 sources + 2 snapshots + 2 seeds = 8
-    # Plus 1 for the project evaluation = 9 total
+    # Count evaluables: models + sources + snapshots + seeds (varies)
     assert mock_formatter.evaluable_evaluated.call_count == 9
     assert mock_formatter.project_evaluated.call_count == 1
 
@@ -87,8 +88,9 @@ def test_evaluation_critical(
 
     evaluation.evaluate()
 
-    model2 = manifest_loader.models[1]
-
+    # Find model2 by name
+    model2 = manifest_loader.get_model_by_name("model2")
+    assert model2 is not None
     assert isinstance(evaluation.results[model2][rule_severity_critical], RuleViolation)
 
 
@@ -159,8 +161,11 @@ def test_evaluation_rule_with_config(
 ):
     """Test rule evaluation with parameters."""
     manifest_loader = ManifestLoader(manifest_path)
-    model1 = manifest_loader.models[0]
-    model2 = manifest_loader.models[1]
+    model1 = manifest_loader.get_first_model()
+    model2 = manifest_loader.get_model_by_name("model2")
+
+    assert model1 is not None
+    assert model2 is not None
 
     config = Config()
     config._load_toml_file(str(valid_config_path))
@@ -218,12 +223,19 @@ def test_evaluation_with_filter(
     )
     evaluation.evaluate()
 
-    model1 = manifest_loader.models[0]
-    model2 = manifest_loader.models[1]
-    source1 = manifest_loader.sources[0]
-    source2 = manifest_loader.sources[1]
-    snapshot1 = manifest_loader.snapshots[0]
-    snapshot2 = manifest_loader.snapshots[1]
+    model1 = manifest_loader.get_first_model()
+    model2 = manifest_loader.get_model_by_name("model2")
+    source1 = manifest_loader.get_first_source()
+    source2 = manifest_loader.get_source_by_name("table2")
+    snapshot1 = manifest_loader.get_first_snapshot()
+    snapshot2 = manifest_loader.get_snapshot_by_name("snapshot2")
+
+    assert model1 is not None
+    assert model2 is not None
+    assert source1 is not None
+    assert source2 is not None
+    assert snapshot1 is not None
+    assert snapshot2 is not None
 
     assert model_rule_with_filter not in evaluation.results[model1]
     assert isinstance(evaluation.results[model2][model_rule_with_filter], RuleViolation)
@@ -268,12 +280,19 @@ def test_evaluation_with_class_filter(
     )
     evaluation.evaluate()
 
-    model1 = manifest_loader.models[0]
-    model2 = manifest_loader.models[1]
-    source1 = manifest_loader.sources[0]
-    source2 = manifest_loader.sources[1]
-    snapshot1 = manifest_loader.snapshots[0]
-    snapshot2 = manifest_loader.snapshots[1]
+    model1 = manifest_loader.get_first_model()
+    model2 = manifest_loader.get_model_by_name("model2")
+    source1 = manifest_loader.get_first_source()
+    source2 = manifest_loader.get_source_by_name("table2")
+    snapshot1 = manifest_loader.get_first_snapshot()
+    snapshot2 = manifest_loader.get_snapshot_by_name("snapshot2")
+
+    assert model1 is not None
+    assert model2 is not None
+    assert source1 is not None
+    assert source2 is not None
+    assert snapshot1 is not None
+    assert snapshot2 is not None
 
     assert model_class_rule_with_filter not in evaluation.results[model1]
     assert isinstance(
@@ -320,9 +339,13 @@ def test_evaluation_with_models_and_sources(
     )
     evaluation.evaluate()
 
-    model1 = manifest_loader.models[0]
-    source1 = manifest_loader.sources[0]
-    snapshot1 = manifest_loader.snapshots[0]
+    model1 = manifest_loader.get_first_model()
+    source1 = manifest_loader.get_first_source()
+    snapshot1 = manifest_loader.get_first_snapshot()
+
+    assert model1 is not None
+    assert source1 is not None
+    assert snapshot1 is not None
 
     assert decorator_rule in evaluation.results[model1]
     assert decorator_rule_source not in evaluation.results[model1]

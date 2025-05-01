@@ -179,6 +179,7 @@ class Model(HasColumnsMixin):
         tags: The list of tags attached to the model.
         tests: The list of tests attached to the model.
         depends_on: Dictionary of models/sources/macros that the model depends on.
+        parents: List of parent node IDs.
         _raw_values: The raw values of the model (node) in the manifest.
         _raw_test_values: The raw test values of the model (node) in the manifest.
     """
@@ -204,6 +205,7 @@ class Model(HasColumnsMixin):
     tests: list[Test] = field(default_factory=list)
     depends_on: dict[str, list[str]] = field(default_factory=dict)
     constraints: list[Constraint] = field(default_factory=list)
+    parents: list[str] = field(default_factory=list)
     _raw_values: dict[str, Any] = field(default_factory=dict)
     _raw_test_values: list[dict[str, Any]] = field(default_factory=list)
 
@@ -243,6 +245,7 @@ class Model(HasColumnsMixin):
                 Constraint.from_raw_values(constraint)
                 for constraint in node_values["constraints"]
             ],
+            parents=[],  # Will be populated later
             _raw_values=node_values,
             _raw_test_values=test_values,
         )
@@ -416,6 +419,7 @@ class Snapshot(HasColumnsMixin):
         depends_on: Dictionary of models/sources/macros that the model depends on.
         strategy: The strategy of the snapshot.
         unique_key: The unique key of the snapshot.
+        parents: List of parent node IDs.
         _raw_values: The raw values of the snapshot (node) in the manifest.
         _raw_test_values: The raw test values of the snapshot (node) in the manifest.
     """
@@ -440,6 +444,7 @@ class Snapshot(HasColumnsMixin):
     depends_on: dict[str, list[str]] = field(default_factory=dict)
     strategy: str | None = None
     unique_key: list[str] | None = None
+    parents: list[str] = field(default_factory=list)
     _raw_values: dict[str, Any] = field(default_factory=dict)
     _raw_test_values: list[dict[str, Any]] = field(default_factory=list)
 
@@ -473,6 +478,7 @@ class Snapshot(HasColumnsMixin):
                 .get("column_name")
             ],
             depends_on=node_values["depends_on"],
+            parents=[],  # Will be populated later
             _raw_values=node_values,
             _raw_test_values=test_values,
         )
@@ -491,7 +497,7 @@ class Seed(HasColumnsMixin):
         name: The name of the seed.
         relation_name: The relation name of the seed, e.g. `db.schema.seed_name`.
         description: The full description of the seed.
-        original_file_path: The file path of the seed CSV.
+        original_file_path: The seed path, e.g. `data/seed_name.csv`.
         config: The config of the seed.
         meta: The meta of the seed.
         columns: The list of columns of the seed.
@@ -499,7 +505,7 @@ class Seed(HasColumnsMixin):
         database: The database name of the seed.
         schema: The schema name of the seed.
         alias: The alias of the seed.
-        patch_path: The yml path of the seed.
+        patch_path: The yml path of the seed, e.g. `seeds.yml`.
         tags: The list of tags attached to the seed.
         tests: The list of tests attached to the seed.
         _raw_values: The raw values of the seed (node) in the manifest.
@@ -586,17 +592,18 @@ class ManifestLoader:
             if source_values["package_name"] == self.project_name
         }
 
-        self.models: list[Model] = []
+        self.models: dict[str, Model] = {}
         self.tests: dict[str, list[dict[str, Any]]] = defaultdict(list)
-        self.sources: list[Source] = []
-        self.snapshots: list[Snapshot] = []
-        self.seeds: list[Seed] = []
+        self.sources: dict[str, Source] = {}
+        self.snapshots: dict[str, Snapshot] = {}
+        self.seeds: dict[str, Seed] = {}
 
         self._reindex_tests()
         self._load_models()
         self._load_sources()
         self._load_snapshots()
         self._load_seeds()
+        self._populate_parents()
 
         if select:
             self._filter_evaluables(select)
@@ -611,28 +618,52 @@ class ManifestLoader:
         for node_id, node_values in self.raw_nodes.items():
             if node_values.get("resource_type") == "model":
                 model = Model.from_node(node_values, self.tests.get(node_id, []))
-                self.models.append(model)
+                self.models[node_id] = model
 
     def _load_sources(self) -> None:
         """Load the sources from the manifest."""
         for source_id, source_values in self.raw_sources.items():
             if source_values.get("resource_type") == "source":
                 source = Source.from_node(source_values, self.tests.get(source_id, []))
-                self.sources.append(source)
+                self.sources[source_id] = source
 
     def _load_snapshots(self) -> None:
         """Load the snapshots from the manifest."""
         for node_id, node_values in self.raw_nodes.items():
             if node_values.get("resource_type") == "snapshot":
                 snapshot = Snapshot.from_node(node_values, self.tests.get(node_id, []))
-                self.snapshots.append(snapshot)
+                self.snapshots[node_id] = snapshot
 
     def _load_seeds(self) -> None:
         """Load the seeds from the manifest."""
         for node_id, node_values in self.raw_nodes.items():
             if node_values.get("resource_type") == "seed":
                 seed = Seed.from_node(node_values, self.tests.get(node_id, []))
-                self.seeds.append(seed)
+                self.seeds[node_id] = seed
+
+    def _populate_parents(self) -> None:
+        """Populate parent references for models and snapshots."""
+        # For models: add parent IDs from depends_on.nodes
+        for _, model in self.models.items():
+            for node_id in model.depends_on.get("nodes", []):
+                if (
+                    node_id in self.models
+                    or node_id in self.sources
+                    or node_id in self.snapshots
+                    or node_id in self.seeds
+                ):
+                    model.parents.append(node_id)
+
+        # For snapshots: add parent IDs from depends_on.nodes
+        for _, snapshot in self.snapshots.items():
+            for node_id in snapshot.depends_on.get("nodes", []):
+                if (
+                    node_id in self.models
+                    or node_id in self.sources
+                    or node_id in self.snapshots
+                    or node_id in self.seeds
+                ):
+                    snapshot.parents.append(node_id)
 
     def _reindex_tests(self) -> None:
         """Index tests based on their associated evaluable."""
@@ -655,14 +686,68 @@ class ManifestLoader:
         single_model_select = re.compile(r"[a-zA-Z0-9_]+")
 
         if all(single_model_select.fullmatch(x) for x in select):
-            # Using '--select my_model' is a common case, which
-            #  can easily be sped up by not invoking dbt
+            # Using '--select my_model' is a common case, which can easily be sped up by
+            # not invoking dbt
             selected = select
         else:
             # Use dbt's implementation of --select
             selected = dbt_ls(select)
 
-        self.models = [m for m in self.models if m.name in selected]
-        self.sources = [s for s in self.sources if s.selector_name in selected]
-        self.snapshots = [s for s in self.snapshots if s.name in selected]
-        self.seeds = [s for s in self.seeds if s.name in selected]
+        self.models = {k: m for k, m in self.models.items() if m.name in selected}
+        self.sources = {
+            k: s for k, s in self.sources.items() if s.selector_name in selected
+        }
+        self.snapshots = {k: s for k, s in self.snapshots.items() if s.name in selected}
+        self.seeds = {k: s for k, s in self.seeds.items() if s.name in selected}
+
+    # Helper methods to find entities by name
+    def get_model_by_name(self, name: str) -> Model | None:
+        """Get a model by name."""
+        for model in self.models.values():
+            if model.name == name:
+                return model
+        return None
+
+    def get_source_by_name(self, name: str) -> Source | None:
+        """Get a source by name."""
+        for source in self.sources.values():
+            if source.name == name:
+                return source
+        return None
+
+    def get_source_by_selector_name(self, selector_name: str) -> Source | None:
+        """Get a source by selector name (source_name.table_name)."""
+        for source in self.sources.values():
+            if source.selector_name == selector_name:
+                return source
+        return None
+
+    def get_snapshot_by_name(self, name: str) -> Snapshot | None:
+        """Get a snapshot by name."""
+        for snapshot in self.snapshots.values():
+            if snapshot.name == name:
+                return snapshot
+        return None
+
+    def get_seed_by_name(self, name: str) -> Seed | None:
+        """Get a seed by name."""
+        for seed in self.seeds.values():
+            if seed.name == name:
+                return seed
+        return None
+
+    def get_first_model(self) -> Model | None:
+        """Get the first model in the collection, if any."""
+        return next(iter(self.models.values())) if self.models else None
+
+    def get_first_source(self) -> Source | None:
+        """Get the first source in the collection, if any."""
+        return next(iter(self.sources.values())) if self.sources else None
+
+    def get_first_snapshot(self) -> Snapshot | None:
+        """Get the first snapshot in the collection, if any."""
+        return next(iter(self.snapshots.values())) if self.snapshots else None
+
+    def get_first_seed(self) -> Seed | None:
+        """Get the first seed in the collection, if any."""
+        return next(iter(self.seeds.values())) if self.seeds else None
