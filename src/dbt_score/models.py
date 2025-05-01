@@ -186,7 +186,7 @@ class Model(HasColumnsMixin):
         tags: The list of tags attached to the model.
         tests: The list of tests attached to the model.
         depends_on: Dictionary of models/sources/macros that the model depends on.
-        parents: The list of models, sources, and snapshots this model depends on.
+        parents: The list of models, sources, and snapshots this snapshot depends on.
         _raw_values: The raw values of the model (node) in the manifest.
         _raw_test_values: The raw test values of the model (node) in the manifest.
     """
