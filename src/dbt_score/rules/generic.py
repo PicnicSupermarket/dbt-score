@@ -3,8 +3,6 @@
 from dbt_score import Model, RuleViolation, Seed, Severity, Snapshot, rule
 from dbt_score.rules.filters import is_table
 
-MAX_DESCRIPTION_MESSAGE_LENGTH = 60
-
 
 @rule
 def snapshot_has_unique_key(snapshot: Snapshot) -> RuleViolation | None:
