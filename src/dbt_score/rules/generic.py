@@ -37,7 +37,7 @@ def columns_have_description(model: Model) -> RuleViolation | None:
         max_length = 60
         message = f"Columns lack a description: {', '.join(invalid_column_names)}."
         if len(message) > max_length:
-            message = f"{message[:60]}…"
+            message = f"{message[:max_length]}…"
         return RuleViolation(message=message)
 
 
@@ -152,9 +152,10 @@ def seed_columns_have_description(seed: Seed) -> RuleViolation | None:
         column.name for column in seed.columns if not column.description
     ]
     if invalid_column_names:
+        max_length = 60
         message = f"Columns lack a description: {', '.join(invalid_column_names)}."
-        if len(message) > MAX_DESCRIPTION_MESSAGE_LENGTH:
-            message = f"{message[:MAX_DESCRIPTION_MESSAGE_LENGTH]}…"
+        if len(message) > max_length:
+            message = f"{message[:max_length]}…"
         return RuleViolation(message=message)
 
 
