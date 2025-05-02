@@ -41,12 +41,9 @@ def test_evaluation_low_medium_high(
     )
     evaluation.evaluate()
 
-    model1 = next(iter(manifest_loader.models.values()))
-    model2 = next(
-        (m for m in manifest_loader.models.values() if m.name == "model2"), None
-    )
+    model1 = manifest_loader.models["model.package.model1"]
+    model2 = manifest_loader.models["model.package.model2"]
 
-    assert model2 is not None
     assert evaluation.results[model1][rule_severity_low] is None
     assert evaluation.results[model1][rule_severity_medium] is None
     assert evaluation.results[model1][rule_severity_high] is None
@@ -95,11 +92,8 @@ def test_evaluation_critical(
 
     evaluation.evaluate()
 
-    # Find model2 by name
-    model2 = next(
-        (m for m in manifest_loader.models.values() if m.name == "model2"), None
-    )
-    assert model2 is not None
+    # Access model directly by its key
+    model2 = manifest_loader.models["model.package.model2"]
     assert isinstance(evaluation.results[model2][rule_severity_critical], RuleViolation)
 
 
@@ -171,12 +165,8 @@ def test_evaluation_rule_with_config(
     """Test rule evaluation with parameters."""
     manifest_loader = ManifestLoader(manifest_path)
 
-    model1 = next(iter(manifest_loader.models.values()))
-    model2 = next(
-        (m for m in manifest_loader.models.values() if m.name == "model2"), None
-    )
-
-    assert model2 is not None
+    model1 = manifest_loader.models["model.package.model1"]
+    model2 = manifest_loader.models["model.package.model2"]
 
     config = Config()
     config._load_toml_file(str(valid_config_path))
@@ -234,31 +224,12 @@ def test_evaluation_with_filter(
     )
     evaluation.evaluate()
 
-    model1 = next(
-        (m for m in manifest_loader.models.values() if m.name == "model1"), None
-    )
-    model2 = next(
-        (m for m in manifest_loader.models.values() if m.name == "model2"), None
-    )
-    source1 = next(
-        (s for s in manifest_loader.sources.values() if s.name == "table1"), None
-    )
-    source2 = next(
-        (s for s in manifest_loader.sources.values() if s.name == "table2"), None
-    )
-    snapshot1 = next(
-        (s for s in manifest_loader.snapshots.values() if s.name == "snapshot1"), None
-    )
-    snapshot2 = next(
-        (s for s in manifest_loader.snapshots.values() if s.name == "snapshot2"), None
-    )
-
-    assert model1 is not None
-    assert model2 is not None
-    assert source1 is not None
-    assert source2 is not None
-    assert snapshot1 is not None
-    assert snapshot2 is not None
+    model1 = manifest_loader.models["model.package.model1"]
+    model2 = manifest_loader.models["model.package.model2"]
+    source1 = manifest_loader.sources["source.package.my_source.table1"]
+    source2 = manifest_loader.sources["source.package.my_source.table2"]
+    snapshot1 = manifest_loader.snapshots["snapshot.package.snapshot1"]
+    snapshot2 = manifest_loader.snapshots["snapshot.package.snapshot2"]
 
     assert model_rule_with_filter not in evaluation.results[model1]
     assert isinstance(evaluation.results[model2][model_rule_with_filter], RuleViolation)
@@ -303,32 +274,13 @@ def test_evaluation_with_class_filter(
     )
     evaluation.evaluate()
 
-    # Directly look up entities
-    model1 = next(
-        (m for m in manifest_loader.models.values() if m.name == "model1"), None
-    )
-    model2 = next(
-        (m for m in manifest_loader.models.values() if m.name == "model2"), None
-    )
-    source1 = next(
-        (s for s in manifest_loader.sources.values() if s.name == "table1"), None
-    )
-    source2 = next(
-        (s for s in manifest_loader.sources.values() if s.name == "table2"), None
-    )
-    snapshot1 = next(
-        (s for s in manifest_loader.snapshots.values() if s.name == "snapshot1"), None
-    )
-    snapshot2 = next(
-        (s for s in manifest_loader.snapshots.values() if s.name == "snapshot2"), None
-    )
-
-    assert model1 is not None
-    assert model2 is not None
-    assert source1 is not None
-    assert source2 is not None
-    assert snapshot1 is not None
-    assert snapshot2 is not None
+    # Access entities directly by their keys
+    model1 = manifest_loader.models["model.package.model1"]
+    model2 = manifest_loader.models["model.package.model2"]
+    source1 = manifest_loader.sources["source.package.my_source.table1"]
+    source2 = manifest_loader.sources["source.package.my_source.table2"]
+    snapshot1 = manifest_loader.snapshots["snapshot.package.snapshot1"]
+    snapshot2 = manifest_loader.snapshots["snapshot.package.snapshot2"]
 
     assert model_class_rule_with_filter not in evaluation.results[model1]
     assert isinstance(
@@ -375,19 +327,9 @@ def test_evaluation_with_models_and_sources(
     )
     evaluation.evaluate()
 
-    model1 = next(
-        (m for m in manifest_loader.models.values() if m.name == "model1"), None
-    )
-    source1 = next(
-        (s for s in manifest_loader.sources.values() if s.name == "table1"), None
-    )
-    snapshot1 = next(
-        (s for s in manifest_loader.snapshots.values() if s.name == "snapshot1"), None
-    )
-
-    assert model1 is not None
-    assert source1 is not None
-    assert snapshot1 is not None
+    model1 = manifest_loader.models["model.package.model1"]
+    source1 = manifest_loader.sources["source.package.my_source.table1"]
+    snapshot1 = manifest_loader.snapshots["snapshot.package.snapshot1"]
 
     assert decorator_rule in evaluation.results[model1]
     assert decorator_rule_source not in evaluation.results[model1]
