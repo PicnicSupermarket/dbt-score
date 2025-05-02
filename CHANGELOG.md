@@ -9,7 +9,6 @@ and this project adheres to
 ## [Unreleased]
 
 - Add support for linting and scoring dbt seeds (#110)
-
 - Add `parents` to models and snapshots, allowing access to parent nodes. (#109)
 
 ## [0.11.0] - 2025-04-04
