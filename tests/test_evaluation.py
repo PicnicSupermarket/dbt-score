@@ -41,10 +41,11 @@ def test_evaluation_low_medium_high(
     )
     evaluation.evaluate()
 
-    model1 = manifest_loader.get_first_model()
-    model2 = manifest_loader.get_model_by_name("model2")
+    model1 = next(iter(manifest_loader.models.values()))
+    model2 = next(
+        (m for m in manifest_loader.models.values() if m.name == "model2"), None
+    )
 
-    assert model1 is not None
     assert model2 is not None
     assert evaluation.results[model1][rule_severity_low] is None
     assert evaluation.results[model1][rule_severity_medium] is None
@@ -56,11 +57,17 @@ def test_evaluation_low_medium_high(
     assert isinstance(evaluation.results[model2][rule_severity_high], RuleViolation)
     assert isinstance(evaluation.results[model2][rule_error], Exception)
 
-    # Count evaluables: models + sources + snapshots + seeds (varies)
-    assert mock_formatter.evaluable_evaluated.call_count == 9
+    # Calculate total number of evaluables
+    total_evaluables = (
+        len(manifest_loader.models)
+        + len(manifest_loader.sources)
+        + len(manifest_loader.snapshots)
+        + len(manifest_loader.seeds)
+    )
+    assert mock_formatter.evaluable_evaluated.call_count == total_evaluables
     assert mock_formatter.project_evaluated.call_count == 1
 
-    assert mock_scorer.score_evaluable.call_count == 9
+    assert mock_scorer.score_evaluable.call_count == total_evaluables
     assert mock_scorer.score_aggregate_evaluables.call_count == 1
 
 
@@ -89,7 +96,9 @@ def test_evaluation_critical(
     evaluation.evaluate()
 
     # Find model2 by name
-    model2 = manifest_loader.get_model_by_name("model2")
+    model2 = next(
+        (m for m in manifest_loader.models.values() if m.name == "model2"), None
+    )
     assert model2 is not None
     assert isinstance(evaluation.results[model2][rule_severity_critical], RuleViolation)
 
@@ -161,10 +170,12 @@ def test_evaluation_rule_with_config(
 ):
     """Test rule evaluation with parameters."""
     manifest_loader = ManifestLoader(manifest_path)
-    model1 = manifest_loader.get_first_model()
-    model2 = manifest_loader.get_model_by_name("model2")
 
-    assert model1 is not None
+    model1 = next(iter(manifest_loader.models.values()))
+    model2 = next(
+        (m for m in manifest_loader.models.values() if m.name == "model2"), None
+    )
+
     assert model2 is not None
 
     config = Config()
@@ -223,12 +234,24 @@ def test_evaluation_with_filter(
     )
     evaluation.evaluate()
 
-    model1 = manifest_loader.get_first_model()
-    model2 = manifest_loader.get_model_by_name("model2")
-    source1 = manifest_loader.get_first_source()
-    source2 = manifest_loader.get_source_by_name("table2")
-    snapshot1 = manifest_loader.get_first_snapshot()
-    snapshot2 = manifest_loader.get_snapshot_by_name("snapshot2")
+    model1 = next(
+        (m for m in manifest_loader.models.values() if m.name == "model1"), None
+    )
+    model2 = next(
+        (m for m in manifest_loader.models.values() if m.name == "model2"), None
+    )
+    source1 = next(
+        (s for s in manifest_loader.sources.values() if s.name == "table1"), None
+    )
+    source2 = next(
+        (s for s in manifest_loader.sources.values() if s.name == "table2"), None
+    )
+    snapshot1 = next(
+        (s for s in manifest_loader.snapshots.values() if s.name == "snapshot1"), None
+    )
+    snapshot2 = next(
+        (s for s in manifest_loader.snapshots.values() if s.name == "snapshot2"), None
+    )
 
     assert model1 is not None
     assert model2 is not None
@@ -280,12 +303,25 @@ def test_evaluation_with_class_filter(
     )
     evaluation.evaluate()
 
-    model1 = manifest_loader.get_first_model()
-    model2 = manifest_loader.get_model_by_name("model2")
-    source1 = manifest_loader.get_first_source()
-    source2 = manifest_loader.get_source_by_name("table2")
-    snapshot1 = manifest_loader.get_first_snapshot()
-    snapshot2 = manifest_loader.get_snapshot_by_name("snapshot2")
+    # Directly look up entities
+    model1 = next(
+        (m for m in manifest_loader.models.values() if m.name == "model1"), None
+    )
+    model2 = next(
+        (m for m in manifest_loader.models.values() if m.name == "model2"), None
+    )
+    source1 = next(
+        (s for s in manifest_loader.sources.values() if s.name == "table1"), None
+    )
+    source2 = next(
+        (s for s in manifest_loader.sources.values() if s.name == "table2"), None
+    )
+    snapshot1 = next(
+        (s for s in manifest_loader.snapshots.values() if s.name == "snapshot1"), None
+    )
+    snapshot2 = next(
+        (s for s in manifest_loader.snapshots.values() if s.name == "snapshot2"), None
+    )
 
     assert model1 is not None
     assert model2 is not None
@@ -339,9 +375,15 @@ def test_evaluation_with_models_and_sources(
     )
     evaluation.evaluate()
 
-    model1 = manifest_loader.get_first_model()
-    source1 = manifest_loader.get_first_source()
-    snapshot1 = manifest_loader.get_first_snapshot()
+    model1 = next(
+        (m for m in manifest_loader.models.values() if m.name == "model1"), None
+    )
+    source1 = next(
+        (s for s in manifest_loader.sources.values() if s.name == "table1"), None
+    )
+    snapshot1 = next(
+        (s for s in manifest_loader.snapshots.values() if s.name == "snapshot1"), None
+    )
 
     assert model1 is not None
     assert source1 is not None

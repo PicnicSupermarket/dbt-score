@@ -6,10 +6,7 @@ import re
 from collections import defaultdict
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Iterable, List, Literal, TypeAlias, Union
-
-if TYPE_CHECKING:
-    from typing import Union
+from typing import Any, Iterable, List, Literal, TypeAlias, Union
 
 from dbt_score.dbt_utils import dbt_ls
 
@@ -648,37 +645,6 @@ class ManifestLoader:
                 seed = Seed.from_node(node_values, self.tests.get(node_id, []))
                 self.seeds[node_id] = seed
 
-    def _add_parent_if_exists(
-        self, node: Union[Model, Snapshot], parent_id: str
-    ) -> None:
-        """Add a parent reference to the node if the parent exists.
-
-        Args:
-            node: The model or snapshot to add parent to
-            parent_id: The ID of the potential parent node
-        """
-        # Check each potential parent collection
-        if parent_id in self.models:
-            node.parents.append(self.models[parent_id])
-        elif parent_id in self.sources:
-            node.parents.append(self.sources[parent_id])
-        elif parent_id in self.snapshots:
-            node.parents.append(self.snapshots[parent_id])
-        elif parent_id in self.seeds:
-            node.parents.append(self.seeds[parent_id])
-
-    def _populate_parents(self) -> None:
-        """Populate models and snapshots with references to their parent objects."""
-        # For models: add parent object references
-        for _, model in self.models.items():
-            for node_id in model.depends_on.get("nodes", []):
-                self._add_parent_if_exists(model, node_id)
-
-        # For snapshots: add parent object references
-        for _, snapshot in self.snapshots.items():
-            for node_id in snapshot.depends_on.get("nodes", []):
-                self._add_parent_if_exists(snapshot, node_id)
-
     def _reindex_tests(self) -> None:
         """Index tests based on their associated evaluable."""
         for node_values in self.raw_nodes.values():
@@ -694,6 +660,19 @@ class ManifestLoader:
                     iter(node_values.get("depends_on", {}).get("nodes", [])), None
                 ):
                     self.tests[node_unique_id].append(node_values)
+
+    def _populate_parents(self) -> None:
+        """Populate `parents` for all models and snapshots."""
+        for node in list(self.models.values()) + list(self.snapshots.values()):
+            for parent_id in node.depends_on.get("nodes", []):
+                if parent_id in self.models:
+                    node.parents.append(self.models[parent_id])
+                elif parent_id in self.snapshots:
+                    node.parents.append(self.snapshots[parent_id])
+                elif parent_id in self.sources:
+                    node.parents.append(self.sources[parent_id])
+                elif parent_id in self.seeds:
+                    node.parents.append(self.seeds[parent_id])
 
     def _filter_evaluables(self, select: Iterable[str]) -> None:
         """Filter evaluables like dbt's --select."""
@@ -713,55 +692,3 @@ class ManifestLoader:
         }
         self.snapshots = {k: s for k, s in self.snapshots.items() if s.name in selected}
         self.seeds = {k: s for k, s in self.seeds.items() if s.name in selected}
-
-    # Helper methods to find entities by name
-    def get_model_by_name(self, name: str) -> Model | None:
-        """Get a model by name."""
-        for model in self.models.values():
-            if model.name == name:
-                return model
-        return None
-
-    def get_source_by_name(self, name: str) -> Source | None:
-        """Get a source by name."""
-        for source in self.sources.values():
-            if source.name == name:
-                return source
-        return None
-
-    def get_source_by_selector_name(self, selector_name: str) -> Source | None:
-        """Get a source by selector name (source_name.table_name)."""
-        for source in self.sources.values():
-            if source.selector_name == selector_name:
-                return source
-        return None
-
-    def get_snapshot_by_name(self, name: str) -> Snapshot | None:
-        """Get a snapshot by name."""
-        for snapshot in self.snapshots.values():
-            if snapshot.name == name:
-                return snapshot
-        return None
-
-    def get_seed_by_name(self, name: str) -> Seed | None:
-        """Get a seed by name."""
-        for seed in self.seeds.values():
-            if seed.name == name:
-                return seed
-        return None
-
-    def get_first_model(self) -> Model | None:
-        """Get the first model in the collection, if any."""
-        return next(iter(self.models.values())) if self.models else None
-
-    def get_first_source(self) -> Source | None:
-        """Get the first source in the collection, if any."""
-        return next(iter(self.sources.values())) if self.sources else None
-
-    def get_first_snapshot(self) -> Snapshot | None:
-        """Get the first snapshot in the collection, if any."""
-        return next(iter(self.snapshots.values())) if self.snapshots else None
-
-    def get_first_seed(self) -> Seed | None:
-        """Get the first seed in the collection, if any."""
-        return next(iter(self.seeds.values())) if self.seeds else None
