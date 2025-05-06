@@ -6,7 +6,7 @@ import re
 from collections import defaultdict
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any, Iterable, List, Literal, TypeAlias, Union
+from typing import Any, Iterable, Literal, TypeAlias, Union
 
 from dbt_score.dbt_utils import dbt_ls
 
