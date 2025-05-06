@@ -242,6 +242,62 @@
         "name": "type",
         "kwargs": {}
       }
+    },
+    "seed.package.seed1": {
+      "resource_type": "seed",
+      "package_name": "package",
+      "unique_id": "seed.package.seed1",
+      "name": "seed1",
+      "relation_name": "database.schema.seed1",
+      "description": "A great seed.",
+      "original_file_path": "/path/to/seeds/seed1.csv",
+      "config": {},
+      "meta": {},
+      "columns": {
+        "a": {
+          "name": "column_a",
+          "description": "Column A.",
+          "data_type": "string",
+          "meta": {},
+          "constraints": [],
+          "tags": []
+        }
+      },
+      "package_name": "package",
+      "database": "db",
+      "schema": "schema",
+      "alias": "seed1_alias",
+      "patch_path": "/path/to/seeds.yml",
+      "tags": [],
+      "depends_on": {}
+    },
+    "seed.package.seed2": {
+      "resource_type": "seed",
+      "package_name": "package",
+      "unique_id": "seed.package.seed2",
+      "name": "seed2",
+      "relation_name": "database.schema.seed2",
+      "description": "",
+      "original_file_path": "/path/to/seeds/seed2.csv",
+      "config": {},
+      "meta": {},
+      "columns": {
+        "a": {
+          "name": "column_a",
+          "description": "",
+          "data_type": "string",
+          "meta": {},
+          "constraints": [],
+          "tags": []
+        }
+      },
+      "package_name": "package",
+      "database": "db",
+      "schema": "schema",
+      "alias": "seed2_alias",
+      "patch_path": "/path/to/seeds.yml",
+      "tags": [],
+      "depends_on": {}
     }
   },
   "sources": {
