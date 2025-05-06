@@ -19,9 +19,11 @@ def test_manifest_load(mock_read_text, raw_manifest):
                 and node["package_name"] == raw_manifest["metadata"]["project_name"]
             ]
         )
-        assert loader.models["model.package.model1"].tests[0].name == "test2"
-        assert loader.models["model.package.model1"].tests[1].name == "test4"
-        assert loader.models["model.package.model1"].columns[0].tests[0].name == "test1"
+
+        model1 = loader.models["model.package.model1"]
+        assert model1.tests[0].name == "test2"
+        assert model1.tests[1].name == "test4"
+        assert model1.columns[0].tests[0].name == "test1"
 
         assert len(loader.sources) == len(
             [
