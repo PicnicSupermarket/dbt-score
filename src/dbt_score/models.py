@@ -671,7 +671,7 @@ class ManifestLoader:
                     self.tests[node_unique_id].append(node_values)
 
     def _populate_relatives(self) -> None:
-        """Populate `parents` and `children` for all evaluables"""
+        """Populate `parents` and `children` for all evaluables."""
         for node in list(self.models.values()) + list(self.snapshots.values()):
             for parent_id in node.depends_on.get("nodes", []):
                 if parent_id in self.models:
