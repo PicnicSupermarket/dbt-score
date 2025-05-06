@@ -134,7 +134,9 @@
       "alias": "model2_alias",
       "patch_path": "/path/to/model2.yml",
       "tags": [],
-      "depends_on": {},
+      "depends_on": {
+        "nodes": ["seed.package.seed1"]
+      },
       "language": "sql",
       "access": "public",
       "group": "them_over_there"
