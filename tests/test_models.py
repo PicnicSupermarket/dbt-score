@@ -19,9 +19,11 @@ def test_manifest_load(mock_read_text, raw_manifest):
                 and node["package_name"] == raw_manifest["metadata"]["project_name"]
             ]
         )
-        assert loader.models["model.package.model1"].tests[0].name == "test2"
-        assert loader.models["model.package.model1"].tests[1].name == "test4"
-        assert loader.models["model.package.model1"].columns[0].tests[0].name == "test1"
+
+        model1 = loader.models["model.package.model1"]
+        assert model1.tests[0].name == "test2"
+        assert model1.tests[1].name == "test4"
+        assert model1.columns[0].tests[0].name == "test1"
 
         assert len(loader.sources) == len(
             [
@@ -38,14 +40,31 @@ def test_manifest_load(mock_read_text, raw_manifest):
         assert loader.snapshots["snapshot.package.snapshot1"].parents == [
             loader.models["model.package.model1"]
         ]
+        assert loader.models["model.package.model1"].children == [
+            loader.snapshots["snapshot.package.snapshot1"],
+            loader.exposures["exposure.package.exposure1"],
+        ]
         assert loader.models["model.package.model1"].parents == [
             loader.models["model.package.model2"],
             loader.sources["source.package.my_source.table1"],
             loader.snapshots["snapshot.package.snapshot2"],
         ]
-        assert loader.models["model.package.model2"].parents == []
+        assert loader.models["model.package.model2"].children == [
+            loader.models["model.package.model1"],
+            loader.exposures["exposure.package.exposure2"],
+        ]
+        assert loader.models["model.package.model2"].parents == [
+            loader.seeds["seed.package.seed1"]
+        ]
         assert loader.snapshots["snapshot.package.snapshot2"].parents == [
             loader.sources["source.package.my_source.table1"]
+        ]
+        assert loader.sources["source.package.my_source.table1"].children == [
+            loader.models["model.package.model1"],
+            loader.snapshots["snapshot.package.snapshot2"],
+        ]
+        assert loader.seeds["seed.package.seed1"].children == [
+            loader.models["model.package.model2"]
         ]
 
         assert loader.exposures["exposure.package.exposure1"].parents == [

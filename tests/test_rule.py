@@ -6,6 +6,7 @@ from dbt_score import (
     Model,
     Rule,
     RuleViolation,
+    Seed,
     Severity,
     Snapshot,
     Source,
@@ -93,6 +94,10 @@ def test_missing_evaluate_rule_class(model1):
         ("decorator_rule_no_parens_exposure", Exposure),
         ("decorator_rule_args_exposure", Exposure),
         ("class_rule_exposure", Exposure),
+        ("decorator_rule_seed", Seed),
+        ("decorator_rule_no_parens_seed", Seed),
+        ("decorator_rule_args_seed", Seed),
+        ("class_rule_seed", Seed),
     ],
 )
 def test_rule_introspects_its_resource_type(request, rule_fixture, expected_type):

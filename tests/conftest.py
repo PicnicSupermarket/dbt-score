@@ -9,6 +9,7 @@ from dbt_score import (
     Model,
     Rule,
     RuleViolation,
+    Seed,
     Severity,
     Snapshot,
     Source,
@@ -586,3 +587,111 @@ def exposure_class_rule_with_filter() -> Type[Rule]:
             return RuleViolation(message="I always fail.")
 
     return ExposureRuleWithFilter
+
+
+# Seeds
+
+
+@fixture
+def seed1(raw_manifest) -> Seed:
+    """Seed 1."""
+    return Seed.from_node(raw_manifest["nodes"]["seed.package.seed1"], [])
+
+
+@fixture
+def seed2(raw_manifest) -> Seed:
+    """Seed 2."""
+    return Seed.from_node(raw_manifest["nodes"]["seed.package.seed2"], [])
+
+
+@fixture
+def decorator_rule_seed() -> Type[Rule]:
+    """An example rule created with the rule decorator."""
+
+    @rule()
+    def example_rule_seed(seed: Seed) -> RuleViolation | None:
+        """Description of the rule."""
+        if seed.name == "seed1":
+            return RuleViolation(message="Seed1 is a violation.")
+
+    return example_rule_seed
+
+
+@fixture
+def decorator_rule_no_parens_seed() -> Type[Rule]:
+    """An example rule created with the rule decorator without parentheses."""
+
+    @rule
+    def example_rule(seed: Seed) -> RuleViolation | None:
+        """Description of the rule."""
+        if seed.name == "seed1":
+            return RuleViolation(message="Seed1 is a violation.")
+
+    return example_rule
+
+
+@fixture
+def decorator_rule_args_seed() -> Type[Rule]:
+    """An example rule created with the rule decorator with arguments."""
+
+    @rule(description="Description of the rule.")
+    def example_rule(seed: Seed) -> RuleViolation | None:
+        if seed.name == "seed1":
+            return RuleViolation(message="Seed1 is a violation.")
+
+    return example_rule
+
+
+@fixture
+def class_rule_seed() -> Type[Rule]:
+    """An example rule created with a class."""
+
+    class ExampleRule(Rule):
+        """Example rule."""
+
+        description = "Description of the rule."
+
+        def evaluate(self, seed: Seed) -> RuleViolation | None:  # type: ignore[override]
+            """Evaluate seed."""
+            if seed.name == "seed1":
+                return RuleViolation(message="Seed1 is a violation.")
+
+    return ExampleRule
+
+
+@fixture
+def seed_rule_with_filter() -> Type[Rule]:
+    """An example rule that skips through a filter."""
+
+    @rule_filter
+    def skip_seed1(seed: Seed) -> bool:
+        """Skips for seed1, passes for seed2."""
+        return seed.name != "seed1"
+
+    @rule(rule_filters={skip_seed1()})
+    def seed_rule_with_filter(seed: Seed) -> RuleViolation | None:
+        """Rule that always fails when not filtered."""
+        return RuleViolation(message="I always fail.")
+
+    return seed_rule_with_filter
+
+
+@fixture
+def seed_class_rule_with_filter() -> Type[Rule]:
+    """Using class definitions for filters and rules."""
+
+    class SkipSeed1(RuleFilter):
+        description = "Filter defined by a class."
+
+        def evaluate(self, seed: Seed) -> bool:  # type: ignore[override]
+            """Skips for seed1, passes for seed2."""
+            return seed.name != "seed1"
+
+    class SeedRuleWithFilter(Rule):
+        description = "Filter defined by a class."
+        rule_filters = frozenset({SkipSeed1()})
+
+        def evaluate(self, seed: Seed) -> RuleViolation | None:  # type: ignore[override]
+            return RuleViolation(message="I always fail.")
+
+    return SeedRuleWithFilter

@@ -9,6 +9,8 @@ and this project adheres to
 ## [Unreleased]
 
 - Support linting of exposures (#112)
+- Add support for linting and scoring dbt seeds (#110)
+- Add `children` to models, snapshots, and sources. (#113)
 - Add `parents` to models and snapshots, allowing access to parent nodes. (#109)
 
 ## [0.11.0] - 2025-04-04

@@ -54,10 +54,18 @@ def test_evaluation_low_medium_high(
     assert isinstance(evaluation.results[model2][rule_severity_high], RuleViolation)
     assert isinstance(evaluation.results[model2][rule_error], Exception)
 
-    assert mock_formatter.evaluable_evaluated.call_count == 9
+    # Calculate total number of evaluables
+    total_evaluables = (
+        len(manifest_loader.models)
+        + len(manifest_loader.sources)
+        + len(manifest_loader.snapshots)
+        + len(manifest_loader.seeds)
+        + len(manifest_loader.exposures)
+    )
+    assert mock_formatter.evaluable_evaluated.call_count == total_evaluables
     assert mock_formatter.project_evaluated.call_count == 1
 
-    assert mock_scorer.score_evaluable.call_count == 9
+    assert mock_scorer.score_evaluable.call_count == total_evaluables
     assert mock_scorer.score_aggregate_evaluables.call_count == 1
 
 
@@ -85,8 +93,8 @@ def test_evaluation_critical(
 
     evaluation.evaluate()
 
+    # Access model directly by its key
     model2 = manifest_loader.models["model.package.model2"]
-
     assert isinstance(evaluation.results[model2][rule_severity_critical], RuleViolation)
 
 
@@ -157,6 +165,7 @@ def test_evaluation_rule_with_config(
 ):
     """Test rule evaluation with parameters."""
     manifest_loader = ManifestLoader(manifest_path)
+
     model1 = manifest_loader.models["model.package.model1"]
     model2 = manifest_loader.models["model.package.model2"]
 
@@ -275,6 +284,7 @@ def test_evaluation_with_class_filter(
     )
     evaluation.evaluate()
 
+    # Access entities directly by their keys
     model1 = manifest_loader.models["model.package.model1"]
     model2 = manifest_loader.models["model.package.model2"]
     source1 = manifest_loader.sources["source.package.my_source.table1"]
