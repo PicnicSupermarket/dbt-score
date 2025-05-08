@@ -15,6 +15,7 @@ encourage) good practices. The dbt entities that `dbt-score` is able to lint
 - Sources
 - Snapshots
 - Exposures
+- Seeds
 
 ## Example
 
