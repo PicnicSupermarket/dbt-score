@@ -64,6 +64,7 @@ class Evaluation:
             self._manifest_loader.models.values(),
             self._manifest_loader.sources.values(),
             self._manifest_loader.snapshots.values(),
+            self._manifest_loader.exposures.values(),
             self._manifest_loader.seeds.values(),
         ):
             # type inference on elements from `chain` is wonky
@@ -98,6 +99,7 @@ class Evaluation:
             self._manifest_loader.models
             or self._manifest_loader.sources
             or self._manifest_loader.snapshots
+            or self._manifest_loader.exposures
             or self._manifest_loader.seeds
         ):
             self._formatter.project_evaluated(self.project_score)

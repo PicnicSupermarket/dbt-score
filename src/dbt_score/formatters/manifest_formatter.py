@@ -36,4 +36,8 @@ class ManifestFormatter(Formatter):
                 source_manifest = manifest["sources"][evaluable_id]
                 source_manifest["meta"]["score"] = evaluable_score.value
                 source_manifest["meta"]["badge"] = evaluable_score.badge
+            if evaluable_id.startswith("exposure"):
+                exposure_manifest = manifest["exposures"][evaluable_id]
+                exposure_manifest["meta"]["score"] = evaluable_score.value
+                exposure_manifest["meta"]["badge"] = evaluable_score.badge
         print(json.dumps(manifest, indent=2))
