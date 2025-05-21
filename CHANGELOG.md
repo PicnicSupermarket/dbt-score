@@ -8,6 +8,8 @@ and this project adheres to
 
 ## [Unreleased]
 
+- Support linting of exposures (#112)
+
 ## [0.12.0] - 2025-05-06
 
 - Add support for linting and scoring dbt seeds (#110)
