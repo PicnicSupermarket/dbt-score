@@ -52,7 +52,7 @@ class RuleFilter:
         if not resource_type_argument:
             raise TypeError(
                 "Subclass must implement method `evaluate` with an "
-                "annotated Model, Snapshot, Source or Exposure argument."
+                "annotated Model, Snapshot, Source, Seed or Exposure argument."
             )
 
         resource_type = cast(type[Evaluable], resource_type_argument.annotation)
