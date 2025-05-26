@@ -156,7 +156,7 @@ class HasColumnsMixin:
 
 # Type annotation for parent references
 ParentType = Union["Model", "Source", "Snapshot", "Seed"]
-ChildType = Union["Model", "Snapshot"]
+ChildType = Union["Model", "Snapshot", "Exposure"]
 
 
 @dataclass
@@ -500,6 +500,71 @@ class Snapshot(HasColumnsMixin):
 
 
 @dataclass
+class Exposure:
+    """Represents a dbt exposure.
+
+    Attributes:
+        unique_id: The unique id of the exposure (e.g. `exposure.package.exposure1`).
+        name: The name of the exposure.
+        description: The description of the exposure.
+        label: The label of the exposure.
+        url: The url of the exposure.
+        maturity: The maturity of the exposure.
+        original_file_path: The path to the exposure file
+            (e.g. `models/exposures/exposures.yml`).
+        type: The type of the exposure, e.g. `application`.
+        owner: The owner of the exposure,
+            e.g. `{"name": "owner", "email": "owner@email.com"}`.
+        config: The config of the exposure.
+        meta: The meta of the exposure.
+        tags: The list of tags attached to the exposure.
+        depends_on: The depends_on of the exposure.
+        parents: The list of models, sources, and snapshot this exposure depends on.
+        _raw_values: The raw values of the exposure in the manifest.
+    """
+
+    unique_id: str
+    name: str
+    description: str
+    label: str
+    url: str
+    maturity: str
+    original_file_path: str
+    type: str
+    owner: dict[str, Any]
+    config: dict[str, Any]
+    meta: dict[str, Any]
+    tags: list[str]
+    depends_on: dict[str, list[str]] = field(default_factory=dict)
+    parents: list[ParentType] = field(default_factory=list)
+    _raw_values: dict[str, Any] = field(default_factory=dict)
+
+    @classmethod
+    def from_node(cls, node_values: dict[str, Any]) -> "Exposure":
+        """Create an exposure object from a node in the manifest."""
+        return cls(
+            unique_id=node_values["unique_id"],
+            name=node_values["name"],
+            description=node_values["description"],
+            label=node_values["label"],
+            url=node_values["url"],
+            maturity=node_values["maturity"],
+            original_file_path=node_values["original_file_path"],
+            type=node_values["type"],
+            owner=node_values["owner"],
+            config=node_values["config"],
+            meta=node_values["meta"],
+            tags=node_values["tags"],
+            depends_on=node_values["depends_on"],
+            _raw_values=node_values,
+        )
+
+    def __hash__(self) -> int:
+        """Compute a unique hash for an exposure."""
+        return hash(self.unique_id)
+
+
+@dataclass
 class Seed(HasColumnsMixin):
     """Represents a dbt seed.
 
@@ -579,11 +644,11 @@ class Seed(HasColumnsMixin):
         return hash(self.unique_id)
 
 
-Evaluable: TypeAlias = Model | Source | Snapshot | Seed
+Evaluable: TypeAlias = Model | Source | Snapshot | Seed | Exposure
 
 
 class ManifestLoader:
-    """Load the models, sources, snapshots, seeds and tests from the manifest."""
+    """Load the evaluables from the manifest."""
 
     def __init__(self, file_path: Path, select: Iterable[str] | None = None):
         """Initialize the ManifestLoader.
@@ -604,17 +669,26 @@ class ManifestLoader:
             for source_id, source_values in self.raw_manifest.get("sources", {}).items()
             if source_values["package_name"] == self.project_name
         }
+        self.raw_exposures = {
+            exposure_id: exposure_values
+            for exposure_id, exposure_values in self.raw_manifest.get(
+                "exposures", {}
+            ).items()
+            if exposure_values["package_name"] == self.project_name
+        }
 
         self.models: dict[str, Model] = {}
         self.tests: dict[str, list[dict[str, Any]]] = defaultdict(list)
         self.sources: dict[str, Source] = {}
         self.snapshots: dict[str, Snapshot] = {}
+        self.exposures: dict[str, Exposure] = {}
         self.seeds: dict[str, Seed] = {}
 
         self._reindex_tests()
         self._load_models()
         self._load_sources()
         self._load_snapshots()
+        self._load_exposures()
         self._load_seeds()
         self._populate_relatives()
 
@@ -622,7 +696,11 @@ class ManifestLoader:
             self._filter_evaluables(select)
 
         if (
-            len(self.models) + len(self.sources) + len(self.snapshots) + len(self.seeds)
+            len(self.models)
+            + len(self.sources)
+            + len(self.snapshots)
+            + len(self.seeds)
+            + len(self.exposures)
         ) == 0:
             logger.warning("Nothing to evaluate!")
 
@@ -646,6 +724,13 @@ class ManifestLoader:
             if node_values.get("resource_type") == "snapshot":
                 snapshot = Snapshot.from_node(node_values, self.tests.get(node_id, []))
                 self.snapshots[node_id] = snapshot
+
+    def _load_exposures(self) -> None:
+        """Load the exposures from the manifest."""
+        for node_id, node_values in self.raw_exposures.items():
+            if node_values.get("resource_type") == "exposure":
+                exposure = Exposure.from_node(node_values)
+                self.exposures[node_id] = exposure
 
     def _load_seeds(self) -> None:
         """Load the seeds from the manifest."""
@@ -672,7 +757,11 @@ class ManifestLoader:
 
     def _populate_relatives(self) -> None:
         """Populate `parents` and `children` for all evaluables."""
-        for node in list(self.models.values()) + list(self.snapshots.values()):
+        for node in (
+            list(self.models.values())
+            + list(self.snapshots.values())
+            + list(self.exposures.values())
+        ):
             for parent_id in node.depends_on.get("nodes", []):
                 if parent_id in self.models:
                     node.parents.append(self.models[parent_id])
@@ -704,4 +793,5 @@ class ManifestLoader:
             k: s for k, s in self.sources.items() if s.selector_name in selected
         }
         self.snapshots = {k: s for k, s in self.snapshots.items() if s.name in selected}
+        self.exposures = {k: e for k, e in self.exposures.items() if e.name in selected}
         self.seeds = {k: s for k, s in self.seeds.items() if s.name in selected}

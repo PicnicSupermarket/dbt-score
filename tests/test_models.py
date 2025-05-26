@@ -41,7 +41,8 @@ def test_manifest_load(mock_read_text, raw_manifest):
             loader.models["model.package.model1"]
         ]
         assert loader.models["model.package.model1"].children == [
-            loader.snapshots["snapshot.package.snapshot1"]
+            loader.snapshots["snapshot.package.snapshot1"],
+            loader.exposures["exposure.package.exposure1"],
         ]
         assert loader.models["model.package.model1"].parents == [
             loader.models["model.package.model2"],
@@ -49,7 +50,8 @@ def test_manifest_load(mock_read_text, raw_manifest):
             loader.snapshots["snapshot.package.snapshot2"],
         ]
         assert loader.models["model.package.model2"].children == [
-            loader.models["model.package.model1"]
+            loader.models["model.package.model1"],
+            loader.exposures["exposure.package.exposure2"],
         ]
         assert loader.models["model.package.model2"].parents == [
             loader.seeds["seed.package.seed1"]
@@ -63,6 +65,10 @@ def test_manifest_load(mock_read_text, raw_manifest):
         ]
         assert loader.seeds["seed.package.seed1"].children == [
             loader.models["model.package.model2"]
+        ]
+
+        assert loader.exposures["exposure.package.exposure1"].parents == [
+            loader.models["model.package.model1"]
         ]
 
 
