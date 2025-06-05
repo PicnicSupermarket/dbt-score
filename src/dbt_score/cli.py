@@ -67,6 +67,12 @@ def cli() -> None:
     multiple=True,
 )
 @click.option(
+    "--selected-rule",
+    help="Rule to select.",
+    default=None,
+    multiple=True,
+)
+@click.option(
     "--manifest",
     "-m",
     help="Manifest filepath.",
@@ -121,6 +127,7 @@ def lint(  # noqa: PLR0912, PLR0913, C901
     select: tuple[str],
     namespace: list[str],
     disabled_rule: list[str],
+    selected_rule: list[str],
     manifest: Path,
     run_dbt_parse: bool,
     fail_project_under: float,
@@ -136,12 +143,19 @@ def lint(  # noqa: PLR0912, PLR0913, C901
     if manifest_provided and run_dbt_parse:
         raise click.UsageError("--run-dbt-parse cannot be used with --manifest.")
 
+    if len(selected_rule) > 0 and len(disabled_rule) > 0:
+        raise click.UsageError(
+            "--disabled-rule and --selected-rule cannot be used together."
+        )
+
     config = Config()
     config.load()
     if namespace:
         config.overload({"rule_namespaces": namespace})
     if disabled_rule:
         config.overload({"disabled_rules": disabled_rule})
+    if selected_rule:
+        config.overload({"selected_rules": selected_rule})
     if fail_project_under:
         config.overload({"fail_project_under": fail_project_under})
     if fail_any_item_under:
@@ -195,6 +209,12 @@ def lint(  # noqa: PLR0912, PLR0913, C901
     multiple=True,
 )
 @click.option(
+    "--selected-rule",
+    help="Rule to select.",
+    default=None,
+    multiple=True,
+)
+@click.option(
     "--title",
     help="Page title (Markdown only).",
     default=None,
@@ -207,14 +227,25 @@ def lint(  # noqa: PLR0912, PLR0913, C901
     default="terminal",
 )
 def list_command(
-    namespace: list[str], disabled_rule: list[str], title: str, format: str
+    namespace: list[str],
+    disabled_rule: list[str],
+    selected_rule: list[str],
+    title: str,
+    format: str,
 ) -> None:
     """Display rules list."""
+    if len(selected_rule) > 0 and len(disabled_rule) > 0:
+        raise click.UsageError(
+            "--disabled-rule and --selected-rule cannot be used together."
+        )
+
     config = Config()
     config.load()
     if namespace:
         config.overload({"rule_namespaces": namespace})
     if disabled_rule:
         config.overload({"disabled_rules": disabled_rule})
+    if selected_rule:
+        config.overload({"selected_rules": selected_rule})
 
     display_catalog(config, title, format)

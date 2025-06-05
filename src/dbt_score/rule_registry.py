@@ -79,7 +79,13 @@ class RuleRegistry:
         rule_name = rule.source()
         if rule_name in self._rules:
             raise DuplicatedRuleException(rule_name)
-        if rule_name not in self.config.disabled_rules:
+        if (
+            len(self.config.selected_rules) > 0
+            and rule_name in self.config.selected_rules
+        ) or (
+            len(self.config.selected_rules) == 0
+            and rule_name not in self.config.disabled_rules
+        ):
             rule_config = self.config.rules_config.get(rule_name, RuleConfig())
             self._rules[rule_name] = rule(rule_config=rule_config)
 
