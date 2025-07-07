@@ -8,6 +8,8 @@ and this project adheres to
 
 ## [Unreleased]
 
+## [0.13.0] - 2025-07-07
+
 - Support linting of exposures (#112)
 - Fix retrieval of data_tests when using quoted columns in BigQuery (#122)
 
