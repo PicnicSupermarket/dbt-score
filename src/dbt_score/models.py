@@ -146,7 +146,8 @@ class HasColumnsMixin:
                     for test in test_values
                     if test.get("test_metadata", {})
                     .get("kwargs", {})
-                    .get("column_name")
+                    .get("column_name", "")
+                    .strip("`")  # BigQuery connector when "quote: true"
                     == name
                 ],
             )
