@@ -145,7 +145,11 @@ class TestRuleFilterValidation:
 
     @pytest.mark.parametrize(
         "rule_filter_fixture",
-        ["source_filter_no_parens", "source_filter_parens", "source_filter_class"],
+        [
+            "source_filter_no_parens",
+            "source_filter_parens",
+            "source_filter_class",
+        ],
     )
     def test_rule_filter_must_match_resource_type_as_rule(
         self, request, rule_filter_fixture
@@ -174,3 +178,21 @@ class TestRuleFilterValidation:
 
         assert "Mismatched resource_type on filter" in str(excinfo.value)
         assert "Expected Model, but got Source" in str(excinfo.value)
+
+
+def test_should_evaluate(model1, source1):
+    """Test that should_evaluate does not execute filter on mismatched resource type."""
+
+    @rule_filter
+    def model_filter(model: Model) -> bool:
+        """Filter on empty constraints."""
+        return model.constraints == []  # constraints does not exist for Source
+
+    @rule(rule_filters={model_filter()})
+    def model_rule(model: Model) -> RuleViolation | None:
+        """Rule that always returns None."""
+        return None
+
+    rule1 = model_rule()
+    assert rule1.should_evaluate(model1) is True
+    assert rule1.should_evaluate(source1) is False
