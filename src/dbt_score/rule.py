@@ -166,12 +166,13 @@ class Rule:
         """
         resource_types_match = cls.resource_type is type(evaluable)
 
+        if not resource_types_match:
+            return False
+
         if cls.rule_filters:
-            return (
-                all(f.evaluate(evaluable) for f in cls.rule_filters)
-                and resource_types_match
-            )
-        return resource_types_match
+            return all(f.evaluate(evaluable) for f in cls.rule_filters)
+
+        return True
 
     @classmethod
     def set_severity(cls, severity: Severity) -> None:

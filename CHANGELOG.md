@@ -8,6 +8,8 @@ and this project adheres to
 
 ## [Unreleased]
 
+- Fix filters being applied to wrong evaluables (#124)
+
 ## [0.13.0] - 2025-07-07
 
 - Support linting of exposures (#112)
