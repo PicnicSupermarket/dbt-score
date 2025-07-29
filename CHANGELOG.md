@@ -8,6 +8,8 @@ and this project adheres to
 
 ## [Unreleased]
 
+## [0.13.1] - 2025-07-29
+
 - Fix filters being applied to wrong evaluables (#124)
 
 ## [0.13.0] - 2025-07-07
