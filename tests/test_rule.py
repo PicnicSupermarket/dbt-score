@@ -181,7 +181,7 @@ class TestRuleFilterValidation:
 
 
 def test_should_evaluate(model1, source1):
-    """Test that Rule.should_evaluate works correctly for different resource types."""
+    """Test that should_evaluate does not execute filter on mismatched resource type."""
 
     @rule_filter
     def model_filter(model: Model) -> bool:
