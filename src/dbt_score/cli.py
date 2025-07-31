@@ -166,7 +166,7 @@ def lint(  # noqa: PLR0912, PLR0913, C901
         ctx.exit(2)
 
     except DbtParseException as exc:
-        logger.error("dbt failed to parse project. %s", exc)
+        logger.error(exc)
         ctx.exit(2)
 
     except Exception:
