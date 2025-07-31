@@ -72,7 +72,7 @@ def dbt_parse() -> "dbtRunnerResult":
         result: "dbtRunnerResult" = dbtRunner().invoke(["parse"])
 
     if not result.success:
-        raise DbtParseException("dbt parse failed.", root_cause=None)
+        raise DbtParseException("dbt parse failed.", root_cause=result.exception)
 
     return result
 
