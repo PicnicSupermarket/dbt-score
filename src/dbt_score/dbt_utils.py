@@ -21,6 +21,17 @@ class DbtNotInstalledException(Exception):
 class DbtParseException(Exception):
     """Raised when dbt parse fails."""
 
+    def __init__(self, message: str, root_cause: Any | None = None):
+        """Initialize the exception."""
+        super().__init__(message)
+        self.root_cause = root_cause
+
+    def __str__(self) -> str:
+        """Return a string representation of the exception."""
+        if self.root_cause:
+            return f"{self.args[0]}\n\nRoot cause: {self.root_cause!s}"
+        return str(self.args[0])
+
 
 class DbtLsException(Exception):
     """Raised when dbt ls fails."""
@@ -61,7 +72,7 @@ def dbt_parse() -> "dbtRunnerResult":
         result: "dbtRunnerResult" = dbtRunner().invoke(["parse"])
 
     if not result.success:
-        raise DbtParseException("dbt parse failed.") from result.exception
+        raise DbtParseException("dbt parse failed.", root_cause=None)
 
     return result
 
