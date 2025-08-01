@@ -141,6 +141,40 @@
       "access": "public",
       "group": "them_over_there"
     },
+    "model.package.collision_test": {
+      "resource_type": "model",
+      "unique_id": "model.package.collision_test",
+      "name": "collision_test",
+      "relation_name": "database.schema.collision_test",
+      "description": "A model to test name collision with exposure.",
+      "original_file_path": "/path/to/collision_test.sql",
+      "config": {},
+      "meta": {},
+      "columns": {
+        "a": {
+          "name": "column_a",
+          "description": "Column A.",
+          "data_type": "string",
+          "meta": {},
+          "constraints": [],
+          "tags": []
+        }
+      },
+      "constraints": [],
+      "package_name": "package",
+      "database": "db",
+      "schema": "schema",
+      "raw_code": "SELECT x FROM y",
+      "alias": "collision_test_alias",
+      "patch_path": "/path/to/collision_test.yml",
+      "tags": [],
+      "depends_on": {
+        "nodes": ["model.package.model2"]
+      },
+      "language": "sql",
+      "access": "public",
+      "group": "default"
+    },
     "model.package2.model1": {
       "resource_type": "model",
       "unique_id": "model.package2.model1",
@@ -513,6 +547,44 @@
       "refs": [
         {
           "name": "model2",
+          "package": null,
+          "version": null
+        }
+      ],
+      "sources": [],
+      "metrics": [],
+      "created_at": 1744832856.199685
+    },
+    "exposure.package.exposure_collision": {
+      "name": "collision_test",
+      "resource_type": "exposure",
+      "package_name": "package",
+      "path": "models/exposures/exposures.yml",
+      "original_file_path": "models/exposures/exposures.yml",
+      "unique_id": "exposure.package.exposure_collision",
+      "fqn": ["package", "exposures", "exposure_collision"],
+      "type": "application",
+      "owner": {
+        "email": null,
+        "name": "owner"
+      },
+      "description": "This exposure has the same name as collision_test model.",
+      "label": null,
+      "maturity": null,
+      "meta": {},
+      "tags": ["collision", "test"],
+      "config": {
+        "enabled": true
+      },
+      "unrendered_config": {},
+      "url": null,
+      "depends_on": {
+        "macros": [],
+        "nodes": ["model.package.collision_test"]
+      },
+      "refs": [
+        {
+          "name": "collision_test",
           "package": null,
           "version": null
         }
