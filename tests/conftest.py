@@ -123,13 +123,13 @@ def snapshot2(raw_manifest) -> Snapshot:
 @fixture
 def exposure1(raw_manifest) -> Exposure:
     """Exposure 1."""
-    return Exposure.from_node(raw_manifest["nodes"]["exposure.package.exposure1"])
+    return Exposure.from_node(raw_manifest["exposures"]["exposure.package.exposure1"])
 
 
 @fixture
 def exposure2(raw_manifest) -> Exposure:
     """Exposure 2."""
-    return Exposure.from_node(raw_manifest["nodes"]["exposure.package.exposure2"])
+    return Exposure.from_node(raw_manifest["exposures"]["exposure.package.exposure2"])
 
 
 # Multiple ways to create rules
