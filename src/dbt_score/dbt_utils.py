@@ -29,7 +29,7 @@ class DbtParseException(Exception):
     def __str__(self) -> str:
         """Return a string representation of the exception."""
         if self.root_cause:
-            return f"dbt parse failed.\n\nRoot cause: {self.root_cause!s}"
+            return f"dbt parse failed.\n\n{self.root_cause!s}"
 
         return (
             "dbt parse failed. Root cause not found. Please run `dbt parse` manually."
