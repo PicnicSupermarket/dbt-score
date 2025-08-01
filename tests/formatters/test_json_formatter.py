@@ -91,60 +91,17 @@ def test_json_formatter(
 
 
 def test_json_formatter_name_collision_prevention(
-    capsys, default_config, manifest_loader, rule_severity_medium
+    capsys,
+    default_config,
+    manifest_loader,
+    model_collision_test,
+    exposure_collision,
+    rule_severity_medium,
 ):
     """Ensure evaluables with same name but different types don't overwrite."""
-    from dbt_score import Exposure, Model
-
-    # Create evaluables with the same name but different types and unique_ids
-    model_same_name = Model(
-        unique_id="model.package.same_name",
-        name="same_name",
-        relation_name="db.schema.same_name",
-        description="A model",
-        original_file_path="models/same_name.sql",
-        config={},
-        meta={},
-        columns=[],
-        package_name="package",
-        database="db",
-        schema="schema",
-        raw_code="SELECT 1",
-        language="sql",
-        access="public",
-        group="default",
-        alias=None,
-        patch_path=None,
-        tags=[],
-        tests=[],
-        depends_on={},
-        parents=[],
-        children=[],
-        _raw_values={},
-        _raw_test_values=[],
-    )
-
-    exposure_same_name = Exposure(
-        unique_id="exposure.package.same_name",
-        name="same_name",  # Same name as model
-        description="An exposure",
-        label="Same Name Exposure",
-        url="https://example.com",
-        maturity="medium",
-        original_file_path="models/exposures.yml",
-        type="dashboard",
-        owner={"name": "test", "email": "test@example.com"},
-        config={},
-        meta={},
-        tags=[],
-        depends_on={},
-        parents=[],
-        _raw_values={},
-    )
-
     # Verify they have the same name but different unique_ids
-    assert model_same_name.name == exposure_same_name.name == "same_name"
-    assert model_same_name.unique_id != exposure_same_name.unique_id
+    assert model_collision_test.name == exposure_collision.name == "collision_test"
+    assert model_collision_test.unique_id != exposure_collision.unique_id
 
     formatter = JSONFormatter(manifest_loader=manifest_loader, config=default_config)
     results: dict[Type[Rule], RuleViolation | Exception | None] = {
@@ -152,8 +109,8 @@ def test_json_formatter_name_collision_prevention(
     }
 
     # Evaluate both evaluables with same name
-    formatter.evaluable_evaluated(model_same_name, results, Score(5.0, "🥈"))
-    formatter.evaluable_evaluated(exposure_same_name, results, Score(7.0, "🥇"))
+    formatter.evaluable_evaluated(model_collision_test, results, Score(5.0, "🥈"))
+    formatter.evaluable_evaluated(exposure_collision, results, Score(7.0, "🥇"))
     formatter.project_evaluated(Score(6.0, "🥈"))
 
     stdout = capsys.readouterr().out
@@ -164,12 +121,12 @@ def test_json_formatter_name_collision_prevention(
     assert len(evaluables) == 2, "Both evaluables with same name should be preserved"
 
     # Keys should be unique_id, not name
-    assert model_same_name.unique_id in evaluables
-    assert exposure_same_name.unique_id in evaluables
+    assert model_collision_test.unique_id in evaluables
+    assert exposure_collision.unique_id in evaluables
 
     # Verify both evaluables maintain their distinct data
-    model_data = evaluables[model_same_name.unique_id]
-    exposure_data = evaluables[exposure_same_name.unique_id]
+    model_data = evaluables[model_collision_test.unique_id]
+    exposure_data = evaluables[exposure_collision.unique_id]
 
     assert model_data["type"] == "model"
     assert model_data["score"] == 5.0

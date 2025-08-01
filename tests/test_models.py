@@ -51,6 +51,7 @@ def test_manifest_load(mock_read_text, raw_manifest):
         ]
         assert loader.models["model.package.model2"].children == [
             loader.models["model.package.model1"],
+            loader.models["model.package.collision_test"],
             loader.exposures["exposure.package.exposure2"],
         ]
         assert loader.models["model.package.model2"].parents == [
@@ -67,8 +68,17 @@ def test_manifest_load(mock_read_text, raw_manifest):
             loader.models["model.package.model2"]
         ]
 
+        assert loader.models["model.package.collision_test"].parents == [
+            loader.models["model.package.model2"]
+        ]
+        assert loader.models["model.package.collision_test"].children == [
+            loader.exposures["exposure.package.exposure_collision"],
+        ]
         assert loader.exposures["exposure.package.exposure1"].parents == [
             loader.models["model.package.model1"]
+        ]
+        assert loader.exposures["exposure.package.exposure_collision"].parents == [
+            loader.models["model.package.collision_test"]
         ]
 
 

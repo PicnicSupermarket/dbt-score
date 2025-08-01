@@ -83,6 +83,12 @@ def model2(raw_manifest) -> Model:
     return Model.from_node(raw_manifest["nodes"]["model.package.model2"], [])
 
 
+@fixture
+def model_collision_test(raw_manifest) -> Model:
+    """Model with collision_test name."""
+    return Model.from_node(raw_manifest["nodes"]["model.package.collision_test"], [])
+
+
 # Sources
 
 
@@ -130,6 +136,14 @@ def exposure1(raw_manifest) -> Exposure:
 def exposure2(raw_manifest) -> Exposure:
     """Exposure 2."""
     return Exposure.from_node(raw_manifest["exposures"]["exposure.package.exposure2"])
+
+
+@fixture
+def exposure_collision(raw_manifest) -> Exposure:
+    """Exposure with collision_test name."""
+    return Exposure.from_node(
+        raw_manifest["exposures"]["exposure.package.exposure_collision"]
+    )
 
 
 # Multiple ways to create rules
