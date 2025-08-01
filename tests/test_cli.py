@@ -70,10 +70,10 @@ def test_lint_dbt_parse_exception(caplog):
     runner = CliRunner()
 
     with patch("dbt_score.cli.dbt_parse") as mock_dbt_parse:
-        mock_dbt_parse.side_effect = DbtParseException("parsing error")
+        mock_dbt_parse.side_effect = DbtParseException()
         result = runner.invoke(lint, ["-p"], catch_exceptions=False)
     assert result.exit_code == 2
-    assert "dbt failed to parse project" in caplog.text
+    assert "dbt parse failed." in caplog.text
 
 
 def test_lint_dbt_not_installed(caplog, manifest_path):

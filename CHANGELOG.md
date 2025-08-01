@@ -8,7 +8,16 @@ and this project adheres to
 
 ## [Unreleased]
 
+- Display the parse error message when `dbt parse` fails.
+
+## [0.13.1] - 2025-07-29
+
+- Fix filters being applied to wrong evaluables (#124)
+
+## [0.13.0] - 2025-07-07
+
 - Support linting of exposures (#112)
+- Fix retrieval of data_tests when using quoted columns in BigQuery (#122)
 
 ## [0.12.0] - 2025-05-06
 
