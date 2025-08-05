@@ -9,6 +9,9 @@ and this project adheres to
 ## [Unreleased]
 
 - Display the parse error message when `dbt parse` fails.
+- Breaking change to json-formatted output - using unique_id as key instead of
+  name, so in the case of duplicated names (e.g. between exposures and models)
+  both are shown (#129)
 
 ## [0.13.1] - 2025-07-29
 
