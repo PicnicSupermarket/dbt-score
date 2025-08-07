@@ -5,7 +5,7 @@ Shape of the JSON output:
 ```json
 {
     "evaluables": {
-        "model_foo": {
+        "model.package.model_foo": {
             "score": 5.0,
             "badge": "🥈",
             "pass": true,
@@ -23,7 +23,7 @@ Shape of the JSON output:
             },
             "type": "model"
         },
-        "model_bar": {
+        "model.package.model_bar": {
             "score": 0.0,
             "badge": "🥉",
             "pass": false,
@@ -35,7 +35,7 @@ Shape of the JSON output:
             },
             "type": "model"
         },
-        "source_baz": {
+        "source.package.source_name.source_baz": {
             "score": 10.0,
             "badge": "🥇",
             "pass": false,
@@ -80,7 +80,7 @@ class JSONFormatter(Formatter):
         self, evaluable: Evaluable, results: EvaluableResultsType, score: Score
     ) -> None:
         """Callback when an evaluable item has been evaluated."""
-        self.evaluable_results[evaluable.name] = {
+        self.evaluable_results[evaluable.unique_id] = {
             "score": score.value,
             "badge": score.badge,
             "pass": score.value >= self._config.fail_any_item_under,
@@ -90,19 +90,25 @@ class JSONFormatter(Formatter):
         for rule, result in results.items():
             severity = rule.severity.name.lower()
             if result is None:
-                self.evaluable_results[evaluable.name]["results"][rule.source()] = {
+                self.evaluable_results[evaluable.unique_id]["results"][
+                    rule.source()
+                ] = {
                     "result": "OK",
                     "severity": severity,
                     "message": None,
                 }
             elif isinstance(result, RuleViolation):
-                self.evaluable_results[evaluable.name]["results"][rule.source()] = {
+                self.evaluable_results[evaluable.unique_id]["results"][
+                    rule.source()
+                ] = {
                     "result": "WARN",
                     "severity": severity,
                     "message": result.message,
                 }
             else:
-                self.evaluable_results[evaluable.name]["results"][rule.source()] = {
+                self.evaluable_results[evaluable.unique_id]["results"][
+                    rule.source()
+                ] = {
                     "result": "ERR",
                     "severity": severity,
                     "message": str(result),
