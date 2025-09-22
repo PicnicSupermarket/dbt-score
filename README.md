@@ -122,12 +122,11 @@ metadata becomes increasingly challenging:
 
 `dbt-score` addresses these challenges by:
 
-1. **Automated Quality Checks**: Continuously evaluate dbt projects against best
+- **Automated Quality Checks**: Continuously evaluate dbt projects against best
    practices
-2. **Objective Scoring**: Get clear, numerical feedback on model quality
-3. **Gradual Improvement**: Track progress over time with scoring trends
-4. **Team Alignment**: Establish shared standards across data teams
-5. **CI/CD Integration**: Prevent quality regressions in production
+- **Objective Scoring**: Get clear, numerical feedback on model quality
+- **Team Alignment**: Establish shared standards across data teams
+- **CI/CD Integration**: Prevent quality regressions in production
 
 ## Built-in Rules
 
