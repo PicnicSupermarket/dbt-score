@@ -10,6 +10,16 @@
 **A comprehensive linter for dbt metadata that helps maintain high-quality data
 models at scale.**
 
+```shell
+dbt-score lint
+🥉 orders (score: 2.7)
+  WARN (medium) dbt_score.rules.generic.columns_have_description: Columns lack a description: customer_id, customer_name.
+  WARN (high) dbt_score.rules.generic.has_description: Model lacks a description.
+  WARN (medium) dbt_score.rules.generic.has_owner: Model lacks an owner.
+  WARN (medium) dbt_score.rules.generic.sql_has_reasonable_number_of_lines: SQL query too long: 238 lines (> 200).
+  WARN (medium) dbt_score_rules.custom_rules.has_test: Model lacks a test.
+```
+
 ## What is dbt-score?
 
 `dbt-score` is a powerful linting tool designed to evaluate and score [dbt][dbt]
@@ -61,7 +71,7 @@ dbt-score lint --run-dbt-parse
 ### Example Output
 
 ```
-> dbt-score lint --show all
+dbt-score lint --show all
 🥉 orders (score: 2.7)
   WARN (medium) dbt_score.rules.generic.columns_have_description: Columns lack a description: customer_id, customer_name.
   WARN (high) dbt_score.rules.generic.has_description: Model lacks a description.
