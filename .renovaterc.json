@@ -1,6 +1,7 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "enabledManagers": ["pdm"],
+  "enabledManagers": ["pep621"],
   "labels": ["dependencies"],
-  "commitMessagePrefix": "dependencies: "
+  "commitMessagePrefix": "dependencies: ",
+  "includePaths": ["pyproject.toml", "pdm.lock"]
 }
