@@ -14,21 +14,25 @@ jobs:
       contents: write
 
     steps:
-      - uses: actions/checkout@v4
-      - name: Set up PDM
-        uses: pdm-project/setup-pdm@v4
+      - uses: actions/checkout@v5
+      - name: "Set up Python"
+        uses: actions/setup-python@v5
         with:
-          python-version: "3.11"
+          python-version-file: 3.13
+      - name: Install uv
+        uses: astral-sh/setup-uv@v6
+      - name: Build
+        run: uv build
       - name: Publish package distributions to PyPI
         run: |
-          pdm publish
+          uv publish
       - name: Install dependencies
         run: |
-          pdm sync -G docs
+          uv sync --group docs
       - name: Deploy docs
         run: |
-          pdm run dbt-score list -f markdown -n dbt_score.rules.generic --title Generic > docs/rules/generic.md
-          pdm run mkdocs gh-deploy --force
+          uv run dbt-score list -f markdown -n dbt_score.rules.generic --title Generic > docs/rules/generic.md
+          uv run mkdocs gh-deploy --force
       - uses: ncipollo/release-action@v1
         with:
           generateReleaseNotes: true

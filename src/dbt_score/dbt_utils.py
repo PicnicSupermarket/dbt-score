@@ -9,7 +9,7 @@ from typing import Any, Callable, Iterable, Iterator, cast
 # Conditionally import dbt objects.
 try:
     DBT_INSTALLED = True
-    from dbt.cli.main import dbtRunner, dbtRunnerResult  # type: ignore
+    from dbt.cli.main import dbtRunner, dbtRunnerResult
 except ImportError:
     DBT_INSTALLED = False
 
@@ -21,7 +21,7 @@ class DbtNotInstalledException(Exception):
 class DbtParseException(Exception):
     """Raised when dbt parse fails."""
 
-    def __init__(self, root_cause: Exception | None = None):
+    def __init__(self, root_cause: BaseException | None = None):
         """Initialize the exception."""
         super().__init__()
         self.root_cause = root_cause
