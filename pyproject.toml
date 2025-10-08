@@ -61,10 +61,6 @@ vcs = "git"
 style = "pep440"
 bump = true
 
-# GitHub Issue: https://github.com/astral-sh/uv/issues/5903
-#[tool.pdm.scripts]
-#dbt-score = {call = "dbt_score.__main__:main"}
-
 ### Mypy ###
 
 [tool.mypy]
