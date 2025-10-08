@@ -1,9 +1,9 @@
 [build-system]
-requires = ["hatchling>=1.27.0, <2.0.0", "uv-dynamic-versioning"]
+requires = ["hatchling>=1.27.0, <2.0.0", "hatch-vcs"]
 build-backend = "hatchling.build"
 
 [tool.hatch.version]
-source = "uv-dynamic-versioning"
+source = "vcs"
 
 [project]
 name = "dbt-score"
