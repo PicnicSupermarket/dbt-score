@@ -56,11 +56,6 @@ docs = [
     "mkdocstrings[python]~=0.26.0"
 ]
 
-[tool.uv-dynamic-versioning]
-vcs = "git"
-style = "pep440"
-bump = true
-
 ### Mypy ###
 
 [tool.mypy]
