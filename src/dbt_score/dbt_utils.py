@@ -21,7 +21,7 @@ class DbtNotInstalledException(Exception):
 class DbtParseException(Exception):
     """Raised when dbt parse fails."""
 
-    def __init__(self, root_cause: Exception | None = None):
+    def __init__(self, root_cause: BaseException | None = None):
         """Initialize the exception."""
         super().__init__()
         self.root_cause = root_cause
