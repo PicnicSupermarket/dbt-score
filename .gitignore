@@ -62,11 +62,6 @@ cover/
 .pybuilder/
 target/
 
-# pdm
-.pdm.toml
-.pdm-python
-.pdm-build/
-
 # Environments
 .env
 .venv
