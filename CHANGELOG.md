@@ -8,6 +8,8 @@ and this project adheres to
 
 ## [Unreleased]
 
+## [0.14.1] - 2025-10-09
+
 - Migrate to `uv` project manager.
 
 ## [0.14.0] - 2025-08-08
