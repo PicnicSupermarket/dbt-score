@@ -8,6 +8,8 @@ and this project adheres to
 
 ## [Unreleased]
 
+- Migrate to `uv` project manager.
+
 ## [0.14.0] - 2025-08-08
 
 - Display the parse error message when `dbt parse` fails.

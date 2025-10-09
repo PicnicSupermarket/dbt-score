@@ -21,10 +21,10 @@ jobs:
       - name: Install uv and set the Python version
         uses: astral-sh/setup-uv@v6
         with:
-          python-version: ${{ matrix.python-version }}
+          python-version: ${{ matrix.python }}
       - name: Install dependencies
         run: |
-          uv sync --locked --all-extras --dev
+          uv sync --locked --only-dev
       - name: Run Prettier
         uses: creyD/prettier_action@v4.3
         with:
