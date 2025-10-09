@@ -1,6 +1,9 @@
 [build-system]
-requires = ["pdm-backend"]
-build-backend = "pdm.backend"
+requires = ["hatchling>=1.27.0, <2.0.0", "hatch-vcs"]
+build-backend = "hatchling.build"
+
+[tool.hatch.version]
+source = "vcs"
 
 [project]
 name = "dbt-score"
@@ -34,11 +37,10 @@ license = {text = "MIT"}
 [project.scripts]
 dbt-score = "dbt_score.__main__:main"
 
-[tool.pdm]
-[tool.pdm.dev-dependencies]
+[dependency-groups]
 dev = [
     "dbt-core>=1.5",
-    "tox-pdm~=0.7.2",
+    "tox-uv~=1.28",
     "tox~=4.13",
 ]
 lint = [
@@ -53,12 +55,6 @@ docs = [
     "mkdocs-material~=9.5",
     "mkdocstrings[python]~=0.26.0"
 ]
-
-[tool.pdm.version]
-source = "scm"
-
-[tool.pdm.scripts]
-dbt-score = {call = "dbt_score.__main__:main"}
 
 ### Mypy ###
 

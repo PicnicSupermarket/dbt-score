@@ -4,19 +4,19 @@
     {
       "label": "mypy",
       "type": "shell",
-      "command": "pdm run mypy .",
+      "command": "uv run mypy .",
       "problemMatcher": ["$go"]
     },
     {
       "label": "ruff",
       "type": "shell",
-      "command": "pdm run ruff check --fix .",
+      "command": "uv run ruff check --fix .",
       "problemMatcher": ["$go"]
     },
     {
       "label": "mkdocs serve",
       "type": "shell",
-      "command": "pdm run mkdocs serve",
+      "command": "uv run mkdocs serve",
       "problemMatcher": []
     }
   ]

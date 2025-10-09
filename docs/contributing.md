@@ -60,17 +60,17 @@ You'll need the following:
 
 - Any Python version starting from 3.10
 - [pre-commit](https://pre-commit.com/) (recommended)
-- [PDM](https://pdm-project.org/2.12/)
+- [uv](https://docs.astral.sh/uv/)
 
 After cloning the repository with git, configure your development environment by
 running these commands from the project's root:
 
 ```shell
 pre-commit install
-pdm install --group :all
+uv sync --all-groups
 ```
 
-The pdm command will install all project's dependency groups, including all the
+The uv command will install all project's dependency groups, including all the
 dependencies needed for development purposes.
 
 ### Lint
@@ -85,10 +85,10 @@ dependencies needed for development purposes.
 Cheatsheet:
 
 ```shell
-pdm run ruff check .
-pdm run ruff check --fix
-pdm run mypy .
-pdm run tox -e lint
+uv run ruff check .
+uv run ruff check --fix
+uv run mypy .
+uv run tox -e lint
 ```
 
 ### Test
@@ -104,9 +104,9 @@ pdm run tox -e lint
 Cheatsheet:
 
 ```shell
-pdm run tox -e py
-pdm run pytest
-pdm run coverage run -m pytest
+uv run tox -e py
+uv run pytest
+uv run coverage run -m pytest
 ```
 
 ### Docs
@@ -120,8 +120,8 @@ pdm run coverage run -m pytest
 Cheatsheet:
 
 ```shell
-pdm run mkdocs build
-pdm run mkdocs serve
+uv run mkdocs build
+uv run mkdocs serve
 ```
 
 ### Pre-commit
