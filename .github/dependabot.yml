@@ -1,0 +1,10 @@
+---
+version: 2
+updates:
+  - package-ecosystem: "uv"
+    directory: "/"
+    schedule:
+      interval: "daily"
+    open-pull-requests-limit: 25
+    commit-message:
+      prefix: "deps"
