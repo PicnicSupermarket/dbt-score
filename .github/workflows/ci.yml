@@ -8,6 +8,7 @@ on:
   push:
     branches:
       - master
+
   workflow_run: # chain from the uv-lock workflow
     workflows: ["uv.lock on Dependabot PRs"]
     types: [completed]
