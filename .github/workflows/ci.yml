@@ -8,13 +8,16 @@ on:
   push:
     branches:
       - master
-  # Allow triggering this workflow from uv-lock workflow
-  workflow_dispatch:
+  workflow_run: # chain from the uv-lock workflow
+    workflows: ["uv.lock on Dependabot PRs"]
+    types: [completed]
 
 jobs:
   build:
-    # Run only on non-Dependabot PRs
-    if: github.actor != 'dependabot[bot]'
+    # Only run if not a Dependabot PR, or once uv-lock has completed successfully
+    if: |
+      github.event_name == 'workflow_run' ||
+      github.actor != 'dependabot[bot]'
     runs-on: ubuntu-latest
     strategy:
       matrix:
