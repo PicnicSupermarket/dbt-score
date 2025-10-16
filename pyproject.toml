@@ -4,8 +4,6 @@ build-backend = "hatchling.build"
 
 [tool.hatch.version]
 source = "vcs"
-# fallback version when building outside a VCS context (dependabot)
-fallback-version = "0.0.0"
 
 [project]
 name = "dbt-score"
@@ -33,9 +31,6 @@ dependencies = [
     "tomli>=1.1.0; python_version<'3.11'",
 ]
 requires-python = ">=3.10"
-# Dependabot’s uv updater doesn’t check out the whole repo.
-# It builds a minimal temp dir where the actual README.md file may not be present.
-readme = {text = "See the project README on GitHub.", content-type = "text/markdown"}
 license = {text = "MIT"}
 
 [project.scripts]
