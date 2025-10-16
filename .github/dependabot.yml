@@ -1,10 +1,11 @@
 ---
 version: 2
 updates:
-  - package-ecosystem: "uv"
+  - package-ecosystem: "pip"
     directory: "/"
     schedule:
       interval: "daily"
     open-pull-requests-limit: 25
     commit-message:
       prefix: "deps"
+    versioning-strategy: increase

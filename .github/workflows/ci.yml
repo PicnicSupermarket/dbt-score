@@ -8,9 +8,12 @@ on:
   push:
     branches:
       - master
+  # Allow triggering this workflow from uv-lock workflow
+  workflow_dispatch:
 
 jobs:
   build:
+    if: github.actor != 'dependabot[bot]'
     runs-on: ubuntu-latest
     strategy:
       matrix:

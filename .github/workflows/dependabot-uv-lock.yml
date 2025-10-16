@@ -1,0 +1,52 @@
+name: uv.lock on Dependabot PRs
+# 📝 Description:
+# Using Dependabot with "pip" to avoid uv’s specifier normalization (~= → >=,<).
+# Consequence: pip updates only pyproject.toml, not uv.lock → `uv sync --locked` would fail.
+# Fix: on Dependabot PRs that touch pyproject.toml, run `uv lock`, commit uv.lock if changed,
+# then dispatch ci.yml so CI runs against the refreshed lockfile.
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+    paths:
+      - "pyproject.toml"
+permissions:
+  contents: write
+  pull-requests: write
+  actions: write
+
+jobs:
+  uv-lock:
+    if: github.actor == 'dependabot[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install uv
+        uses: astral-sh/setup-uv@v6
+      - name: Update lockfile
+        run: uv lock
+      - name: Commit updated uv.lock
+        run: |
+          if ! git diff --quiet -- uv.lock; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add uv.lock
+            git commit -m "chore: refresh uv.lock"
+            git push
+          fi
+      - name: Trigger CI for this PR head
+        uses: actions/github-script@v7
+        with:
+          script: |
+            await github.rest.actions.createWorkflowDispatch({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            workflow_id: 'ci.yml',
+            ref: context.payload.pull_request.head.ref // the dependabot branch
+            });
