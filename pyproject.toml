@@ -32,7 +32,7 @@ dependencies = [
     "tomli>=1.1.0; python_version<'3.11'",
 ]
 requires-python = ">=3.10"
-readme = "README.md"
+readme = { text = "See the project README on GitHub.", content-type = "text/markdown" }
 license = {text = "MIT"}
 
 [project.scripts]
