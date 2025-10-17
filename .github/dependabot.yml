@@ -1,0 +1,11 @@
+---
+version: 2
+updates:
+  - package-ecosystem: "pip"
+    directory: "/"
+    schedule:
+      interval: "monthly"
+    open-pull-requests-limit: 25
+    commit-message:
+      prefix: "deps"
+    versioning-strategy: increase
