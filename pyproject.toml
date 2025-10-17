@@ -4,6 +4,8 @@ build-backend = "hatchling.build"
 
 [tool.hatch.version]
 source = "vcs"
+version = "0.0.0"
+
 
 [project]
 name = "dbt-score"
