@@ -2,42 +2,64 @@ name: ci
 
 on:
   pull_request:
-    branches:
-      - master
-
+    branches: [master]
   push:
-    branches:
-      - master
+    branches: [master]
 
-  workflow_run: # chain from the uv-lock workflow
-    workflows: ["uv.lock on Dependabot PRs"]
-    types: [completed]
+permissions:
+  contents: write
+  pull-requests: write
 
 jobs:
   build:
-    # Only run if not a Dependabot PR, or once uv-lock has completed successfully
-    if: |
-      github.event_name == 'workflow_run' ||
-      github.actor != 'dependabot[bot]'
     runs-on: ubuntu-latest
     strategy:
       matrix:
         python: ["3.10", "3.11", "3.12", "3.13"]
 
     steps:
+      # default checkout for builds
       - uses: actions/checkout@v5
-      - name: Install uv and set the Python version
+
+      # switch to PR head only when we need to commit uv.lock (Dependabot PRs)
+      - name: Checkout PR head (Dependabot only)
+        if:
+          github.event_name == 'pull_request' && github.actor ==
+          'dependabot[bot]'
+        uses: actions/checkout@v5
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
+          fetch-depth: 0
+
+      - name: Install uv and Python
         uses: astral-sh/setup-uv@v6
         with:
           python-version: ${{ matrix.python }}
-      - name: Install dependencies
+
+      # refresh lock only for Dependabot PRs; keep going even if push is blocked
+      - name: Refresh uv.lock (Dependabot only)
+        if:
+          github.event_name == 'pull_request' && github.actor ==
+          'dependabot[bot]'
         run: |
-          uv sync --locked --only-dev
+          uv lock
+          if ! git diff --quiet -- uv.lock; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add uv.lock
+            git commit -m "chore: refresh uv.lock"
+            git push || echo "push skipped (no perms)"
+          fi
+
+      - name: Install dependencies
+        run: uv sync --locked --only-dev
+
       - name: Run Prettier
         uses: creyD/prettier_action@v4.3
         with:
-          dry: True
+          dry: true
           prettier_options: "--check **/*.{json,yaml,yml,md}"
+
       - name: Run Tox
-        run: |
-          uv run tox -e py,lint
+        run: uv run tox -e py,lint
