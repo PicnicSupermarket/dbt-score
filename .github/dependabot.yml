@@ -4,10 +4,6 @@ multi-ecosystem-groups:
   python:
     schedule:
       interval: "daily"
-    # optional, but if you use it, it must be nested under the group:
-    commit-message:
-      prefix: "dependencies: "
-      include: "scope"
 
 updates:
   - package-ecosystem: "pip"
