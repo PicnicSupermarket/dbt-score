@@ -9,16 +9,12 @@ on:
     branches:
       - master
 
-  workflow_run: # chain from the uv-lock workflow
-    workflows: ["uv.lock on Dependabot PRs"]
-    types: [completed]
+permissions:
+  contents: write
+  pull-requests: write
 
 jobs:
   build:
-    # Only run if not a Dependabot PR, or once uv-lock has completed successfully
-    if: |
-      github.event_name == 'workflow_run' ||
-      github.actor != 'dependabot[bot]'
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -26,18 +22,19 @@ jobs:
 
     steps:
       - uses: actions/checkout@v5
-      - name: Install uv and set the Python version
+      - name: Install uv and Python
         uses: astral-sh/setup-uv@v6
         with:
           python-version: ${{ matrix.python }}
+
       - name: Install dependencies
-        run: |
-          uv sync --locked --only-dev
+        run: uv sync --locked --only-dev
+
       - name: Run Prettier
         uses: creyD/prettier_action@v4.3
         with:
-          dry: True
+          dry: true
           prettier_options: "--check **/*.{json,yaml,yml,md}"
+
       - name: Run Tox
-        run: |
-          uv run tox -e py,lint
+        run: uv run tox -e py,lint

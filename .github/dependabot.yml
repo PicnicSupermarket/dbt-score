@@ -1,11 +1,22 @@
----
 version: 2
+
+multi-ecosystem-groups:
+  python:
+    schedule:
+      interval: "daily"
+    # optional, but if you use it, it must be nested under the group:
+    commit-message:
+      prefix: "dependencies: "
+      include: "scope"
+
 updates:
   - package-ecosystem: "pip"
     directory: "/"
-    schedule:
-      interval: "monthly"
-    open-pull-requests-limit: 25
-    commit-message:
-      prefix: "deps"
+    multi-ecosystem-group: "python"
+    patterns: ["*"]
     versioning-strategy: increase
+
+  - package-ecosystem: "uv"
+    directory: "/"
+    multi-ecosystem-group: "python"
+    patterns: ["*"]
