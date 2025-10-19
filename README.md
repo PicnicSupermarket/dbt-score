@@ -221,4 +221,4 @@ This project is licensed under the MIT License - see the
 
 ## Changelog
 
-See [CHANGELOG.md](CHANGELOG.md) for a history of changes to dbt-score.
+See [CHANGELOG.md](CHANGELOG.md)
