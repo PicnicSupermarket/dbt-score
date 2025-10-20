@@ -9,27 +9,46 @@ on:
     branches:
       - master
 
-  workflow_run: # chain from the uv-lock workflow
-    workflows: ["uv.lock on Dependabot PRs"]
-    types: [completed]
+permissions:
+  contents: write
+  pull-requests: write
 
 jobs:
   build:
-    # Only run if not a Dependabot PR, or once uv-lock has completed successfully
-    if: |
-      github.event_name == 'workflow_run' ||
-      github.actor != 'dependabot[bot]'
     runs-on: ubuntu-latest
     strategy:
       matrix:
         python: ["3.10", "3.11", "3.12", "3.13"]
 
     steps:
+      - uses: actions/create-github-app-token@v1
+        id: app
+        with:
+          app-id: ${{ secrets.APP_ID }}
+          private-key: ${{ secrets.APP_PRIVATE_KEY }}
       - uses: actions/checkout@v5
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
+          token: ${{ steps.app.outputs.token }}
       - name: Install uv and set the Python version
         uses: astral-sh/setup-uv@v6
         with:
           python-version: ${{ matrix.python }}
+      # refresh lock only for Dependabot PRs
+      - name: Refresh uv.lock (Dependabot only)
+        if: |
+          github.event_name == 'pull_request' &&
+          github.actor == 'dependabot[bot]'
+        run: |
+          uv lock
+          if ! git diff --quiet -- uv.lock; then
+            git config user.name "uv-lock-bot[bot]"
+            git config user.email "uv-lock-bot[bot]@users.noreply.github.com"
+            git add uv.lock
+            git commit -m "chore: refresh uv.lock"
+            git push || echo "push skipped (no perms)"
+          fi
       - name: Install dependencies
         run: |
           uv sync --locked --only-dev
