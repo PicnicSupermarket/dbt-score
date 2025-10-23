@@ -13,6 +13,7 @@ from dbt_score.dbt_utils import (
     DbtParseException,
     dbt_parse,
     get_default_manifest_path,
+    manifest_needs_regeneration,
 )
 from dbt_score.lint import lint_dbt_project
 from dbt_score.rule_catalog import display_catalog
@@ -71,12 +72,17 @@ def cli() -> None:
     "-m",
     help="Manifest filepath.",
     type=click.Path(path_type=Path),
-    default=get_default_manifest_path(),
+    default=None,
 )
 @click.option(
-    "--run-dbt-parse",
-    "-p",
-    help="Run dbt parse.",
+    "--force-parse",
+    help="Force dbt parse even if manifest is up-to-date.",
+    is_flag=True,
+    default=False,
+)
+@click.option(
+    "--no-parse",
+    help="Never run dbt parse, even if manifest is missing or outdated.",
     is_flag=True,
     default=False,
 )
@@ -121,20 +127,28 @@ def lint(  # noqa: PLR0912, PLR0913, C901
     select: tuple[str],
     namespace: list[str],
     disabled_rule: list[str],
-    manifest: Path,
-    run_dbt_parse: bool,
+    manifest: Path | None,
+    force_parse: bool,
+    no_parse: bool,
     fail_project_under: float,
     fail_any_item_under: float,
     show: Literal["all", "failing-items", "failing-rules"],
     debug: bool,
 ) -> None:
     """Lint dbt metadata."""
-    manifest_provided = (
-        click.get_current_context().get_parameter_source("manifest")
-        != ParameterSource.DEFAULT
-    )
-    if manifest_provided and run_dbt_parse:
-        raise click.UsageError("--run-dbt-parse cannot be used with --manifest.")
+    # Get manifest path, using default if not provided
+    if manifest is None:
+        manifest = get_default_manifest_path()
+        manifest_provided = False
+    else:
+        manifest_provided = True
+
+    if force_parse and no_parse:
+        raise click.UsageError("--force-parse and --no-parse cannot be used together.")
+    if manifest_provided and (force_parse or no_parse):
+        raise click.UsageError(
+            "--manifest cannot be used with --force-parse or --no-parse."
+        )
 
     config = Config()
     config.load()
@@ -152,16 +166,22 @@ def lint(  # noqa: PLR0912, PLR0913, C901
         config.overload({"debug": debug})
 
     try:
-        if run_dbt_parse:
-            dbt_parse()
+        # Auto-parse logic:
+        # - If --force-parse: always parse
+        # - If --no-parse: never parse
+        # - Otherwise: parse only if manifest is missing or outdated
+        if not no_parse and not manifest_provided:
+            if force_parse or manifest_needs_regeneration(manifest):
+                dbt_parse(force=force_parse, manifest_path=manifest)
+
         evaluation = lint_dbt_project(
             manifest_path=manifest, config=config, format=format, select=select
         )
 
     except FileNotFoundError:
         logger.error(
-            "dbt's manifest.json could not be found. If you're in a dbt project, be "
-            "sure to run 'dbt parse' first, or use the option '--run-dbt-parse'."
+            "dbt's manifest.json could not be found. "
+            "Run 'dbt parse' first."
         )
         ctx.exit(2)
 

@@ -8,6 +8,21 @@ and this project adheres to
 
 ## [Unreleased]
 
+### Added
+
+- Automatic `dbt parse` execution with intelligent manifest freshness checking.
+- New `--force-parse` flag to force parsing even if manifest is up-to-date.
+- New `--no-parse` flag to skip parsing even if manifest is missing or outdated.
+
+### Changed
+
+- `dbt-score lint` now automatically runs `dbt parse` when manifest is missing or outdated (no flag required).
+- Manifest freshness is determined by comparing timestamps of `.sql`, `.yml`, and `.yaml` files against the manifest.
+
+### Removed
+
+- **Breaking**: Removed `--run-dbt-parse` / `-p` flag (auto-parse is now the default behavior).
+
 ## [0.14.1] - 2025-10-09
 
 - Migrate to `uv` project manager.
