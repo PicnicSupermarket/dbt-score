@@ -61,9 +61,54 @@ def _disable_dbt_stdout() -> Iterator[None]:
         yield
 
 
+def manifest_needs_regeneration(manifest_path: Path | None = None) -> bool:
+    """Check if the manifest needs to be regenerated.
+
+    Compares the modification time of the manifest against all .sql and .yml files
+    in the dbt project to determine if a re-parse is needed.
+
+    Args:
+        manifest_path: Path to the manifest.json file. If None, uses default path.
+
+    Returns:
+        True if manifest is missing or outdated, False if up-to-date.
+    """
+    if manifest_path is None:
+        manifest_path = get_default_manifest_path()
+
+    # If manifest doesn't exist, we need to generate it
+    if not manifest_path.exists():
+        return True
+
+    manifest_time = manifest_path.stat().st_mtime
+
+    # Get the dbt project directory (parent of target directory)
+    if manifest_path.parent.name == os.getenv("DBT_TARGET_DIR", "target"):
+        project_dir = manifest_path.parent.parent
+    else:
+        project_dir = Path.cwd()
+
+    # Check if any .sql, .yml, or .yaml files are newer than manifest
+    for pattern in ("**/*.sql", "**/*.yml", "**/*.yaml"):
+        for file in project_dir.glob(pattern):
+            # Skip files in target directory to avoid checking generated files
+            if os.getenv("DBT_TARGET_DIR", "target") in file.parts:
+                continue
+            if file.stat().st_mtime > manifest_time:
+                return True
+
+    return False
+
+
 @dbt_required
-def dbt_parse() -> "dbtRunnerResult":
+def dbt_parse(
+    force: bool = False, manifest_path: Path | None = None
+) -> "dbtRunnerResult":
     """Parse a dbt project.
+
+    Args:
+        force: If True, always run dbt parse. If False, skip if manifest is up-to-date.
+        manifest_path: Path to check for manifest freshness. If None, uses default path.
 
     Returns:
         The dbt parse run result.
@@ -71,6 +116,15 @@ def dbt_parse() -> "dbtRunnerResult":
     Raises:
         DbtParseException: dbt parse failed.
     """
+    if not force and not manifest_needs_regeneration(manifest_path):
+        # Return a mock successful result when skipping parse
+        # This maintains backward compatibility with code expecting a result
+        class MockResult:
+            success = True
+            exception = None
+
+        return cast("dbtRunnerResult", MockResult())
+
     with _disable_dbt_stdout():
         result: "dbtRunnerResult" = dbtRunner().invoke(["parse"])
 

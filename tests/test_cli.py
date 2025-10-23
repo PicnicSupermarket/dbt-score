@@ -13,7 +13,7 @@ def test_invalid_options():
     runner = CliRunner()
     with patch("dbt_score.cli.Config._load_toml_file"):
         result = runner.invoke(
-            lint, ["--manifest", "fake_manifest.json", "--run-dbt-parse"]
+            lint, ["--manifest", "fake_manifest.json", "--force-parse"]
         )
         assert result.exit_code == 2  # pylint: disable=PLR2004
 
@@ -53,7 +53,7 @@ def test_lint_dbt_parse_exception(caplog):
 
     with patch("dbt_score.cli.dbt_parse") as mock_dbt_parse:
         mock_dbt_parse.side_effect = DbtParseException()
-        result = runner.invoke(lint, ["-p"], catch_exceptions=False)
+        result = runner.invoke(lint, ["--force-parse"], catch_exceptions=False)
     assert result.exit_code == 2
     assert "dbt parse failed." in caplog.text
 
@@ -75,7 +75,7 @@ def test_lint_dbt_not_installed_v(caplog):
     runner = CliRunner()
 
     with patch("dbt_score.dbt_utils.DBT_INSTALLED", new=False):
-        result = runner.invoke(lint, ["-p"])
+        result = runner.invoke(lint, ["--force-parse"])
     assert result.exit_code == 2
     assert "DbtNotInstalledException" in caplog.text
 
