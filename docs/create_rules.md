@@ -32,7 +32,7 @@ function is its description. Therefore, it is important to use a
 self-explanatory name for the function and document it well.
 
 The type annotation for the rule's argument dictates whether the rule should be
-applied to dbt models, sources, snapshots, seeds, or exposures.
+applied to dbt models, sources, snapshots, seeds, exposures, or macros.
 
 Here is the same example rule, applied to sources:
 

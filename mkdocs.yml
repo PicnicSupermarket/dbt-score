@@ -28,6 +28,7 @@ nav:
   - Programmatic invocations: programmatic_invocations.md
   - Rules:
       - rules/generic.md
+      - rules/macros.md
       - rules/filters.md
   - Reference:
       - reference/cli.md

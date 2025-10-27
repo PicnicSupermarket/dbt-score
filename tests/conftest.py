@@ -6,6 +6,7 @@ from typing import Any, Type
 
 from dbt_score import (
     Exposure,
+    Macro,
     Model,
     Rule,
     RuleViolation,
@@ -618,6 +619,21 @@ def seed2(raw_manifest) -> Seed:
     return Seed.from_node(raw_manifest["nodes"]["seed.package.seed2"], [])
 
 
+# Macros
+
+
+@fixture
+def macro1(raw_manifest) -> Macro:
+    """Macro 1."""
+    return Macro.from_node(raw_manifest["macros"]["macro.package.macro1"])
+
+
+@fixture
+def macro2(raw_manifest) -> Macro:
+    """Macro 2."""
+    return Macro.from_node(raw_manifest["macros"]["macro.package.macro2"])
+
+
 @fixture
 def decorator_rule_seed() -> Type[Rule]:
     """An example rule created with the rule decorator."""
@@ -709,3 +725,75 @@ def seed_class_rule_with_filter() -> Type[Rule]:
             return RuleViolation(message="I always fail.")
 
     return SeedRuleWithFilter
+
+
+@fixture
+def decorator_rule_macro() -> Type[Rule]:
+    """An example rule created with the rule decorator."""
+
+    @rule()
+    def example_rule_macro(macro: Macro) -> RuleViolation | None:
+        """Description of the rule."""
+        if macro.name == "macro1":
+            return RuleViolation(message="Macro1 is a violation.")
+
+    return example_rule_macro
+
+
+@fixture
+def decorator_rule_no_parens_macro() -> Type[Rule]:
+    """An example rule created with the rule decorator without parentheses."""
+
+    @rule
+    def example_rule(macro: Macro) -> RuleViolation | None:
+        """Description of the rule."""
+        if macro.name == "macro1":
+            return RuleViolation(message="Macro1 is a violation.")
+
+    return example_rule
+
+
+@fixture
+def decorator_rule_args_macro() -> Type[Rule]:
+    """An example rule created with the rule decorator with arguments."""
+
+    @rule(description="Description of the rule.")
+    def example_rule(macro: Macro) -> RuleViolation | None:
+        if macro.name == "macro1":
+            return RuleViolation(message="Macro1 is a violation.")
+
+    return example_rule
+
+
+@fixture
+def class_rule_macro() -> Type[Rule]:
+    """An example rule created with a class."""
+
+    class ExampleRule(Rule):
+        """Example rule."""
+
+        description = "Description of the rule."
+
+        def evaluate(self, macro: Macro) -> RuleViolation | None:  # type: ignore[override]
+            """Evaluate macro."""
+            if macro.name == "macro1":
+                return RuleViolation(message="Macro1 is a violation.")
+
+    return ExampleRule
+
+
+@fixture
+def macro_rule_with_filter() -> Type[Rule]:
+    """An example rule that skips through a filter."""
+
+    @rule_filter
+    def skip_macro1(macro: Macro) -> bool:
+        """Skips for macro1, passes for macro2."""
+        return macro.name != "macro1"
+
+    @rule(rule_filters={skip_macro1()})
+    def macro_rule_with_filter(macro: Macro) -> RuleViolation | None:
+        """Rule that always fails when not filtered."""
+        return RuleViolation(message="I always fail.")
+
+    return macro_rule_with_filter
