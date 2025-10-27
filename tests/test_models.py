@@ -81,6 +81,22 @@ def test_manifest_load(mock_read_text, raw_manifest):
             loader.models["model.package.collision_test"]
         ]
 
+        assert len(loader.macros) == len(
+            [
+                macro
+                for macro in raw_manifest["macros"].values()
+                if macro["package_name"] == raw_manifest["metadata"]["project_name"]
+            ]
+        )
+        macro1 = loader.macros["macro.package.macro1"]
+        assert macro1.name == "macro1"
+        assert macro1.description == "A helpful macro."
+        assert macro1.tags == ["utility"]
+        macro2 = loader.macros["macro.package.macro2"]
+        assert macro2.name == "macro2"
+        assert macro2.description == ""
+        assert len(macro2.arguments) == 2
+
 
 @patch("dbt_score.models.Path.read_text")
 def test_manifest_select_models_simple(mock_read_text, raw_manifest):

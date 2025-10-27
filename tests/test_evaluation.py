@@ -61,6 +61,7 @@ def test_evaluation_low_medium_high(
         + len(manifest_loader.snapshots)
         + len(manifest_loader.seeds)
         + len(manifest_loader.exposures)
+        + len(manifest_loader.macros)
     )
     assert mock_formatter.evaluable_evaluated.call_count == total_evaluables
     assert mock_formatter.project_evaluated.call_count == 1
