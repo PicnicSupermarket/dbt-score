@@ -61,6 +61,7 @@ def test_macro_arguments_have_description():
     )
     violation = rule.evaluate(macro_no_docs)
     assert violation is not None
+    assert violation.message is not None
     assert "arg1" in violation.message
 
 
@@ -94,4 +95,5 @@ def test_macro_name_follows_naming_convention():
     )
     violation = rule.evaluate(macro_camel)
     assert violation is not None
+    assert violation.message is not None
     assert "snake_case" in violation.message
