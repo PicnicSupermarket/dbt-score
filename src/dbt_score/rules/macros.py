@@ -2,7 +2,7 @@
 
 import re
 
-from dbt_score import Macro, RuleViolation, Severity, rule
+from dbt_score import Macro, RuleViolation, rule
 
 
 @rule
