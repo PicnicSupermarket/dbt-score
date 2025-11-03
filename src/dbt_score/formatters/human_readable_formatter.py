@@ -96,7 +96,7 @@ class HumanReadableFormatter(Formatter):
                 resource_type = type(evaluable)
                 print(
                     f"{resource_type.__name__} "
-                    f"{self.pretty_name(evaluable)} scored {evaluable_score.value}"
+                    f"{self.pretty_name(evaluable)} scored {evaluable_score.rounded_value}"
                 )
 
         elif score.value < self._config.fail_project_under:
