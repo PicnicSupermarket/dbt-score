@@ -161,23 +161,23 @@ def test_human_readable_formatter_low_evaluable_score(
     results: EvaluableResultsType = {
         rule_severity_critical: RuleViolation("Error"),
     }
-    formatter.evaluable_evaluated(model1, results, Score(0.0, "🚧"))
-    formatter.evaluable_evaluated(source1, results, Score(0.0, "🚧"))
-    formatter.project_evaluated(Score(0.0, "🚧"))
+    formatter.evaluable_evaluated(model1, results, Score(4.99, "🚧"))
+    formatter.evaluable_evaluated(source1, results, Score(3.33, "🚧"))
+    formatter.project_evaluated(Score(4.16, "🚧"))
     stdout = capsys.readouterr().out
 
     expected = """\
-    🚧 \x1b[1mModel: model1\x1b[0m (score: 0.0)
+    🚧 \x1b[1mModel: model1\x1b[0m (score: 4.9)
         \x1b[1;33mWARN\x1b[0m (critical) tests.conftest.rule_severity_critical: Error
 
-    🚧 \x1b[1mSource: my_source.table1\x1b[0m (score: 0.0)
+    🚧 \x1b[1mSource: my_source.table1\x1b[0m (score: 3.3)
         \x1b[1;33mWARN\x1b[0m (critical) tests.conftest.rule_severity_critical: Error
 
-    Project score: \x1b[1m0.0\x1b[0m 🚧
+    Project score: \x1b[1m4.1\x1b[0m 🚧
 
     Error: evaluable score too low, fail_any_item_under = 5.0
-    Model model1 scored 0.0
-    Source my_source.table1 scored 0.0
+    Model model1 scored 4.9
+    Source my_source.table1 scored 3.3
     """
     assert stdout == dedent(expected)
 
