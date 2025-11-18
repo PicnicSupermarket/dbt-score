@@ -8,11 +8,14 @@ and this project adheres to
 
 ## [Unreleased]
 
+## [0.15.0] - 2025-11-19
+
+- Round score of individual entities when showing summary.
+- Support linting dbt macros as a new evaluable entity type.
+
 ## [0.14.1] - 2025-10-09
 
 - Migrate to `uv` project manager.
-- Round score of individual entities when showing summary.
-- Support linting dbt macros as a new evaluable entity type.
 
 ## [0.14.0] - 2025-08-08
 
