@@ -645,7 +645,60 @@ class Seed(HasColumnsMixin):
         return hash(self.unique_id)
 
 
-Evaluable: TypeAlias = Model | Source | Snapshot | Seed | Exposure
+@dataclass
+class Macro:
+    """Represents a dbt macro.
+
+    Attributes:
+        unique_id: The unique id of the macro (e.g. `macro.package.macro_name`).
+        name: The name of the macro.
+        description: The description of the macro.
+        original_file_path: The path to the macro file
+            (e.g. `macros/my_macro.sql`).
+        package_name: The name of the package this macro belongs to.
+        macro_sql: The SQL code of the macro.
+        meta: The metadata attached to the macro.
+        tags: The list of tags attached to the macro.
+        depends_on: The depends_on of the macro (macros it depends on).
+        arguments: The list of arguments the macro accepts.
+        _raw_values: The raw values of the macro in the manifest.
+    """
+
+    unique_id: str
+    name: str
+    description: str
+    original_file_path: str
+    package_name: str
+    macro_sql: str
+    meta: dict[str, Any]
+    tags: list[str]
+    depends_on: dict[str, list[str]] = field(default_factory=dict)
+    arguments: list[dict[str, Any]] = field(default_factory=list)
+    _raw_values: dict[str, Any] = field(default_factory=dict)
+
+    @classmethod
+    def from_node(cls, node_values: dict[str, Any]) -> "Macro":
+        """Create a macro object from a node in the manifest."""
+        return cls(
+            unique_id=node_values["unique_id"],
+            name=node_values["name"],
+            description=node_values.get("description", ""),
+            original_file_path=node_values["original_file_path"],
+            package_name=node_values["package_name"],
+            macro_sql=node_values["macro_sql"],
+            meta=node_values.get("meta", {}),
+            tags=node_values.get("tags", []),
+            depends_on=node_values.get("depends_on", {}),
+            arguments=node_values.get("arguments", []),
+            _raw_values=node_values,
+        )
+
+    def __hash__(self) -> int:
+        """Compute a unique hash for a macro."""
+        return hash(self.unique_id)
+
+
+Evaluable: TypeAlias = Model | Source | Snapshot | Seed | Exposure | Macro
 
 
 class ManifestLoader:
@@ -677,6 +730,11 @@ class ManifestLoader:
             ).items()
             if exposure_values["package_name"] == self.project_name
         }
+        self.raw_macros = {
+            macro_id: macro_values
+            for macro_id, macro_values in self.raw_manifest.get("macros", {}).items()
+            if macro_values["package_name"] == self.project_name
+        }
 
         self.models: dict[str, Model] = {}
         self.tests: dict[str, list[dict[str, Any]]] = defaultdict(list)
@@ -684,6 +742,7 @@ class ManifestLoader:
         self.snapshots: dict[str, Snapshot] = {}
         self.exposures: dict[str, Exposure] = {}
         self.seeds: dict[str, Seed] = {}
+        self.macros: dict[str, Macro] = {}
 
         self._reindex_tests()
         self._load_models()
@@ -691,6 +750,7 @@ class ManifestLoader:
         self._load_snapshots()
         self._load_exposures()
         self._load_seeds()
+        self._load_macros()
         self._populate_relatives()
 
         if select:
@@ -702,6 +762,7 @@ class ManifestLoader:
             + len(self.snapshots)
             + len(self.seeds)
             + len(self.exposures)
+            + len(self.macros)
         ) == 0:
             logger.warning("Nothing to evaluate!")
 
@@ -739,6 +800,13 @@ class ManifestLoader:
             if node_values.get("resource_type") == "seed":
                 seed = Seed.from_node(node_values, self.tests.get(node_id, []))
                 self.seeds[node_id] = seed
+
+    def _load_macros(self) -> None:
+        """Load the macros from the manifest."""
+        for macro_id, macro_values in self.raw_macros.items():
+            if macro_values.get("resource_type") == "macro":
+                macro = Macro.from_node(macro_values)
+                self.macros[macro_id] = macro
 
     def _reindex_tests(self) -> None:
         """Index tests based on their associated evaluable."""
@@ -796,3 +864,4 @@ class ManifestLoader:
         self.snapshots = {k: s for k, s in self.snapshots.items() if s.name in selected}
         self.exposures = {k: e for k, e in self.exposures.items() if e.name in selected}
         self.seeds = {k: s for k, s in self.seeds.items() if s.name in selected}
+        self.macros = {k: m for k, m in self.macros.items() if m.name in selected}

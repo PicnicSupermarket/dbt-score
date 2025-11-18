@@ -61,6 +61,7 @@ def test_evaluation_low_medium_high(
         + len(manifest_loader.snapshots)
         + len(manifest_loader.seeds)
         + len(manifest_loader.exposures)
+        + len(manifest_loader.macros)
     )
     assert mock_formatter.evaluable_evaluated.call_count == total_evaluables
     assert mock_formatter.project_evaluated.call_count == 1
@@ -203,6 +204,8 @@ def test_evaluation_with_filter(
     source_rule_with_filter,
     snapshot_rule_with_filter,
     exposure_rule_with_filter,
+    seed_rule_with_filter,
+    macro_rule_with_filter,
 ):
     """Test rule with filter."""
     manifest_loader = ManifestLoader(manifest_path)
@@ -214,6 +217,8 @@ def test_evaluation_with_filter(
     rule_registry._add_rule(source_rule_with_filter)
     rule_registry._add_rule(snapshot_rule_with_filter)
     rule_registry._add_rule(exposure_rule_with_filter)
+    rule_registry._add_rule(seed_rule_with_filter)
+    rule_registry._add_rule(macro_rule_with_filter)
     # Ensure we get a valid Score object from the Mock
     mock_scorer.score_model.return_value = Score(10, "🥇")
 
@@ -234,6 +239,10 @@ def test_evaluation_with_filter(
     snapshot2 = manifest_loader.snapshots["snapshot.package.snapshot2"]
     exposure1 = manifest_loader.exposures["exposure.package.exposure1"]
     exposure2 = manifest_loader.exposures["exposure.package.exposure2"]
+    seed1 = manifest_loader.seeds["seed.package.seed1"]
+    seed2 = manifest_loader.seeds["seed.package.seed2"]
+    macro1 = manifest_loader.macros["macro.package.macro1"]
+    macro2 = manifest_loader.macros["macro.package.macro2"]
 
     assert model_rule_with_filter not in evaluation.results[model1]
     assert isinstance(evaluation.results[model2][model_rule_with_filter], RuleViolation)
@@ -251,6 +260,16 @@ def test_evaluation_with_filter(
     assert exposure_rule_with_filter not in evaluation.results[exposure1]
     assert isinstance(
         evaluation.results[exposure2][exposure_rule_with_filter], RuleViolation
+    )
+
+    assert seed_rule_with_filter not in evaluation.results[seed1]
+    assert isinstance(
+        evaluation.results[seed2][seed_rule_with_filter], RuleViolation
+    )
+
+    assert macro_rule_with_filter not in evaluation.results[macro1]
+    assert isinstance(
+        evaluation.results[macro2][macro_rule_with_filter], RuleViolation
     )
 
 

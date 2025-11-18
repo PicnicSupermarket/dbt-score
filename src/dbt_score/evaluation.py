@@ -66,6 +66,7 @@ class Evaluation:
             self._manifest_loader.snapshots.values(),
             self._manifest_loader.exposures.values(),
             self._manifest_loader.seeds.values(),
+            self._manifest_loader.macros.values(),
         ):
             # type inference on elements from `chain` is wonky
             # and resolves to superclass HasColumnsMixin
@@ -101,5 +102,6 @@ class Evaluation:
             or self._manifest_loader.snapshots
             or self._manifest_loader.exposures
             or self._manifest_loader.seeds
+            or self._manifest_loader.macros
         ):
             self._formatter.project_evaluated(self.project_score)
