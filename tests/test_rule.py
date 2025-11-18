@@ -3,6 +3,7 @@
 import pytest
 from dbt_score import (
     Exposure,
+    Macro,
     Model,
     Rule,
     RuleViolation,
@@ -98,6 +99,10 @@ def test_missing_evaluate_rule_class(model1):
         ("decorator_rule_no_parens_seed", Seed),
         ("decorator_rule_args_seed", Seed),
         ("class_rule_seed", Seed),
+        ("decorator_rule_macro", Macro),
+        ("decorator_rule_no_parens_macro", Macro),
+        ("decorator_rule_args_macro", Macro),
+        ("class_rule_macro", Macro),
     ],
 )
 def test_rule_introspects_its_resource_type(request, rule_fixture, expected_type):

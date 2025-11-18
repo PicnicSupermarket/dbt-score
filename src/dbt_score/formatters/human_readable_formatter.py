@@ -4,7 +4,7 @@ from typing import Any
 
 from dbt_score.evaluation import EvaluableResultsType
 from dbt_score.formatters import Formatter
-from dbt_score.models import Evaluable, Exposure, Model, Seed, Snapshot, Source
+from dbt_score.models import Evaluable, Exposure, Macro, Model, Seed, Snapshot, Source
 from dbt_score.rule import RuleViolation
 from dbt_score.scoring import Score
 
@@ -40,6 +40,8 @@ class HumanReadableFormatter(Formatter):
             case Exposure():
                 return evaluable.name
             case Seed():
+                return evaluable.name
+            case Macro():
                 return evaluable.name
             case _:
                 raise NotImplementedError

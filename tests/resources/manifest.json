@@ -593,5 +593,48 @@
       "metrics": [],
       "created_at": 1744832856.199685
     }
+  },
+  "macros": {
+    "macro.package.macro1": {
+      "resource_type": "macro",
+      "package_name": "package",
+      "unique_id": "macro.package.macro1",
+      "name": "macro1",
+      "description": "A helpful macro.",
+      "original_file_path": "macros/macro1.sql",
+      "macro_sql": "{% macro macro1() %}\n  SELECT 1\n{% endmacro %}",
+      "meta": {},
+      "tags": ["utility"],
+      "depends_on": {
+        "macros": []
+      },
+      "arguments": []
+    },
+    "macro.package.macro2": {
+      "resource_type": "macro",
+      "package_name": "package",
+      "unique_id": "macro.package.macro2",
+      "name": "macro2",
+      "description": "",
+      "original_file_path": "macros/macro2.sql",
+      "macro_sql": "{% macro macro2(arg1, arg2) %}\n  SELECT {{ arg1 }}, {{ arg2 }}\n{% endmacro %}",
+      "meta": {},
+      "tags": [],
+      "depends_on": {
+        "macros": ["macro.package.macro1"]
+      },
+      "arguments": [
+        {
+          "name": "arg1",
+          "type": "string",
+          "description": "First argument"
+        },
+        {
+          "name": "arg2",
+          "type": "int",
+          "description": "Second argument"
+        }
+      ]
+    }
   }
 }
