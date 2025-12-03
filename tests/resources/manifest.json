@@ -85,7 +85,13 @@
           "data_type": "string",
           "meta": {},
           "constraints": [],
-          "tags": []
+          "tags": [],
+          "config": {
+            "custom_property": "custom_value",
+            "meta": {
+              "info": "some info"
+            }
+          }
         }
       },
       "constraints": [],
