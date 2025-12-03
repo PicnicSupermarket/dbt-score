@@ -81,6 +81,7 @@ class Column:
         name: The name of the column.
         description: The description of the column.
         data_type: The data type of the column.
+        config: The configuration of the column.
         meta: The metadata attached to the column.
         constraints: The list of constraints attached to the column.
         tags: The list of tags attached to the column.
@@ -92,6 +93,7 @@ class Column:
     name: str
     description: str
     data_type: str | None = None
+    config: dict[str, Any] = field(default_factory=dict)
     meta: dict[str, Any] = field(default_factory=dict)
     constraints: list[Constraint] = field(default_factory=list)
     tags: list[str] = field(default_factory=list)
@@ -108,6 +110,7 @@ class Column:
             name=values["name"],
             description=values["description"],
             data_type=values["data_type"],
+            config=values.get("config", {}),
             meta=values["meta"],
             constraints=[
                 Constraint.from_raw_values(constraint)
