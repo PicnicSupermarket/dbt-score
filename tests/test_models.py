@@ -23,7 +23,17 @@ def test_manifest_load(mock_read_text, raw_manifest):
         model1 = loader.models["model.package.model1"]
         assert model1.tests[0].name == "test2"
         assert model1.tests[1].name == "test4"
-        assert model1.columns[0].tests[0].name == "test1"
+
+        column_a = model1.columns[0]
+        assert column_a.name == "column_a"
+        assert column_a.config.get("custom_property") == "custom_value"
+        assert column_a.config.get("meta", {}).get("info") == "some info"
+        assert column_a.tests[0].name == "test1"
+
+        model2 = loader.models["model.package.model2"]
+        column_a_model2 = model2.columns[0]
+        assert column_a_model2.name == "column_a"
+        assert column_a_model2.config == {}
 
         assert len(loader.sources) == len(
             [
