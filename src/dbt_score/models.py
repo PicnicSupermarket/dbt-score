@@ -409,10 +409,10 @@ class Snapshot(HasColumnsMixin):
         unique_id: The id of the snapshot, e.g. `snapshot.package.snapshot_name`.
         name: The name of the snapshot.
         relation_name: The relation name of the snapshot,
-        e.g. `db.schema.snapshot_name`.
+            e.g. `db.schema.snapshot_name`.
         description: The full description of the snapshot.
         original_file_path: The sql path of the snapshot,
-        `e.g. snapshot_dir/dir/file.sql`.
+            `e.g. snapshot_dir/dir/file.sql`.
         config: The config of the snapshot.
         meta: The meta of the snapshot.
         columns: The list of columns of the snapshot.
