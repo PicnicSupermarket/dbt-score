@@ -38,7 +38,7 @@ jobs:
         uses: astral-sh/setup-uv@v6
         with:
           python-version: ${{ matrix.python }}
-      # refresh lock only for Dependabot PRs
+      # refresh lock only for Dependabot PRs.
       - name: Refresh uv.lock (Dependabot only)
         if: |
           github.event_name == 'pull_request' &&
