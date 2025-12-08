@@ -35,7 +35,9 @@ jobs:
       - uses: actions/checkout@v5
         with:
           ref: ${{ github.event.pull_request.head.ref || github.ref }}
-          repository: ${{ github.event.pull_request.head.repo.full_name || github.repository }}
+          repository:
+            ${{ github.event.pull_request.head.repo.full_name ||
+            github.repository }}
           token: ${{ steps.app.outputs.token || github.token }}
       - name: Install uv and set the Python version
         uses: astral-sh/setup-uv@v6
