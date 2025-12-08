@@ -23,14 +23,17 @@ jobs:
     steps:
       - uses: actions/create-github-app-token@v1
         id: app
+        if: |
+          github.event_name == 'push' ||
+          (github.event.pull_request.head.repo.full_name == github.repository)
         with:
           app-id: ${{ secrets.APP_ID }}
           private-key: ${{ secrets.APP_PRIVATE_KEY }}
       - uses: actions/checkout@v5
         with:
-          ref: ${{ github.event.pull_request.head.ref }}
-          repository: ${{ github.event.pull_request.head.repo.full_name }}
-          token: ${{ steps.app.outputs.token }}
+          ref: ${{ github.event.pull_request.head.ref || github.ref }}
+          repository: ${{ github.event.pull_request.head.repo.full_name || github.repository }}
+          token: ${{ steps.app.outputs.token || github.token }}
       - name: Install uv and set the Python version
         uses: astral-sh/setup-uv@v6
         with:
