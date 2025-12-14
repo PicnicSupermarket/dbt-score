@@ -26,7 +26,7 @@ def test_manifest_load(mock_read_text, raw_manifest):
 
         column_a = model1.columns[0]
         assert column_a.name == "column_a"
-        assert column_a.config.get("custom_property") == "custom_value"
+        assert column_a.config.get("meta", {}).get("custom_property") == "custom_value"
         assert column_a.config.get("meta", {}).get("info") == "some info"
         assert column_a.tests[0].name == "test1"
 

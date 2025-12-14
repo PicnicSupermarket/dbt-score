@@ -87,8 +87,8 @@
           "constraints": [],
           "tags": [],
           "config": {
-            "custom_property": "custom_value",
             "meta": {
+              "custom_property": "custom_value",
               "info": "some info"
             }
           }
