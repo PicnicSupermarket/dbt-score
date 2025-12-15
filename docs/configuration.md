@@ -31,7 +31,7 @@ wip.icon = "🏗️"
 
 [tool.dbt-score.rules."dbt_score.rules.generic.sql_has_reasonable_number_of_lines"]
 severity = 1
-max_lines = 300
+max_lines = 250
 ```
 
 ### Configuration options
