@@ -48,7 +48,7 @@ lint = [
     "mypy~=1.8",
 ]
 test = [
-    "pytest~=8.0",
+    "pytest~=9.0",
     "coverage[toml]~=7.4"
 ]
 docs = [
