@@ -8,6 +8,8 @@ and this project adheres to
 
 ## [Unreleased]
 
+- Expose column config field from the manifest.
+
 ## [0.15.0] - 2025-11-19
 
 - Round score of individual entities when showing summary.
