@@ -18,6 +18,24 @@ def test_invalid_options():
         assert result.exit_code == 2  # pylint: disable=PLR2004
 
 
+def test_selected_and_disabled_rule_options_mutually_exclusive():
+    """Test selected and disabled rule options are mutually exclusive."""
+    runner = CliRunner()
+    with patch("dbt_score.cli.Config._load_toml_file"):
+        result = runner.invoke(
+            lint,
+            [
+                "--manifest",
+                "fake_manifest.json",
+                "--selected-rule",
+                "foo",
+                "--disabled-rule",
+                "bar",
+            ],
+        )
+        assert result.exit_code == 2  # pylint: disable=PLR2004
+
+
 def test_lint_existing_manifest(manifest_path):
     """Test lint with an existing manifest."""
     runner = CliRunner()
