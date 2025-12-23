@@ -66,7 +66,7 @@ After cloning the repository with git, configure your development environment by
 running these commands from the project's root:
 
 ```shell
-pre-commit install
+uv pip install pre-commit
 uv sync --all-groups
 ```
 
@@ -131,7 +131,7 @@ Cheatsheet:
 Execute hooks manually:
 
 ```shell
-pre-commit run --all-files
+uv run pre-commit run --all-files
 ```
 
 Create a commit bypassing hooks:
