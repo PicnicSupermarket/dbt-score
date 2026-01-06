@@ -4,6 +4,8 @@ import json
 from pathlib import Path
 from typing import Any, Type
 
+from pytest import fixture
+
 from dbt_score import (
     Exposure,
     Macro,
@@ -19,7 +21,6 @@ from dbt_score import (
 from dbt_score.config import Config
 from dbt_score.models import ManifestLoader
 from dbt_score.rule_filter import RuleFilter, rule_filter
-from pytest import fixture
 
 # Configuration
 

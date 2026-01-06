@@ -1,7 +1,6 @@
 """Example rules."""
 
 from dbt_score import Model, RuleViolation, rule
-
 from tests.rules.rule_filters import skip_schemaX
 
 

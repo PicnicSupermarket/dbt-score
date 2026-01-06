@@ -3,6 +3,7 @@
 from textwrap import dedent
 
 import pytest
+
 from dbt_score.evaluation import EvaluableResultsType
 from dbt_score.formatters.human_readable_formatter import HumanReadableFormatter
 from dbt_score.rule import RuleViolation

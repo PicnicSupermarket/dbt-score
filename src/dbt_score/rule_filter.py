@@ -79,41 +79,34 @@ class RuleFilter:
 
 
 @overload
-def rule_filter(__func: ModelFilterEvaluationType) -> Type[RuleFilter]:
-    ...
+def rule_filter(__func: ModelFilterEvaluationType) -> Type[RuleFilter]: ...
 
 
 @overload
-def rule_filter(__func: SourceFilterEvaluationType) -> Type[RuleFilter]:
-    ...
+def rule_filter(__func: SourceFilterEvaluationType) -> Type[RuleFilter]: ...
 
 
 @overload
-def rule_filter(__func: SnapshotFilterEvaluationType) -> Type[RuleFilter]:
-    ...
+def rule_filter(__func: SnapshotFilterEvaluationType) -> Type[RuleFilter]: ...
 
 
 @overload
-def rule_filter(__func: ExposureFilterEvaluationType) -> Type[RuleFilter]:
-    ...
+def rule_filter(__func: ExposureFilterEvaluationType) -> Type[RuleFilter]: ...
 
 
 @overload
-def rule_filter(__func: SeedRuleEvaluationType) -> Type[RuleFilter]:
-    ...
+def rule_filter(__func: SeedRuleEvaluationType) -> Type[RuleFilter]: ...
 
 
 @overload
-def rule_filter(__func: MacroFilterEvaluationType) -> Type[RuleFilter]:
-    ...
+def rule_filter(__func: MacroFilterEvaluationType) -> Type[RuleFilter]: ...
 
 
 @overload
 def rule_filter(
     *,
     description: str | None = None,
-) -> Callable[[FilterEvaluationType], Type[RuleFilter]]:
-    ...
+) -> Callable[[FilterEvaluationType], Type[RuleFilter]]: ...
 
 
 def rule_filter(
