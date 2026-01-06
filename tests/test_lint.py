@@ -1,6 +1,5 @@
 """Unit tests for the linting functionality."""
 
-
 from unittest.mock import patch
 
 from dbt_score.config import Config

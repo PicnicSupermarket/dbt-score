@@ -1,6 +1,7 @@
 """Unit tests for the rule registry."""
 
 import pytest
+
 from dbt_score import Severity
 from dbt_score.config import Config
 from dbt_score.exceptions import DuplicatedRuleException

@@ -1,6 +1,7 @@
 """Test rule."""
 
 import pytest
+
 from dbt_score import (
     Exposure,
     Macro,
