@@ -859,11 +859,13 @@ class ManifestLoader:
         """Filter evaluables like dbt's --select and --exclude."""
         single_model_select = re.compile(r"[a-zA-Z0-9_]+")
 
-        if not select and not exclude:
-            return
-
+        # Re-reading an Iterable can exhaust generators.
+        # Materialize here
         selected_set = set(select or [])
         excluded_set = set(exclude or [])
+
+        if not select and not exclude:
+            return
 
         if all(
             single_model_select.fullmatch(x) for x in selected_set.union(excluded_set)
