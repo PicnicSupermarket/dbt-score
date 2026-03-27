@@ -1,0 +1,170 @@
+{
+  "metadata": {
+    "project_name": "package"
+  },
+  "nodes": {
+    "model.package.model0": {
+      "resource_type": "model",
+      "unique_id": "model.package.model0",
+      "name": "model0",
+      "relation_name": "database.schema.model0",
+      "description": "",
+      "original_file_path": "/path/to/model0.sql",
+      "config": {},
+      "meta": {},
+      "columns": {
+        "a": {
+          "name": "column_a",
+          "description": "Column A.",
+          "data_type": "string",
+          "meta": {},
+          "constraints": [],
+          "tags": []
+        }
+      },
+      "constraints": [],
+      "package_name": "package",
+      "database": "db",
+      "schema": "schema",
+      "raw_code": "SELECT 1",
+      "alias": "model0",
+      "patch_path": null,
+      "tags": [],
+      "depends_on": { "nodes": [] },
+      "language": "sql",
+      "access": "protected",
+      "group": null
+    },
+    "model.package.model1": {
+      "resource_type": "model",
+      "unique_id": "model.package.model1",
+      "name": "model1",
+      "relation_name": "database.schema.model1",
+      "description": "",
+      "original_file_path": "/path/to/model1.sql",
+      "config": {},
+      "meta": {},
+      "columns": {
+        "a": {
+          "name": "column_a",
+          "description": "Column A.",
+          "data_type": "string",
+          "meta": {},
+          "constraints": [],
+          "tags": []
+        }
+      },
+      "constraints": [],
+      "package_name": "package",
+      "database": "db",
+      "schema": "schema",
+      "raw_code": "SELECT 1",
+      "alias": "model1",
+      "patch_path": null,
+      "tags": [],
+      "depends_on": { "nodes": ["model.package.model0"] },
+      "language": "sql",
+      "access": "protected",
+      "group": null
+    },
+    "model.package.model2": {
+      "resource_type": "model",
+      "unique_id": "model.package.model2",
+      "name": "model2",
+      "relation_name": "database.schema.model2",
+      "description": "",
+      "original_file_path": "/path/to/model2.sql",
+      "config": {},
+      "meta": {},
+      "columns": {
+        "a": {
+          "name": "column_a",
+          "description": "Column A.",
+          "data_type": "string",
+          "meta": {},
+          "constraints": [],
+          "tags": []
+        }
+      },
+      "constraints": [],
+      "package_name": "package",
+      "database": "db",
+      "schema": "schema",
+      "raw_code": "SELECT 1",
+      "alias": "model2",
+      "patch_path": null,
+      "tags": [],
+      "depends_on": { "nodes": ["model.package.model1"] },
+      "language": "sql",
+      "access": "protected",
+      "group": null
+    },
+    "model.package.model3": {
+      "resource_type": "model",
+      "unique_id": "model.package.model3",
+      "name": "model3",
+      "relation_name": "database.schema.model3",
+      "description": "",
+      "original_file_path": "/path/to/model3.sql",
+      "config": {},
+      "meta": {},
+      "columns": {
+        "a": {
+          "name": "column_a",
+          "description": "Column A.",
+          "data_type": "string",
+          "meta": {},
+          "constraints": [],
+          "tags": []
+        }
+      },
+      "constraints": [],
+      "package_name": "package",
+      "database": "db",
+      "schema": "schema",
+      "raw_code": "SELECT 1",
+      "alias": "model3",
+      "patch_path": null,
+      "tags": [],
+      "depends_on": { "nodes": ["model.package.model2"] },
+      "language": "sql",
+      "access": "protected",
+      "group": null
+    },
+    "model.package.standalone": {
+      "resource_type": "model",
+      "unique_id": "model.package.standalone",
+      "name": "standalone",
+      "relation_name": "database.schema.standalone",
+      "description": "",
+      "original_file_path": "/path/to/standalone.sql",
+      "config": {},
+      "meta": {},
+      "columns": {
+        "a": {
+          "name": "column_a",
+          "description": "Column A.",
+          "data_type": "string",
+          "meta": {},
+          "constraints": [],
+          "tags": []
+        }
+      },
+      "constraints": [],
+      "package_name": "package",
+      "database": "db",
+      "schema": "schema",
+      "raw_code": "SELECT 1",
+      "alias": "standalone",
+      "patch_path": null,
+      "tags": [],
+      "depends_on": { "nodes": [] },
+      "language": "sql",
+      "access": "protected",
+      "group": null
+    }
+  },
+  "sources": {},
+  "exposures": {},
+  "macros": {}
+}
