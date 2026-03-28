@@ -124,8 +124,8 @@ def cli() -> None:
 def lint(  # noqa: PLR0912, PLR0913, C901
     ctx: click.Context,
     format: Literal["plain", "manifest", "ascii", "json"],
-    select: tuple[str],
-    exclude: tuple[str],
+    select: tuple[str, ...],
+    exclude: tuple[str, ...],
     namespace: list[str],
     disabled_rule: list[str],
     manifest: Path,
