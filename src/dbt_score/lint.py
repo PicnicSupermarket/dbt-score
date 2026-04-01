@@ -17,7 +17,7 @@ from dbt_score.scoring import Scorer
 def lint_dbt_project(
     manifest_path: Path,
     config: Config,
-    format: Literal["plain", "manifest", "ascii"],
+    format: Literal["plain", "manifest", "ascii", "json"],
     select: Iterable[str] | None = None,
 ) -> Evaluation:
     """Lint dbt manifest."""
