@@ -9,8 +9,7 @@ and this project adheres to
 ## [Unreleased]
 
 - Expose column config field from the manifest.
-- Fix missing `json` in type annotation for `format` parameter in
-  `lint_dbt_project`.
+- Fix missing `json` in type annotations.
 
 ## [0.15.0] - 2025-11-19
 
