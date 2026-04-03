@@ -1,6 +1,5 @@
 """Unit tests for the scoring module."""
 
-
 from dbt_score.rule import RuleViolation
 from dbt_score.scoring import Score, Scorer
 

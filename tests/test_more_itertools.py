@@ -1,4 +1,5 @@
 """Tests for vendored more_itertools functions."""
+
 from dbt_score.more_itertools import first_true
 
 

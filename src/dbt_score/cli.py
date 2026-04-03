@@ -121,7 +121,7 @@ def cli() -> None:
     default=False,
 )
 @click.pass_context
-def lint(  # noqa: PLR0912, PLR0913, C901
+def lint(  # noqa: PLR0913, C901
     ctx: click.Context,
     format: Literal["plain", "manifest", "ascii", "json"],
     select: tuple[str, ...],

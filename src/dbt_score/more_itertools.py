@@ -1,4 +1,5 @@
 """Vendored utility functions from https://github.com/more-itertools/more-itertools."""
+
 from typing import (
     Callable,
     Iterable,
@@ -14,8 +15,7 @@ _U = TypeVar("_U")
 @overload
 def first_true(
     iterable: Iterable[_T], *, pred: Callable[[_T], object] | None = ...
-) -> _T | None:
-    ...
+) -> _T | None: ...
 
 
 @overload
@@ -23,8 +23,7 @@ def first_true(
     iterable: Iterable[_T],
     default: _U,
     pred: Callable[[_T], object] | None = ...,
-) -> _T | _U:
-    ...
+) -> _T | _U: ...
 
 
 def first_true(

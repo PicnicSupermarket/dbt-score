@@ -3,6 +3,7 @@
 from unittest.mock import MagicMock, patch
 
 from click.testing import CliRunner
+
 from dbt_score.cli import lint
 from dbt_score.dbt_utils import DbtParseException
 from dbt_score.scoring import Score
