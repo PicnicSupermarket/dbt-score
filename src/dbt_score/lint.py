@@ -19,6 +19,7 @@ def lint_dbt_project(
     config: Config,
     format: Literal["plain", "manifest", "ascii", "json"],
     select: Iterable[str] | None = None,
+    exclude: Iterable[str] | None = None,
 ) -> Evaluation:
     """Lint dbt manifest."""
     if not manifest_path.exists():
@@ -27,7 +28,7 @@ def lint_dbt_project(
     rule_registry = RuleRegistry(config)
     rule_registry.load_all()
 
-    manifest_loader = ManifestLoader(manifest_path, select=select)
+    manifest_loader = ManifestLoader(manifest_path, select=select, exclude=exclude)
 
     formatters = {
         "plain": HumanReadableFormatter,

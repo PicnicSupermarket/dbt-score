@@ -81,7 +81,9 @@ def dbt_parse() -> "dbtRunnerResult":
 
 
 @dbt_required
-def dbt_ls(select: Iterable[str] | None) -> Iterable[str]:
+def dbt_ls(
+    select: Iterable[str] | None, exclude: Iterable[str] | None = None
+) -> Iterable[str]:
     """Run dbt ls."""
     cmd = [
         "ls",
@@ -96,6 +98,8 @@ def dbt_ls(select: Iterable[str] | None) -> Iterable[str]:
     ]
     if select:
         cmd += ["--select", *select]
+    if exclude:
+        cmd += ["--exclude", *exclude]
 
     with _disable_dbt_stdout():
         result: "dbtRunnerResult" = dbtRunner().invoke(cmd)

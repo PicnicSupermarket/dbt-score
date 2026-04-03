@@ -707,12 +707,18 @@ Evaluable: TypeAlias = Model | Source | Snapshot | Seed | Exposure | Macro
 class ManifestLoader:
     """Load the evaluables from the manifest."""
 
-    def __init__(self, file_path: Path, select: Iterable[str] | None = None):
+    def __init__(
+        self,
+        file_path: Path,
+        select: Iterable[str] | None = None,
+        exclude: Iterable[str] | None = None,
+    ):
         """Initialize the ManifestLoader.
 
         Args:
             file_path: The file path of the JSON manifest.
             select: An optional dbt selection.
+            exclude: An optional dbt exclusion.
         """
         self.raw_manifest = json.loads(file_path.read_text(encoding="utf-8"))
         self.project_name = self.raw_manifest["metadata"]["project_name"]
@@ -756,8 +762,7 @@ class ManifestLoader:
         self._load_macros()
         self._populate_relatives()
 
-        if select:
-            self._filter_evaluables(select)
+        self._filter_evaluables(select, exclude)
 
         if (
             len(self.models)
@@ -848,23 +853,48 @@ class ManifestLoader:
                     node.parents.append(self.seeds[parent_id])
                     self.seeds[parent_id].children.append(node)
 
-    def _filter_evaluables(self, select: Iterable[str]) -> None:
-        """Filter evaluables like dbt's --select."""
+    def _filter_evaluables(
+        self, select: Iterable[str] | None, exclude: Iterable[str] | None
+    ) -> None:
+        """Filter evaluables like dbt's --select and --exclude."""
         single_model_select = re.compile(r"[a-zA-Z0-9_]+")
 
-        if all(single_model_select.fullmatch(x) for x in select):
-            # Using '--select my_model' is a common case, which can easily be sped up by
-            # not invoking dbt
-            selected = select
-        else:
-            # Use dbt's implementation of --select
-            selected = dbt_ls(select)
+        # Re-reading an Iterable can exhaust generators.
+        # Materialize here
+        selected_set = set(select or [])
+        excluded_set = set(exclude or [])
 
-        self.models = {k: m for k, m in self.models.items() if m.name in selected}
+        if not select and not exclude:
+            return
+
+        if all(
+            single_model_select.fullmatch(x) for x in selected_set.union(excluded_set)
+        ):
+            # All tokens are simple names — filter in-memory without invoking dbt
+            available = (
+                {model.name for model in self.models.values()}
+                | {source.selector_name for source in self.sources.values()}
+                | {snapshot.name for snapshot in self.snapshots.values()}
+                | {exposure.name for exposure in self.exposures.values()}
+                | {seed.name for seed in self.seeds.values()}
+                | {macro.name for macro in self.macros.values()}
+            )
+
+            result_list = list((selected_set or available) - excluded_set)
+
+        else:
+            # Use dbt's implementation of --select and --exclude
+            result_list = dbt_ls(select, exclude)
+
+        self.models = {k: m for k, m in self.models.items() if m.name in result_list}
         self.sources = {
-            k: s for k, s in self.sources.items() if s.selector_name in selected
+            k: s for k, s in self.sources.items() if s.selector_name in result_list
         }
-        self.snapshots = {k: s for k, s in self.snapshots.items() if s.name in selected}
-        self.exposures = {k: e for k, e in self.exposures.items() if e.name in selected}
-        self.seeds = {k: s for k, s in self.seeds.items() if s.name in selected}
-        self.macros = {k: m for k, m in self.macros.items() if m.name in selected}
+        self.snapshots = {
+            k: s for k, s in self.snapshots.items() if s.name in result_list
+        }
+        self.exposures = {
+            k: e for k, e in self.exposures.items() if e.name in result_list
+        }
+        self.seeds = {k: s for k, s in self.seeds.items() if s.name in result_list}
+        self.macros = {k: m for k, m in self.macros.items() if m.name in result_list}

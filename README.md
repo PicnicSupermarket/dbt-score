@@ -64,6 +64,9 @@ dbt-score lint --show all
 # Lint specific models
 dbt-score lint --select +my_model+
 
+# Exclude specific models
+dbt-score lint --exclude my_model+
+
 # Auto-generate manifest (via `dbt parse`) and lint
 dbt-score lint --run-dbt-parse
 ```
@@ -173,7 +176,7 @@ signal success or failure, making integrations a breeze!
 
 ### Selective Linting
 
-Use dbt's selection syntax to lint specific parts of projects:
+Use dbt's selection and/or exclusion syntax to lint specific parts of projects:
 
 ```bash
 # Lint only staging models
@@ -184,6 +187,9 @@ dbt-score lint --select +my_important_model
 
 # Lint recently changed models
 dbt-score lint --select state:modified
+
+# Lint all models except experimental ones
+dbt-score lint --exclude my_experimental_model+
 ```
 
 ## Documentation
