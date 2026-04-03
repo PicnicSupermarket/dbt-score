@@ -10,6 +10,8 @@ and this project adheres to
 
 - Expose column config field from the manifest.
 - Fix missing `json` in type annotations.
+- Add `--exclude` option to `dbt-score lint` to exclude dbt entities from
+  linting (#160).
 
 ## [0.15.0] - 2025-11-19
 

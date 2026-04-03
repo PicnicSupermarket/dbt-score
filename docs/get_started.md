@@ -48,6 +48,20 @@ It accepts any
 dbt-score lint --select +my_model+
 ```
 
+To exclude specific dbt entities from linting, the argument `--exclude` can be
+used. It also accepts any
+[dbt node exclusion syntax](https://docs.getdbt.com/reference/node-selection/exclude):
+
+```shell
+dbt-score lint --exclude my_model+
+```
+
+Both `--select` and `--exclude` can be combined:
+
+```shell
+dbt-score lint --select +my_model+ --exclude my_model+
+```
+
 To get more information on how to run `dbt-score`, `--help` can be used:
 
 ```shell
