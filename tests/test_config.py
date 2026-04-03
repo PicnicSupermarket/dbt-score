@@ -1,8 +1,10 @@
 """Tests for the module config_parser."""
+
 from pathlib import Path
 from unittest.mock import patch
 
 import pytest
+
 from dbt_score.config import BadgeConfig, Config
 from dbt_score.rule import RuleConfig, Severity
 
@@ -44,8 +46,7 @@ def test_invalid_rule_config(rule_severity_low):
     config = RuleConfig(config={"foo": "bar"})
     with pytest.raises(
         AttributeError,
-        match="Unknown rule parameter: foo for rule "
-        "tests.conftest.rule_severity_low.",
+        match=r"Unknown rule parameter: foo for rule tests.conftest.rule_severity_low.",
     ):
         rule_severity_low(config)
 
@@ -75,30 +76,30 @@ def test_invalid_badge_thresholds():
     badge_config.third.threshold = 9.0
     badge_config.second.threshold = 8.0
     badge_config.first.threshold = 10.0
-    with pytest.raises(ValueError, match="Invalid badge thresholds."):
+    with pytest.raises(ValueError, match=r"Invalid badge thresholds."):
         badge_config.validate()
 
     badge_config = BadgeConfig()
     badge_config.third.threshold = 8.0
     badge_config.second.threshold = 9.5
     badge_config.first.threshold = 9.5
-    with pytest.raises(ValueError, match="Invalid badge thresholds."):
+    with pytest.raises(ValueError, match=r"Invalid badge thresholds."):
         badge_config.validate()
 
     badge_config = BadgeConfig()
     badge_config.third.threshold = -1
-    with pytest.raises(ValueError, match="third threshold must be 0.0 or higher."):
+    with pytest.raises(ValueError, match=r"third threshold must be 0.0 or higher."):
         badge_config.validate()
 
     badge_config = BadgeConfig()
     badge_config.first.threshold = 11.0
-    with pytest.raises(ValueError, match="first threshold must 10.0 or lower."):
+    with pytest.raises(ValueError, match=r"first threshold must 10.0 or lower."):
         badge_config.validate()
 
     badge_config = BadgeConfig()
     badge_config.wip.threshold = 1.0
     with pytest.raises(
-        AttributeError, match="wip badge cannot have a threshold configuration."
+        AttributeError, match=r"wip badge cannot have a threshold configuration."
     ):
         badge_config.validate()
 

@@ -201,33 +201,27 @@ class Rule:
 
 
 @overload
-def rule(__func: ModelRuleEvaluationType) -> Type[Rule]:
-    ...
+def rule(__func: ModelRuleEvaluationType) -> Type[Rule]: ...
 
 
 @overload
-def rule(__func: SourceRuleEvaluationType) -> Type[Rule]:
-    ...
+def rule(__func: SourceRuleEvaluationType) -> Type[Rule]: ...
 
 
 @overload
-def rule(__func: SnapshotRuleEvaluationType) -> Type[Rule]:
-    ...
+def rule(__func: SnapshotRuleEvaluationType) -> Type[Rule]: ...
 
 
 @overload
-def rule(__func: ExposureRuleEvaluationType) -> Type[Rule]:
-    ...
+def rule(__func: ExposureRuleEvaluationType) -> Type[Rule]: ...
 
 
 @overload
-def rule(__func: SeedRuleEvaluationType) -> Type[Rule]:
-    ...
+def rule(__func: SeedRuleEvaluationType) -> Type[Rule]: ...
 
 
 @overload
-def rule(__func: MacroRuleEvaluationType) -> Type[Rule]:
-    ...
+def rule(__func: MacroRuleEvaluationType) -> Type[Rule]: ...
 
 
 @overload
@@ -236,8 +230,7 @@ def rule(
     description: str | None = None,
     severity: Severity = Severity.MEDIUM,
     rule_filters: set[RuleFilter] | None = None,
-) -> Callable[[RuleEvaluationType], Type[Rule]]:
-    ...
+) -> Callable[[RuleEvaluationType], Type[Rule]]: ...
 
 
 def rule(

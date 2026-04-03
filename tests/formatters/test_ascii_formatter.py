@@ -1,6 +1,5 @@
 """Unit tests for the ASCII formatter."""
 
-
 from dbt_score.evaluation import EvaluableResultsType
 from dbt_score.formatters.ascii_formatter import ASCIIFormatter
 from dbt_score.rule import RuleViolation

@@ -263,14 +263,10 @@ def test_evaluation_with_filter(
     )
 
     assert seed_rule_with_filter not in evaluation.results[seed1]
-    assert isinstance(
-        evaluation.results[seed2][seed_rule_with_filter], RuleViolation
-    )
+    assert isinstance(evaluation.results[seed2][seed_rule_with_filter], RuleViolation)
 
     assert macro_rule_with_filter not in evaluation.results[macro1]
-    assert isinstance(
-        evaluation.results[macro2][macro_rule_with_filter], RuleViolation
-    )
+    assert isinstance(evaluation.results[macro2][macro_rule_with_filter], RuleViolation)
 
 
 def test_evaluation_with_class_filter(

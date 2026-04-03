@@ -10,10 +10,10 @@ def test_rule_catalog_terminal(capsys, default_config):
     stdout = capsys.readouterr().out
     assert (
         stdout
-        == """\x1B[1mtests.rules.nested.example.rule_test_nested_example\x1B[0m:
+        == """\x1b[1mtests.rules.nested.example.rule_test_nested_example\x1b[0m:
     An example rule.
 
-\x1B[1mtests.rules.rules.rule_test_example\x1B[0m:
+\x1b[1mtests.rules.rules.rule_test_example\x1b[0m:
     An example rule.
 
 """
