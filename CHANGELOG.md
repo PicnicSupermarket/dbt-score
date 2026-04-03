@@ -8,6 +8,7 @@ and this project adheres to
 
 ## [Unreleased]
 
+- Upgrade transitive dependencies to resolve Dependabot security alerts.
 - Expose column config field from the manifest.
 - Fix missing `json` in type annotations.
 - Add `--exclude` option to `dbt-score lint` to exclude dbt entities from
