@@ -8,6 +8,8 @@ and this project adheres to
 
 ## [Unreleased]
 
+## [0.16.0] - 2026-04-07
+
 - Upgrade transitive dependencies to resolve Dependabot security alerts.
 - Expose column config field from the manifest.
 - Fix missing `json` in type annotations.
