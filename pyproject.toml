@@ -41,7 +41,7 @@ dbt-score = "dbt_score.__main__:main"
 dev = [
     "dbt-core>=1.5",
     "tox-uv~=1.28",
-    "tox~=4.13",
+    "tox~=4.53",
 ]
 lint = [
     "ruff~=0.14.10",
