@@ -53,7 +53,7 @@ test = [
 ]
 docs = [
     "mkdocs-material~=9.5",
-    "mkdocstrings[python]~=1.0.0"
+    "mkdocstrings[python]~=1.0.4"
 ]
 
 ### Mypy ###
