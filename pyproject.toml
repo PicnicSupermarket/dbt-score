@@ -40,7 +40,7 @@ dbt-score = "dbt_score.__main__:main"
 [dependency-groups]
 dev = [
     "dbt-core>=1.5",
-    "tox-uv~=1.28",
+    "tox-uv~=1.35",
     "tox~=4.13",
 ]
 lint = [
