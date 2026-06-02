@@ -49,7 +49,7 @@ lint = [
 ]
 test = [
     "pytest~=9.0",
-    "coverage[toml]~=7.13"
+    "coverage[toml]~=7.14"
 ]
 docs = [
     "mkdocs-material~=9.5",
