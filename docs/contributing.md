@@ -98,15 +98,24 @@ uv run tox -e lint
 - [pytest](https://docs.pytest.org/) as a main test framework.
 - [coverage](https://coverage.readthedocs.io/en/latest/index.html) for test
   coverage.
-- [tox](https://tox.wiki/en/latest/) for testing against multiple Python
-  versions.
+- [tox](https://tox.wiki/en/latest/) for testing against multiple Python and
+  dbt-core versions.
 
 Cheatsheet:
 
 ```shell
-uv run tox -e py
+# Quick local testing
 uv run pytest
 uv run coverage run -m pytest
+
+# Test a specific Python and dbt version combination
+uv run tox -e py313-dbt111
+
+# Test all Python versions with one dbt version
+uv run tox -f dbt111
+
+# Test one Python version with all dbt versions
+uv run tox -f py312
 ```
 
 ### Docs
