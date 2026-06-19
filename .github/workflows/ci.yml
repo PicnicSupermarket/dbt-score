@@ -65,4 +65,20 @@ jobs:
       - name: Run Tox
         run: |
           PYTHON_VERSION=$(echo "${{ matrix.python }}" | sed 's/\.//')
-          uv run tox -e py${PYTHON_VERSION}-dbt${{ matrix.dbt-core }},lint
+          uv run tox -e py${PYTHON_VERSION}-dbt${{ matrix.dbt-core }}
+
+  lint:
+    runs-on: ubuntu-slim
+
+    steps:
+      - uses: actions/checkout@v5
+      - name: Install uv and set the Python version
+        uses: astral-sh/setup-uv@v6
+        with:
+          python-version: "3.13"
+      - name: Install dependencies
+        run: |
+          uv sync --locked --only-dev
+      - name: Run Tox lint
+        run: |
+          uv run tox -e lint
