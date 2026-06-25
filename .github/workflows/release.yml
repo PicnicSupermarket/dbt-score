@@ -32,6 +32,7 @@ jobs:
           uv run dbt-score list -f markdown -n dbt_score.rules.generic --title Generic > docs/rules/generic.md
           uv run dbt-score list -f markdown -n dbt_score.rules.macros --title Macros > docs/rules/macros.md
           uv run mkdocs gh-deploy --force
-      - uses: ncipollo/release-action@v1
-        with:
-          generateReleaseNotes: true
+      - name: Create GitHub release
+        run: gh release create "${{ github.ref_name }}" --generate-notes
+        env:
+          GH_TOKEN: ${{ github.token }}
