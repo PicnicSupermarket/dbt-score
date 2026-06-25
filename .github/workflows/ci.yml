@@ -28,6 +28,7 @@ jobs:
         with:
           app-id: ${{ secrets.APP_ID }}
           private-key: ${{ secrets.APP_PRIVATE_KEY }}
+          permission-contents: write
       - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5
         with:
           ref: ${{ github.event.pull_request.head.ref || github.ref }}
@@ -57,7 +58,7 @@ jobs:
         run: |
           uv sync --locked --only-dev
       - name: Run Prettier
-        run: npx --yes prettier --check "**/*.{json,yaml,yml,md}"
+        run: npx --yes prettier@3.1.0 --check "**/*.{json,yaml,yml,md}"
       - name: Run Tox
         run: |
           uv run tox -e py,lint

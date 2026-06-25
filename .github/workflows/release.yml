@@ -19,6 +19,7 @@ jobs:
         uses: astral-sh/setup-uv@d0cc045d04ccac9d8b7881df0226f9e82c39688e # v6
         with:
           python-version: 3.13
+          enable-cache: false
       - name: Build
         run: uv build
       - name: Publish package distributions to PyPI
@@ -33,6 +34,7 @@ jobs:
           uv run dbt-score list -f markdown -n dbt_score.rules.macros --title Macros > docs/rules/macros.md
           uv run mkdocs gh-deploy --force
       - name: Create GitHub release
-        run: gh release create "${{ github.ref_name }}" --generate-notes
+        run: gh release create "$TAG" --generate-notes
         env:
           GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.ref_name }}
