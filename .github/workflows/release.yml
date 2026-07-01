@@ -14,11 +14,12 @@ jobs:
       contents: write
 
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5
       - name: Install uv and set the Python version
-        uses: astral-sh/setup-uv@v6
+        uses: astral-sh/setup-uv@d0cc045d04ccac9d8b7881df0226f9e82c39688e # v6
         with:
           python-version: 3.13
+          enable-cache: false
       - name: Build
         run: uv build
       - name: Publish package distributions to PyPI
@@ -32,6 +33,8 @@ jobs:
           uv run dbt-score list -f markdown -n dbt_score.rules.generic --title Generic > docs/rules/generic.md
           uv run dbt-score list -f markdown -n dbt_score.rules.macros --title Macros > docs/rules/macros.md
           uv run mkdocs gh-deploy --force
-      - uses: ncipollo/release-action@v1
-        with:
-          generateReleaseNotes: true
+      - name: Create GitHub release
+        run: gh release create "$TAG" --generate-notes
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.ref_name }}

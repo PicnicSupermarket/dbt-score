@@ -22,13 +22,14 @@ jobs:
 
     steps:
       - name: Create GitHub App Token
-        uses: actions/create-github-app-token@v1
+        uses: actions/create-github-app-token@d72941d797fd3113feb6b93fd0dec494b13a2547 # v1
         id: app
         continue-on-error: true
         with:
           app-id: ${{ secrets.APP_ID }}
           private-key: ${{ secrets.APP_PRIVATE_KEY }}
-      - uses: actions/checkout@v5
+          permission-contents: write
+      - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5
         with:
           ref: ${{ github.event.pull_request.head.ref || github.ref }}
           repository:
@@ -36,7 +37,7 @@ jobs:
             github.repository }}
           token: ${{ steps.app.outputs.token || github.token }}
       - name: Install uv and set the Python version
-        uses: astral-sh/setup-uv@v6
+        uses: astral-sh/setup-uv@d0cc045d04ccac9d8b7881df0226f9e82c39688e # v6
         with:
           python-version: ${{ matrix.python }}
       # refresh lock only for Dependabot PRs
@@ -57,10 +58,7 @@ jobs:
         run: |
           uv sync --locked --only-dev
       - name: Run Prettier
-        uses: creyD/prettier_action@v4.3
-        with:
-          dry: True
-          prettier_options: "--check **/*.{json,yaml,yml,md}"
+        run: npx --yes prettier@3.1.0 --check "**/*.{json,yaml,yml,md}"
       - name: Run Tox
         run: |
           uv run tox -e py,lint
