@@ -22,11 +22,11 @@ encourage) good practices. The dbt entities that `dbt-score` is able to lint
 
 ```
 > dbt-score lint --show all
-🥇 M: customers (score: 10.0)
+🥇 Model: customers (score: 10.0)
     OK   dbt_score.rules.generic.has_description
     OK   dbt_score.rules.generic.has_owner
     OK   dbt_score.rules.generic.sql_has_reasonable_number_of_lines
-Score: 10.0 🥇
+Project score: 10.0 🥇
 ```
 
 In this example, the model `customers` scores the maximum value of `10.0` as it

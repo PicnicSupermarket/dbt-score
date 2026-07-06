@@ -11,8 +11,8 @@ the JSON formatter can be used:
 ```shell
 $ dbt-score lint --format json
 {
-  "models": {
-    "model1": {
+  "evaluables": {
+    "model.package.model1": {
       "score": 8.666666666666668,
       "badge": "🥈",
       "pass": true,
@@ -42,7 +42,8 @@ $ dbt-score lint --format json
           "severity": "medium",
           "message": null
         }
-      }
+      },
+      "type": "model"
     }
   },
   "project": {
