@@ -95,11 +95,11 @@ discoverable.
 ### Configurable rules
 
 It's possible to create rules that can be
-[configured with parameters](configuration.md#rule-configuration)
-. In order to create a configurable rule, the evaluation function of the rule
-should have additional input parameters with a default value defined. In the
-example below, the rule has a `max_lines` parameter with a default value of 200,
-which can be configured in the `pyproject.toml` file.
+[configured with parameters](configuration.md#rule-configuration). In order to
+create a configurable rule, the evaluation function of the rule should have
+additional input parameters with a default value defined. In the example below,
+the rule has a `max_lines` parameter with a default value of 200, which can be
+configured in the `pyproject.toml` file.
 
 ```python
 from dbt_score import Model, rule, RuleViolation
@@ -157,8 +157,8 @@ class SkipSourceDatabaseB(RuleFilter):
 ```
 
 Similar to setting a rule severity, standard rules can have filters set in the
-[configuration file](configuration.md#rule-configuration),
-while custom rules accept the configuration file or a decorator parameter.
+[configuration file](configuration.md#rule-configuration), while custom rules
+accept the configuration file or a decorator parameter.
 
 ```python
 from dbt_score import Model, rule, RuleViolation
