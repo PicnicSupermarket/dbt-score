@@ -58,8 +58,6 @@ jobs:
       - name: Install dependencies
         run: |
           uv sync --locked --only-dev
-      - name: Run Prettier
-        run: npx --yes prettier@3.1.0 --check "**/*.{json,yaml,yml,md}"
       - name: Run Tox
         run: |
           PYTHON_VERSION=$(echo "${{ matrix.python }}" | sed 's/\.//')
@@ -77,6 +75,8 @@ jobs:
       - name: Install dependencies
         run: |
           uv sync --locked --only-dev
+      - name: Run Prettier
+        run: npx --yes prettier@3.1.0 --check "**/*.{json,yaml,yml,md}"
       - name: Run Tox lint
         run: |
           uv run tox -e lint
