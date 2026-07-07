@@ -19,6 +19,7 @@ jobs:
     strategy:
       matrix:
         python: ["3.10", "3.11", "3.12", "3.13"]
+        dbt-core: ["15", "16", "17", "110", "111"]
 
     steps:
       - name: Create GitHub App Token
@@ -57,8 +58,25 @@ jobs:
       - name: Install dependencies
         run: |
           uv sync --locked --only-dev
-      - name: Run Prettier
-        run: npx --yes prettier@3.1.0 --check "**/*.{json,yaml,yml,md}"
       - name: Run Tox
         run: |
-          uv run tox -e py,lint
+          PYTHON_VERSION=$(echo "${{ matrix.python }}" | sed 's/\.//')
+          uv run tox -e py${PYTHON_VERSION}-dbt${{ matrix.dbt-core }}
+
+  lint:
+    runs-on: ubuntu-slim
+
+    steps:
+      - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5
+      - name: Install uv and set the Python version
+        uses: astral-sh/setup-uv@d0cc045d04ccac9d8b7881df0226f9e82c39688e # v6
+        with:
+          python-version: "3.13"
+      - name: Install dependencies
+        run: |
+          uv sync --locked --only-dev
+      - name: Run Prettier
+        run: npx --yes prettier@3.1.0 --check "**/*.{json,yaml,yml,md}"
+      - name: Run Tox lint
+        run: |
+          uv run tox -e lint

@@ -55,6 +55,24 @@ docs = [
     "mkdocs-material~=9.5",
     "mkdocstrings[python]~=1.0.4"
 ]
+# Used by the tox matrix (see tox.ini) to pin a specific dbt-core version per
+# test env. Mutually exclusive, see tool.uv.conflicts below.
+dbt15 = ["dbt-core>=1.5,<1.6"]
+dbt16 = ["dbt-core>=1.6,<1.7"]
+dbt17 = ["dbt-core>=1.7,<1.8"]
+dbt110 = ["dbt-core>=1.10,<1.11"]
+dbt111 = ["dbt-core>=1.11,<1.12"]
+
+[tool.uv]
+conflicts = [
+    [
+        { group = "dbt15" },
+        { group = "dbt16" },
+        { group = "dbt17" },
+        { group = "dbt110" },
+        { group = "dbt111" },
+    ],
+]
 
 ### Mypy ###
 
