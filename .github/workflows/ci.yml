@@ -24,8 +24,8 @@ jobs:
       # compatibility matrix:
       # https://docs.getdbt.com/faqs/Core/install-python-compatibility
       #   dbt 1.5/1.6:   Python 3.10-3.11
-      #   dbt 1.7:       Python 3.10-3.12
-      #   dbt 1.10/1.11: Python 3.10-3.13
+      #   dbt 1.7/1.19:  Python 3.10-3.12
+      #   dbt 1.11:      Python 3.10-3.13
       matrix:
         python: ["3.10", "3.11", "3.12", "3.13"]
         dbt-core: ["15", "16", "17", "110", "111"]
@@ -35,6 +35,7 @@ jobs:
           - { python: "3.13", dbt-core: "15" }
           - { python: "3.13", dbt-core: "16" }
           - { python: "3.13", dbt-core: "17" }
+          - { python: "3.13", dbt-core: "110" }
 
     steps:
       - name: Create GitHub App Token
