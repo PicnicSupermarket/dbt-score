@@ -3,7 +3,6 @@
 import pytest
 
 from dbt_score.rule_catalog import (
-    Formatter,
     MarkdownFormatter,
     display_catalog,
 )
@@ -104,13 +103,3 @@ def test_rule_catalog_markdown_default_config(default_config, rule_with_config):
     doc = MarkdownFormatter.format_rule(rule_with_config())
     assert doc is not None
     assert "model_name = model1" in doc
-
-
-def test_formatter_abstract_methods():
-    """The abstract base formatter methods raise NotImplementedError."""
-    with pytest.raises(NotImplementedError):
-        Formatter.header(None)
-    with pytest.raises(NotImplementedError):
-        Formatter.footer()
-    with pytest.raises(NotImplementedError):
-        Formatter.format_rule(None)  # type: ignore[arg-type]

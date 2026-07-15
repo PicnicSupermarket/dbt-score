@@ -171,6 +171,11 @@ def test_lint_overload_options(manifest_path):
             ],
         )
     assert result.exit_code == 0
+    # The options should have been applied to the config passed to the linter.
+    config = mock_lint.call_args.kwargs["config"]
+    assert "tests.rules" in config.rule_namespaces
+    assert "some.rule" in config.disabled_rules
+    assert config.debug is True
 
 
 def test_lint_fail_thresholds_zero(manifest_path):
