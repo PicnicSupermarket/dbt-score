@@ -106,7 +106,7 @@ class MarkdownFormatter(Formatter):
         return template
 
 
-def display_catalog(config: Config, title: str, format: str) -> None:
+def display_catalog(config: Config, title: str | None, format: str) -> None:
     """Print rules catalog."""
     formatter: Formatter
     if format == "terminal":

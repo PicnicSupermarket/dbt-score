@@ -4,7 +4,7 @@ from unittest.mock import MagicMock, patch
 
 from click.testing import CliRunner
 
-from dbt_score.cli import lint
+from dbt_score.cli import lint, list_command
 from dbt_score.dbt_utils import DbtParseException
 from dbt_score.scoring import Score
 
@@ -132,6 +132,47 @@ def test_fail_any_item_under(manifest_path):
         assert result.exit_code == 1
 
 
+def test_lint_passing(manifest_path):
+    """A passing evaluation exits with code 0."""
+    mock_eval = MagicMock()
+    mock_eval.project_score = Score(9.0, "🥇")
+    mock_eval.scores = {MagicMock(): Score(9.0, "🥇")}
+
+    with patch("dbt_score.cli.lint_dbt_project") as mock_lint, patch(
+        "dbt_score.cli.Config._load_toml_file"
+    ):
+        mock_lint.return_value = mock_eval
+        runner = CliRunner()
+        result = runner.invoke(lint, ["--manifest", manifest_path])
+    assert result.exit_code == 0
+
+
+def test_lint_overload_options(manifest_path):
+    """CLI options overload the config before linting."""
+    mock_eval = MagicMock()
+    mock_eval.project_score = Score(9.0, "🥇")
+    mock_eval.scores = {MagicMock(): Score(9.0, "🥇")}
+
+    with patch("dbt_score.cli.lint_dbt_project") as mock_lint, patch(
+        "dbt_score.cli.Config._load_toml_file"
+    ):
+        mock_lint.return_value = mock_eval
+        runner = CliRunner()
+        result = runner.invoke(
+            lint,
+            [
+                "--manifest",
+                manifest_path,
+                "--namespace",
+                "tests.rules",
+                "--disabled-rule",
+                "some.rule",
+                "--debug",
+            ],
+        )
+    assert result.exit_code == 0
+
+
 def test_lint_fail_thresholds_zero(manifest_path):
     """A threshold of 0 is honored (not treated as unset)."""
     mock_eval = MagicMock()
@@ -157,3 +198,15 @@ def test_lint_fail_thresholds_zero(manifest_path):
         )
     # With thresholds at 0 and scores at 0, nothing is strictly under -> pass.
     assert result.exit_code == 0
+
+
+def test_list_command(capsys):
+    """The list command displays the rule catalog."""
+    runner = CliRunner()
+    with patch("dbt_score.cli.Config._load_toml_file"):
+        result = runner.invoke(
+            list_command,
+            ["--namespace", "tests.rules", "--disabled-rule", "some.rule"],
+        )
+    assert result.exit_code == 0
+    assert "rule_test_example" in result.output

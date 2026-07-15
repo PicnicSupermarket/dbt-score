@@ -122,14 +122,14 @@ max-args = 9
 ### Coverage ###
 
 [tool.coverage.run]
+branch = true
 source = [
-    "tests",
     "src"
 ]
 
 [tool.coverage.report]
 show_missing = true
-fail_under = 80
+fail_under = 95
 exclude_also = [
     "@overload"
 ]
