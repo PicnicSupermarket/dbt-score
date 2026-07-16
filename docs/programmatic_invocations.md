@@ -56,7 +56,7 @@ $ dbt-score lint --format json
 
 ## Exit codes
 
-When `dbt-score` terminates, it exists with one of the following exit codes:
+When `dbt-score` terminates, it exits with one of the following exit codes:
 
 - `0` in case of successful termination. This is the happy case, when the
   project being linted either doesn't raise any warning, or the warnings are
