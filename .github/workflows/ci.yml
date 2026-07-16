@@ -46,15 +46,23 @@ jobs:
         if: |
           github.event_name == 'pull_request' &&
           github.actor == 'dependabot[bot]'
+        env:
+          GH_TOKEN: ${{ steps.app.outputs.token || github.token }}
         run: |
           uv lock
-          if ! git diff --quiet -- uv.lock; then
-            git config user.name "uv-lock-bot[bot]"
-            git config user.email "uv-lock-bot[bot]@users.noreply.github.com"
-            git add uv.lock
-            git commit -m "chore: refresh uv.lock"
-            git push || echo "push skipped (no perms)"
+          if git diff --quiet -- uv.lock; then
+            exit 0
           fi
+
+          REPO="${{ github.repository }}"
+          BRANCH="${{ github.event.pull_request.head.ref }}"
+          SHA=$(gh api "/repos/$REPO/contents/uv.lock?ref=$BRANCH" --jq .sha)
+
+          gh api --method PUT "/repos/$REPO/contents/uv.lock" \
+            -f message="chore: refresh uv.lock" \
+            -f content="$(base64 -w0 uv.lock)" \
+            -f branch="$BRANCH" \
+            -f sha="$SHA"
       - name: Install dependencies
         run: |
           uv sync --locked --only-dev
