@@ -47,15 +47,20 @@ jobs:
           github.event_name == 'pull_request' &&
           github.actor == 'dependabot[bot]'
         env:
-          GH_TOKEN: ${{ steps.app.outputs.token || github.token }}
+          GH_TOKEN: ${{ steps.app.outputs.token }}
+          REPO: ${{ github.repository }}
+          BRANCH: ${{ github.event.pull_request.head.ref }}
         run: |
+          if [ -z "$GH_TOKEN" ]; then
+            echo "App token unavailable, refusing to refresh uv.lock as a different identity" >&2
+            exit 1
+          fi
+
           uv lock
           if git diff --quiet -- uv.lock; then
             exit 0
           fi
 
-          REPO="${{ github.repository }}"
-          BRANCH="${{ github.event.pull_request.head.ref }}"
           SHA=$(gh api "/repos/$REPO/contents/uv.lock?ref=$BRANCH" --jq .sha)
 
           gh api --method PUT "/repos/$REPO/contents/uv.lock" \
