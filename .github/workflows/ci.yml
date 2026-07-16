@@ -14,38 +14,28 @@ permissions:
   pull-requests: write
 
 jobs:
-  build:
+  refresh-lock:
     runs-on: ubuntu-slim
-    strategy:
-      matrix:
-        python: ["3.10", "3.11", "3.12", "3.13"]
-        dbt-core: ["15", "16", "17", "110", "111"]
-
+    if: |
+      github.event_name == 'pull_request' &&
+      github.actor == 'dependabot[bot]'
     steps:
       - name: Create GitHub App Token
         uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
         id: app
-        continue-on-error: true
         with:
           app-id: ${{ secrets.APP_ID }}
           private-key: ${{ secrets.APP_PRIVATE_KEY }}
           permission-contents: write
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
-          ref: ${{ github.event.pull_request.head.ref || github.ref }}
-          repository:
-            ${{ github.event.pull_request.head.repo.full_name ||
-            github.repository }}
-          token: ${{ steps.app.outputs.token || github.token }}
+          ref: ${{ github.event.pull_request.head.ref }}
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
       - name: Install uv and set the Python version
         uses: astral-sh/setup-uv@11f9893b081a58869d3b5fccaea48c9e9e46f990 # v8.3.2
         with:
-          python-version: ${{ matrix.python }}
-      # refresh lock only for Dependabot PRs
-      - name: Refresh uv.lock (Dependabot only)
-        if: |
-          github.event_name == 'pull_request' &&
-          github.actor == 'dependabot[bot]'
+          python-version: "3.13"
+      - name: Refresh uv.lock
         env:
           GH_TOKEN: ${{ steps.app.outputs.token }}
           REPO: ${{ github.repository }}
@@ -68,6 +58,29 @@ jobs:
             -f content="$(base64 -w0 uv.lock)" \
             -f branch="$BRANCH" \
             -f sha="$SHA"
+
+  build:
+    needs: refresh-lock
+    if: |
+      always() &&
+      (needs.refresh-lock.result == 'success' || needs.refresh-lock.result == 'skipped')
+    runs-on: ubuntu-slim
+    strategy:
+      matrix:
+        python: ["3.10", "3.11", "3.12", "3.13"]
+        dbt-core: ["15", "16", "17", "110", "111"]
+
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          ref: ${{ github.event.pull_request.head.ref || github.ref }}
+          repository:
+            ${{ github.event.pull_request.head.repo.full_name ||
+            github.repository }}
+      - name: Install uv and set the Python version
+        uses: astral-sh/setup-uv@11f9893b081a58869d3b5fccaea48c9e9e46f990 # v8.3.2
+        with:
+          python-version: ${{ matrix.python }}
       - name: Install dependencies
         run: |
           uv sync --locked --only-dev
@@ -77,6 +90,10 @@ jobs:
           uv run tox -e py${PYTHON_VERSION}-dbt${{ matrix.dbt-core }}
 
   lint:
+    needs: refresh-lock
+    if: |
+      always() &&
+      (needs.refresh-lock.result == 'success' || needs.refresh-lock.result == 'skipped')
     runs-on: ubuntu-slim
 
     steps:
