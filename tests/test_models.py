@@ -3,7 +3,7 @@
 from pathlib import Path
 from unittest.mock import patch
 
-from dbt_score.models import ManifestLoader
+from dbt_score.models import Exposure, ManifestLoader, Model, Snapshot
 
 
 @patch("dbt_score.models.Path.read_text")
@@ -260,3 +260,129 @@ def test_manifest_select_simple_exclude_descendants(
 
     assert len(loader.models) == 0
     mock_dbt_ls.assert_called_once()
+
+
+def create_dummy_model(unique_id: str, name: str = "dummy", children=None) -> Model:
+    """Helper to create a minimal Model instance for testing."""
+    return Model(
+        unique_id=unique_id,
+        name=name,
+        relation_name="relation",
+        description="desc",
+        original_file_path="path.sql",
+        config={},
+        meta={},
+        columns=[],
+        package_name="pkg",
+        database="db",
+        schema="schema",
+        raw_code="select 1",
+        language="sql",
+        access="public",
+        group="group",
+        parents=[],
+        children=children or [],
+    )
+
+
+def create_dummy_snapshot(
+    unique_id: str, name: str = "dummy", children=None
+) -> Snapshot:
+    """Helper to create a minimal Snapshot instance for testing."""
+    return Snapshot(
+        unique_id=unique_id,
+        name=name,
+        relation_name="relation",
+        description="desc",
+        original_file_path="path.sql",
+        config={},
+        meta={},
+        columns=[],
+        package_name="pkg",
+        database="db",
+        schema="schema",
+        raw_code="select 1",
+        language="sql",
+        parents=[],
+        children=children or [],
+    )
+
+
+def create_dummy_exposure(unique_id: str, name: str = "dummy") -> Exposure:
+    """Helper to create a minimal Exposure instance for testing."""
+    return Exposure(
+        unique_id=unique_id,
+        name=name,
+        description="desc",
+        label="label",
+        url="http://url",
+        maturity="high",
+        original_file_path="path.yml",
+        type="dashboard",
+        owner={},
+        config={},
+        meta={},
+        tags=[],
+        parents=[],
+    )
+
+
+def test_downstream_count_isolated():
+    """Verify that a standalone model with no children/dependents returns 0."""
+    model = create_dummy_model("model.package.isolated", "isolated")
+    assert model.downstream_count == 0
+
+
+def test_downstream_count_single_child():
+    """Verify that a model with exactly one child model returns 1."""
+    child = create_dummy_model("model.package.child", "child")
+    parent = create_dummy_model("model.package.parent", "parent", children=[child])
+    assert parent.downstream_count == 1
+
+
+def test_downstream_count_linear_chain():
+    """Verify downstream_count calculation in a linear chain of dependencies."""
+    grandchild = create_dummy_model("model.package.grandchild", "grandchild")
+    child = create_dummy_model("model.package.child", "child", children=[grandchild])
+    parent = create_dummy_model("model.package.parent", "parent", children=[child])
+    assert parent.downstream_count == 2
+    assert child.downstream_count == 1
+
+
+def test_downstream_count_diamond_dag():
+    """Verify downstream_count in a diamond dependency.
+
+    Ensure the shared descendant is only counted once.
+    """
+    descendant = create_dummy_model("model.package.descendant", "descendant")
+    child_b = create_dummy_model(
+        "model.package.child_b", "child_b", children=[descendant]
+    )
+    child_c = create_dummy_model(
+        "model.package.child_c", "child_c", children=[descendant]
+    )
+    parent = create_dummy_model(
+        "model.package.parent", "parent", children=[child_b, child_c]
+    )
+    assert parent.downstream_count == 3
+
+
+def test_downstream_count_with_non_model_descendants():
+    """Verify only Model instances are counted.
+
+    Ensure non-model nodes are traversed correctly.
+    """
+    exposure = create_dummy_exposure("exposure.package.exp")
+    snapshot = create_dummy_snapshot(
+        "snapshot.package.snap", "snap", children=[exposure]
+    )
+    model = create_dummy_model("model.package.m", "m")
+
+    # Snapshot (not Model) has exposure (not Model) and model (Model)
+    snapshot.children.append(model)
+
+    # Root model has snapshot
+    parent = create_dummy_model("model.package.parent", "parent", children=[snapshot])
+
+    # Only model should be counted (1), snapshot and exposure are not Model type
+    assert parent.downstream_count == 1
