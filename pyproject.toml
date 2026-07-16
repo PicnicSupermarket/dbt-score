@@ -53,7 +53,7 @@ test = [
 ]
 docs = [
     "mkdocs-material~=9.5",
-    "mkdocstrings[python]~=1.0.4"
+    "mkdocstrings[python]~=1.0.6"
 ]
 # Used by the tox matrix (see tox.ini) to pin a specific dbt-core version per
 # test env. Mutually exclusive, see tool.uv.conflicts below.
