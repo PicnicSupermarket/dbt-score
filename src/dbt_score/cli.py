@@ -130,8 +130,8 @@ def lint(  # noqa: PLR0913, C901
     disabled_rule: list[str],
     manifest: Path,
     run_dbt_parse: bool,
-    fail_project_under: float,
-    fail_any_item_under: float,
+    fail_project_under: float | None,
+    fail_any_item_under: float | None,
     show: Literal["all", "failing-items", "failing-rules"],
     debug: bool,
 ) -> None:
@@ -149,9 +149,9 @@ def lint(  # noqa: PLR0913, C901
         config.overload({"rule_namespaces": namespace})
     if disabled_rule:
         config.overload({"disabled_rules": disabled_rule})
-    if fail_project_under:
+    if fail_project_under is not None:
         config.overload({"fail_project_under": fail_project_under})
-    if fail_any_item_under:
+    if fail_any_item_under is not None:
         config.overload({"fail_any_item_under": fail_any_item_under})
     if show:
         config.overload({"show": show})

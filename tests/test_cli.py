@@ -130,3 +130,30 @@ def test_fail_any_item_under(manifest_path):
 
         # Since we're mocking the evaluation with a low score, we should get exit code 1
         assert result.exit_code == 1
+
+
+def test_lint_fail_thresholds_zero(manifest_path):
+    """A threshold of 0 is honored (not treated as unset)."""
+    mock_eval = MagicMock()
+    mock_eval.project_score = Score(0.0, "🚧")
+    mock_eval.scores = {MagicMock(): Score(0.0, "🚧")}
+
+    with (
+        patch("dbt_score.cli.lint_dbt_project") as mock_lint,
+        patch("dbt_score.cli.Config._load_toml_file"),
+    ):
+        mock_lint.return_value = mock_eval
+        runner = CliRunner()
+        result = runner.invoke(
+            lint,
+            [
+                "--manifest",
+                manifest_path,
+                "--fail-project-under",
+                "0",
+                "--fail-any-item-under",
+                "0",
+            ],
+        )
+    # With thresholds at 0 and scores at 0, nothing is strictly under -> pass.
+    assert result.exit_code == 0
