@@ -53,11 +53,15 @@ jobs:
 
           SHA=$(gh api "/repos/$REPO/contents/uv.lock?ref=$BRANCH" --jq .sha)
 
-          gh api --method PUT "/repos/$REPO/contents/uv.lock" \
-            -f message="chore: refresh uv.lock" \
-            -f content="$(base64 -w0 uv.lock)" \
-            -f branch="$BRANCH" \
-            -f sha="$SHA"
+          base64 -w0 uv.lock > /tmp/uv.lock.b64
+
+          jq -n \
+            --arg message "chore: refresh uv.lock" \
+            --rawfile content /tmp/uv.lock.b64 \
+            --arg branch "$BRANCH" \
+            --arg sha "$SHA" \
+            '{message: $message, content: $content, branch: $branch, sha: $sha}' \
+            | gh api --method PUT "/repos/$REPO/contents/uv.lock" --input -
 
   build:
     needs: refresh-lock
