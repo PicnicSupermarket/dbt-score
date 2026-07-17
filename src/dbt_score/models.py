@@ -3,7 +3,7 @@
 import json
 import logging
 import re
-from collections import defaultdict
+from collections import defaultdict, deque
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Iterable, Literal, TypeAlias, Union
@@ -264,6 +264,35 @@ class Model(HasColumnsMixin):
     def __hash__(self) -> int:
         """Compute a unique hash for a model."""
         return hash(self.unique_id)
+
+    @property
+    def downstream_count(self) -> int:
+        """Calculate the count of all downstream model dependents.
+
+        Returns:
+            int: The count of unique downstream models.
+        """
+        visited: set[str] = set()
+        queue: deque[ChildType] = deque()
+        for child in self.children:
+            if child.unique_id not in visited:
+                visited.add(child.unique_id)
+                queue.append(child)
+
+        count = 0
+        while queue:
+            current = queue.popleft()
+
+            if isinstance(current, Model):
+                count += 1
+
+            if hasattr(current, "children"):
+                for grandchild in current.children:
+                    if grandchild.unique_id not in visited:
+                        visited.add(grandchild.unique_id)
+                        queue.append(grandchild)
+
+        return count
 
 
 @dataclass
