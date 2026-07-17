@@ -123,6 +123,7 @@ max-args = 9
 
 [tool.coverage.run]
 branch = true
+parallel = true
 source = [
     "src"
 ]

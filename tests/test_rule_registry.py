@@ -70,8 +70,8 @@ def test_rule_registry_rule_filters(valid_config_path, model1, model2):
 
 
 def test_rule_registry_invalid_namespace_warning(default_config, caplog):
-    """Ensure a warning is logged when a non-dbt_score_rules namespace can't be imported."""
-    import logging
+    """Ensure a warning is logged when a non-dbt_score_rules namespace can't be imported."""  # noqa: E501
+    import logging  # noqa: PLC0415
 
     r = RuleRegistry(default_config)
     with caplog.at_level(logging.WARNING, logger="dbt_score.rule_registry"):
@@ -81,7 +81,7 @@ def test_rule_registry_invalid_namespace_warning(default_config, caplog):
 
 
 def test_rule_registry_leaf_module_namespace(default_config):
-    """Ensure rules/filters are discovered when namespace is a leaf module (not a package)."""
+    """Ensure rules/filters are discovered when namespace is a leaf module (not a package)."""  # noqa: E501
     r = RuleRegistry(default_config)
     r._load("tests.rules.rule_filters")
 

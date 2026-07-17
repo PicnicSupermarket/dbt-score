@@ -59,33 +59,12 @@ jobs:
             -f branch="$BRANCH" \
             -f sha="$SHA"
 
-  build:
+  test:
     needs: refresh-lock
     if: |
       always() &&
       (needs.refresh-lock.result == 'success' || needs.refresh-lock.result == 'skipped')
     runs-on: ubuntu-slim
-    strategy:
-      fail-fast: false
-      # NOTE: This matrix duplicates the supported Python/dbt-core combinations
-      # defined in tox.ini's `env_list`. If you add or drop a Python or dbt
-      # version, update BOTH files. The valid combinations follow dbt's Python
-      # compatibility matrix:
-      # https://docs.getdbt.com/faqs/Core/install-python-compatibility
-      #   dbt 1.5/1.6:   Python 3.10-3.11
-      #   dbt 1.7/1.19:  Python 3.10-3.12
-      #   dbt 1.11:      Python 3.10-3.13
-      matrix:
-        python: ["3.10", "3.11", "3.12", "3.13"]
-        dbt-core: ["15", "16", "17", "110", "111"]
-        exclude:
-          - { python: "3.12", dbt-core: "15" }
-          - { python: "3.12", dbt-core: "16" }
-          - { python: "3.13", dbt-core: "15" }
-          - { python: "3.13", dbt-core: "16" }
-          - { python: "3.13", dbt-core: "17" }
-          - { python: "3.13", dbt-core: "110" }
-
     steps:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
@@ -96,14 +75,13 @@ jobs:
       - name: Install uv and set the Python version
         uses: astral-sh/setup-uv@11f9893b081a58869d3b5fccaea48c9e9e46f990 # v8.3.2
         with:
-          python-version: ${{ matrix.python }}
+          python-version: "3.13"
       - name: Install dependencies
-        run: |
-          uv sync --locked --only-dev
+        run: uv sync --locked --only-dev
       - name: Run Tox
-        run: |
-          PYTHON_VERSION=$(echo "${{ matrix.python }}" | sed 's/\.//')
-          uv run tox -e py${PYTHON_VERSION}-dbt${{ matrix.dbt-core }}
+        run: uv run tox run-parallel --parallel-no-spinner
+      - name: Combine and report coverage
+        run: uv run tox -e coverage
 
   lint:
     needs: refresh-lock
@@ -118,10 +96,8 @@ jobs:
         with:
           python-version: "3.13"
       - name: Install dependencies
-        run: |
-          uv sync --locked --only-dev
+        run: uv sync --locked --only-dev
       - name: Run Prettier
         run: npx --yes prettier@3.1.0 --check "**/*.{json,yaml,yml,md}"
       - name: Run Tox lint
-        run: |
-          uv run tox -e lint
+        run: uv run tox -e lint
