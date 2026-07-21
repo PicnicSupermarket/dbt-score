@@ -87,3 +87,43 @@ def test_manifest_formatter_project(
         new_manifest["sources"]["source.package.my_source.table2"]["meta"]["badge"]
         == "🥇"
     )
+
+
+def test_manifest_formatter_exposure(
+    capsys,
+    default_config,
+    manifest_loader,
+    exposure1,
+    exposure2,
+    rule_severity_low,
+    rule_severity_critical,
+):
+    """Ensure the formatter injects scores into exposures correctly."""
+    formatter = ManifestFormatter(
+        manifest_loader=manifest_loader, config=default_config
+    )
+    result1: EvaluableResultsType = {
+        rule_severity_critical: RuleViolation("Error"),
+    }
+    result2: EvaluableResultsType = {
+        rule_severity_low: None,
+    }
+
+    formatter.evaluable_evaluated(exposure1, result1, Score(0.0, "🚧"))
+    formatter.evaluable_evaluated(exposure2, result2, Score(10.0, "🥇"))
+    formatter.project_evaluated(Score(5.0, "🥉"))
+
+    stdout = capsys.readouterr().out
+    new_manifest = json.loads(stdout)
+    assert (
+        new_manifest["exposures"]["exposure.package.exposure1"]["meta"]["score"] == 0.0
+    )
+    assert (
+        new_manifest["exposures"]["exposure.package.exposure1"]["meta"]["badge"] == "🚧"
+    )
+    assert (
+        new_manifest["exposures"]["exposure.package.exposure2"]["meta"]["score"] == 10.0
+    )
+    assert (
+        new_manifest["exposures"]["exposure.package.exposure2"]["meta"]["badge"] == "🥇"
+    )
