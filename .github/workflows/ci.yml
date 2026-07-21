@@ -13,9 +13,25 @@ jobs:
   build:
     runs-on: ubuntu-slim
     strategy:
+      fail-fast: false
+      # NOTE: This matrix duplicates the supported Python/dbt-core combinations
+      # defined in tox.ini's `env_list`. If you add or drop a Python or dbt
+      # version, update BOTH files. The valid combinations follow dbt's Python
+      # compatibility matrix:
+      # https://docs.getdbt.com/faqs/Core/install-python-compatibility
+      #   dbt 1.5/1.6:   Python 3.10-3.11
+      #   dbt 1.7/1.19:  Python 3.10-3.12
+      #   dbt 1.11:      Python 3.10-3.13
       matrix:
         python: ["3.10", "3.11", "3.12", "3.13"]
         dbt-core: ["15", "16", "17", "110", "111"]
+        exclude:
+          - { python: "3.12", dbt-core: "15" }
+          - { python: "3.12", dbt-core: "16" }
+          - { python: "3.13", dbt-core: "15" }
+          - { python: "3.13", dbt-core: "16" }
+          - { python: "3.13", dbt-core: "17" }
+          - { python: "3.13", dbt-core: "110" }
 
     steps:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
