@@ -910,7 +910,7 @@ name = "exceptiongroup"
 version = "1.3.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "typing-extensions", marker = "python_full_version < '3.13' or (extra == 'group-9-dbt-score-dbt110' and extra == 'group-9-dbt-score-dbt111') or (extra == 'group-9-dbt-score-dbt110' and extra == 'group-9-dbt-score-dbt15') or (extra == 'group-9-dbt-score-dbt110' and extra == 'group-9-dbt-score-dbt16') or (extra == 'group-9-dbt-score-dbt110' and extra == 'group-9-dbt-score-dbt17') or (extra == 'group-9-dbt-score-dbt111' and extra == 'group-9-dbt-score-dbt15') or (extra == 'group-9-dbt-score-dbt111' and extra == 'group-9-dbt-score-dbt16') or (extra == 'group-9-dbt-score-dbt111' and extra == 'group-9-dbt-score-dbt17') or (extra == 'group-9-dbt-score-dbt15' and extra == 'group-9-dbt-score-dbt16') or (extra == 'group-9-dbt-score-dbt15' and extra == 'group-9-dbt-score-dbt17') or (extra == 'group-9-dbt-score-dbt16' and extra == 'group-9-dbt-score-dbt17')" },
+    { name = "typing-extensions", marker = "python_full_version < '3.11' or (extra == 'group-9-dbt-score-dbt110' and extra == 'group-9-dbt-score-dbt111') or (extra == 'group-9-dbt-score-dbt110' and extra == 'group-9-dbt-score-dbt15') or (extra == 'group-9-dbt-score-dbt110' and extra == 'group-9-dbt-score-dbt16') or (extra == 'group-9-dbt-score-dbt110' and extra == 'group-9-dbt-score-dbt17') or (extra == 'group-9-dbt-score-dbt111' and extra == 'group-9-dbt-score-dbt15') or (extra == 'group-9-dbt-score-dbt111' and extra == 'group-9-dbt-score-dbt16') or (extra == 'group-9-dbt-score-dbt111' and extra == 'group-9-dbt-score-dbt17') or (extra == 'group-9-dbt-score-dbt15' and extra == 'group-9-dbt-score-dbt16') or (extra == 'group-9-dbt-score-dbt15' and extra == 'group-9-dbt-score-dbt17') or (extra == 'group-9-dbt-score-dbt16' and extra == 'group-9-dbt-score-dbt17')" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/50/79/66800aadf48771f6b62f7eb014e352e5d06856655206165d775e675a02c9/exceptiongroup-1.3.1.tar.gz", hash = "sha256:8b412432c6055b0b7d14c310000ae93352ed6754f70fa8f7c34141f91c4e3219", size = 30371, upload-time = "2025-11-21T23:01:54.787Z" }
 wheels = [
@@ -2077,15 +2077,15 @@ wheels = [
 
 [[package]]
 name = "python-discovery"
-version = "1.4.2"
+version = "1.4.4"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "filelock" },
     { name = "platformdirs" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/0b/1a/cbbaf13b730abb0a16b964d984e19f2fe520c21a4dc664051359a3f5a9e7/python_discovery-1.4.2.tar.gz", hash = "sha256:8f3746c4b4968d22afbb97d36e1a0e5b66e6c0f297290f2e95f05b9b8bf18690", size = 70277, upload-time = "2026-06-11T16:10:42.383Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/4c/81/58c70036dffeccb7fe7d79d6260c69f7a28272bbd3909c29a01ea9422744/python_discovery-1.4.4.tar.gz", hash = "sha256:5cad33982d412c1f3ffb8f9ca4ea292c9680bca3942451d30b69c37fce53a4a3", size = 72212, upload-time = "2026-07-08T23:06:50.691Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/1a/82/a70006589557f267f15bd384c0642ad49f0d97b690c3a05b166b9dcbad3b/python_discovery-1.4.2-py3-none-any.whl", hash = "sha256:475803f53b7b2ed6e490e27373f9d8340f7d2eebf9acdaf645d7d714c97bb500", size = 33886, upload-time = "2026-06-11T16:10:41.192Z" },
+    { url = "https://files.pythonhosted.org/packages/9d/ae/84bc0d2440c95772272bb6f4b3d09ccf08b2898fce89b3d4f969a9fc74e9/python_discovery-1.4.4-py3-none-any.whl", hash = "sha256:abebe9120b43453b68c908acfb1e72a19d1a959ed2cb620ad38fc57d08056dbe", size = 34181, upload-time = "2026-07-08T23:06:49.402Z" },
 ]
 
 [[package]]
@@ -2648,7 +2648,7 @@ wheels = [
 
 [[package]]
 name = "tox"
-version = "4.56.1"
+version = "4.57.2"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "cachetools" },
@@ -2664,9 +2664,9 @@ dependencies = [
     { name = "typing-extensions", marker = "python_full_version < '3.11' or (extra == 'group-9-dbt-score-dbt110' and extra == 'group-9-dbt-score-dbt111') or (extra == 'group-9-dbt-score-dbt110' and extra == 'group-9-dbt-score-dbt15') or (extra == 'group-9-dbt-score-dbt110' and extra == 'group-9-dbt-score-dbt16') or (extra == 'group-9-dbt-score-dbt110' and extra == 'group-9-dbt-score-dbt17') or (extra == 'group-9-dbt-score-dbt111' and extra == 'group-9-dbt-score-dbt15') or (extra == 'group-9-dbt-score-dbt111' and extra == 'group-9-dbt-score-dbt16') or (extra == 'group-9-dbt-score-dbt111' and extra == 'group-9-dbt-score-dbt17') or (extra == 'group-9-dbt-score-dbt15' and extra == 'group-9-dbt-score-dbt16') or (extra == 'group-9-dbt-score-dbt15' and extra == 'group-9-dbt-score-dbt17') or (extra == 'group-9-dbt-score-dbt16' and extra == 'group-9-dbt-score-dbt17')" },
     { name = "virtualenv" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/60/6a/d20d405fc6661902ff803a9fa048d8aae27597c3b5dc750369ded82d08f7/tox-4.56.1.tar.gz", hash = "sha256:db1c2610802553189cf40de251661d066a635ee0ed9bf2a60093b5f1a7f36ef8", size = 283155, upload-time = "2026-06-25T06:18:36.802Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/09/c5/511b56f901c9a2c47f081a53ff7929a20e69d010930710acb70ff1ac96d4/tox-4.57.2.tar.gz", hash = "sha256:d23465ed07fd743f3b20b21a4991f4932ed4edb392bf32c0b9f7ce4415d2e89d", size = 296928, upload-time = "2026-07-21T01:15:25.841Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/d8/97/560a5dfde154619d9643b1e208119dddc29bbb35a38a4ce4d095c16cf8f0/tox-4.56.1-py3-none-any.whl", hash = "sha256:4d06b925c4dd67872099b39c5a46fba79a2169c5f6e32060f95a8b1181f0ef55", size = 216469, upload-time = "2026-06-25T06:18:35.229Z" },
+    { url = "https://files.pythonhosted.org/packages/8b/d7/201d7adfd7372ff3354a39e85cb70f95e36b91aff6bcc5547155d6ea6a5c/tox-4.57.2-py3-none-any.whl", hash = "sha256:2c187558a0d336b5e658025649f3c0e61aad080fdc674740e213d93bd48506ee", size = 223298, upload-time = "2026-07-21T01:15:24.115Z" },
 ]
 
 [[package]]
