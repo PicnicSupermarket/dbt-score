@@ -66,6 +66,7 @@ dbt111 = ["dbt-core>=1.11,<1.12"]
 [tool.uv]
 conflicts = [
     [
+        { group = "lint" },
         { group = "dbt15" },
         { group = "dbt16" },
         { group = "dbt17" },
