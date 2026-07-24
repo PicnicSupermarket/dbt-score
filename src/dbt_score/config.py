@@ -6,7 +6,7 @@ from dataclasses import dataclass, field, replace
 from pathlib import Path
 from typing import Any, Final
 
-from dbt_score.rule import RuleConfig
+from dbt_score.rule import RuleConfig, Severity
 
 if sys.version_info >= (3, 11):
     import tomllib
@@ -47,6 +47,39 @@ class BadgeConfig:
             raise AttributeError("wip badge cannot have a threshold configuration.")
 
 
+@dataclass
+class SeverityValueConfig:
+    """Configuration for the value of each rule severity."""
+
+    low: int = 1
+    medium: int = 2
+    high: int = 3
+    critical: int = 4
+
+    def as_dict(self) -> dict[Severity, int]:
+        """Return a mapping of severity to its configured value."""
+        return {
+            Severity.LOW: self.low,
+            Severity.MEDIUM: self.medium,
+            Severity.HIGH: self.high,
+            Severity.CRITICAL: self.critical,
+        }
+
+    def validate(self) -> None:
+        """Validate the severity value configuration."""
+        for name in ("low", "medium", "high", "critical"):
+            value = getattr(self, name)
+            if isinstance(value, bool) or not isinstance(value, int):
+                raise ValueError(f"Severity value {name!r} must be an integer.")
+            if value <= 0:
+                raise ValueError(f"Severity value {name!r} must be greater than 0.")
+        if not (self.low < self.medium < self.high < self.critical):
+            raise ValueError(
+                "Severity values must be strictly increasing:"
+                " low < medium < high < critical."
+            )
+
+
 class Config:
     """Configuration for dbt-score."""
 
@@ -62,6 +95,7 @@ class Config:
     ]
     _rules_section: Final[str] = "rules"
     _badges_section: Final[str] = "badges"
+    _severity_values_section: Final[str] = "severity_values"
 
     def __init__(self) -> None:
         """Initialize the Config object."""
@@ -71,6 +105,7 @@ class Config:
         self.rules_config: dict[str, RuleConfig] = {}
         self.config_file: Path | None = None
         self.badge_config: BadgeConfig = BadgeConfig()
+        self.severity_value_config: SeverityValueConfig = SeverityValueConfig()
         self.fail_project_under: float = 5.0
         self.fail_any_item_under: float = 5.0
         self.show: str = "failing-rules"
@@ -89,6 +124,7 @@ class Config:
         dbt_score_config = tools.get("dbt-score", {})
         rules_config = dbt_score_config.pop(self._rules_section, {})
         badge_config = dbt_score_config.pop(self._badges_section, {})
+        severity_value_config = dbt_score_config.pop(self._severity_values_section, {})
 
         # Main configuration
         for option, value in dbt_score_config.items():
@@ -120,9 +156,24 @@ class Config:
 
         self.badge_config.validate()
 
+        # Severity value configuration
+        if severity_value_config:
+            try:
+                self.severity_value_config = replace(
+                    self.severity_value_config, **severity_value_config
+                )
+            except TypeError as e:
+                options = list(SeverityValueConfig.__annotations__.keys())
+                raise AttributeError(
+                    f"Severity values: config only accepts {options}."
+                ) from e
+            self.severity_value_config.validate()
+
         # Rule configuration
+        severity_values = self.severity_value_config.as_dict()
         self.rules_config = {
-            name: RuleConfig.from_dict(config) for name, config in rules_config.items()
+            name: RuleConfig.from_dict(config, severity_values)
+            for name, config in rules_config.items()
         }
 
     @staticmethod
