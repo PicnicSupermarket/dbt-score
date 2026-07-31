@@ -12,6 +12,10 @@ jobs:
     permissions:
       id-token: write
       contents: write
+      pages: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy-docs.outputs.page_url }}
 
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -28,11 +32,18 @@ jobs:
       - name: Install dependencies
         run: |
           uv sync --group docs
-      - name: Deploy docs
+      - name: Build docs
         run: |
           uv run dbt-score list -f markdown -n dbt_score.rules.generic --title Generic > docs/rules/generic.md
           uv run dbt-score list -f markdown -n dbt_score.rules.macros --title Macros > docs/rules/macros.md
-          uv run mkdocs gh-deploy --force
+          uv run zensical build --clean
+      - name: Upload docs artifact
+        uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
+        with:
+          path: site
+      - name: Deploy docs to GitHub Pages
+        id: deploy-docs
+        uses: actions/deploy-pages@cd2ce8fcbc39b97be8ca5fce6e763baed58fa128 # v5.0.0
       - name: Create GitHub release
         run: gh release create "$TAG" --generate-notes
         env:

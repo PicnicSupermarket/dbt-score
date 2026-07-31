@@ -10,7 +10,7 @@ The default namespaces which are searched are:
   rule, either implemented by 3rd party packages or by yourself.
 
 Additionally, `dbt-score`
-[can be configured to search for rules in other namespaces](configuration.md/#main-configuration).
+[can be configured to search for rules in other namespaces](configuration.md#main-configuration).
 
 ## Packaging for a single project
 

@@ -122,15 +122,15 @@ uv run tox -f py312
 
 `dbt-score` uses:
 
-- [mkdocs](https://www.mkdocs.org/) for docs generation.
+- [zensical](https://zensical.org/) for docs generation.
 - [mkdocstrings](https://mkdocstrings.github.io/) for automatic docs from
   sources.
 
 Cheatsheet:
 
 ```shell
-uv run mkdocs build
-uv run mkdocs serve
+uv run zensical build
+uv run zensical serve
 ```
 
 ### Pre-commit
