@@ -1,0 +1,64 @@
+[project]
+site_name = "dbt-score"
+site_description = "Linter for dbt metadata."
+site_url = "https://dbt-score.picnic.tech/"
+repo_url = "https://github.com/PicnicSupermarket/dbt-score"
+docs_dir = "docs"
+site_dir = "site"
+nav = [
+    { "Home" = "index.md" },
+    { "Get started" = "get_started.md" },
+    { "Create rules" = "create_rules.md" },
+    { "Package rules" = "package_rules.md" },
+    { "Configuration" = "configuration.md" },
+    { "Programmatic invocations" = "programmatic_invocations.md" },
+    { "Rules" = [
+        "rules/generic.md",
+        "rules/macros.md",
+        "rules/filters.md",
+    ] },
+    { "Reference" = [
+        "reference/cli.md",
+        "reference/config.md",
+        "reference/dbt_utils.md",
+        "reference/exceptions.md",
+        "reference/evaluation.md",
+        "reference/models.md",
+        "reference/rule.md",
+        "reference/rule_registry.md",
+        "reference/scoring.md",
+        { "Formatters" = [
+            "reference/formatters/index.md",
+            "reference/formatters/human_readable_formatter.md",
+            "reference/formatters/manifest_formatter.md",
+            "reference/formatters/json_formatter.md",
+        ] },
+    ] },
+    { "Contributor's guide" = "contributing.md" },
+    { "Changelog" = "https://github.com/PicnicSupermarket/dbt-score/blob/master/CHANGELOG.md" },
+]
+
+[project.theme]
+variant = "classic"
+logo = "assets/medal.svg"
+favicon = "assets/medal.svg"
+features = [
+    "content.code.copy",
+    "content.action.edit",
+]
+
+[project.plugins.mkdocstrings.handlers.python]
+paths = ["src"]
+
+[project.markdown_extensions.pymdownx.highlight]
+anchor_linenums = true
+line_spans = "__span"
+pygments_lang_class = true
+
+[project.markdown_extensions.pymdownx.details]
+
+[project.markdown_extensions.pymdownx.inlinehilite]
+
+[project.markdown_extensions.pymdownx.snippets]
+
+[project.markdown_extensions.pymdownx.superfences]

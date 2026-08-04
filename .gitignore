@@ -71,7 +71,7 @@ ENV/
 env.bak/
 venv.bak/
 
-# mkdocs documentation
+# mkdocs / zensical documentation
 /site
 
 # mypy
