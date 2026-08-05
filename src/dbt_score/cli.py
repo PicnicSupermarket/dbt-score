@@ -218,7 +218,7 @@ def lint(  # noqa: PLR0913, C901
     default="terminal",
 )
 def list_command(
-    namespace: list[str], disabled_rule: list[str], title: str, format: str
+    namespace: list[str], disabled_rule: list[str], title: str | None, format: str
 ) -> None:
     """Display rules list."""
     config = Config()

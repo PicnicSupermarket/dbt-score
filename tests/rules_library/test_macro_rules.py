@@ -64,6 +64,29 @@ def test_macro_arguments_have_description():
     assert violation.message is not None
     assert "arg1" in violation.message
 
+    # Macro with many undocumented arguments — message should be truncated
+    macro_many_undoc_args = Macro(
+        unique_id="macro.package.test",
+        name="test_macro",
+        description="Test",
+        original_file_path="macros/test.sql",
+        package_name="package",
+        macro_sql="{% macro test() %}\n  SELECT 1\n{% endmacro %}",
+        meta={},
+        tags=[],
+        arguments=[
+            {"name": "argument_one"},
+            {"name": "argument_two"},
+            {"name": "argument_three"},
+            {"name": "argument_four"},
+        ],
+    )
+    truncated_violation = rule.evaluate(macro_many_undoc_args)
+    assert truncated_violation is not None
+    assert truncated_violation.message is not None
+    assert truncated_violation.message.endswith("…")
+    assert len(truncated_violation.message) == 61  # 60 chars + the ellipsis character
+
 
 def test_macro_name_follows_naming_convention():
     """Test macro_name_follows_naming_convention rule."""

@@ -67,3 +67,33 @@ def test_rule_registry_rule_filters(valid_config_path, model1, model2):
 
     assert not r.rules["tests.rules.rules.rule_test_example"].should_evaluate(model1)
     assert r.rules["tests.rules.rules.rule_test_example"].should_evaluate(model2)
+
+
+def test_rule_registry_invalid_namespace_warning(default_config, caplog):
+    """Ensure a warning is logged when a non-dbt_score_rules namespace can't be imported."""  # noqa: E501
+    import logging  # noqa: PLC0415
+
+    r = RuleRegistry(default_config)
+    with caplog.at_level(logging.WARNING, logger="dbt_score.rule_registry"):
+        list(r._walk_packages("nonexistent.custom.namespace"))
+
+    assert "Can't import nonexistent.custom.namespace." in caplog.text
+
+
+def test_rule_registry_leaf_module_namespace(default_config):
+    """Ensure rules/filters are discovered when namespace is a leaf module (not a package)."""  # noqa: E501
+    r = RuleRegistry(default_config)
+    r._load("tests.rules.rule_filters")
+
+    assert list(r._rule_filters.keys()) == [
+        "tests.rules.rule_filters.skip_model1",
+        "tests.rules.rule_filters.skip_schemaX",
+    ]
+
+
+def test_rule_registry_no_duplicate_filters(default_config):
+    """Ensure no duplicate filter names can coexist."""
+    r = RuleRegistry(default_config)
+    r._load("tests.rules.rule_filters")
+    with pytest.raises(DuplicatedRuleException):
+        r._load("tests.rules.rule_filters")
