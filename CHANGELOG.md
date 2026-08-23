@@ -8,6 +8,9 @@ and this project adheres to
 
 ## [Unreleased]
 
+- Write score and badge to the manifest `meta` for seeds and macros when using
+  the `manifest` output format.
+
 ## [0.16.0] - 2026-04-07
 
 - Upgrade transitive dependencies to resolve Dependabot security alerts.
