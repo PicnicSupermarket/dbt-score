@@ -8,6 +8,8 @@ and this project adheres to
 
 ## [Unreleased]
 
+## [0.17.0] - 2026-08-26
+
 - Write score and badge to the manifest `meta` for seeds and macros when using
   the `manifest` output format.
 
