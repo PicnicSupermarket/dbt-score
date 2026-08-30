@@ -251,8 +251,6 @@ class Model(HasColumnsMixin):
         raw_code: The raw code of the model.
         language: The language of the model, e.g. sql.
         access: The access level of the model, e.g. public.
-        group: The group the model is in.
-        group_owner: The owner of the group the model is in.
         alias: The alias of the model.
         patch_path: The yml path of the model, e.g. `package://model_dir/dir/file.yml`.
         tags: The list of tags attached to the model.
@@ -262,6 +260,8 @@ class Model(HasColumnsMixin):
         children: The list of models and snapshots that depend on this model.
         _raw_values: The raw values of the model (node) in the manifest.
         _raw_test_values: The raw test values of the model (node) in the manifest.
+        group: The group the model is in.
+        group_owner: The owner of the group the model is in.
     """
 
     unique_id: str
@@ -278,8 +278,6 @@ class Model(HasColumnsMixin):
     raw_code: str
     language: str
     access: str
-    group: str | None = None
-    group_owner: Owner | None = None
     alias: str | None = None
     patch_path: str | None = None
     tags: list[str] = field(default_factory=list)
@@ -290,6 +288,8 @@ class Model(HasColumnsMixin):
     children: list[ChildType] = field(default_factory=list)
     _raw_values: dict[str, Any] = field(default_factory=dict)
     _raw_test_values: list[dict[str, Any]] = field(default_factory=list)
+    group: str | None = None
+    group_owner: Owner | None = None
 
     @classmethod
     def from_node(
