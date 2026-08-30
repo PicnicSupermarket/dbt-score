@@ -386,3 +386,144 @@ def test_downstream_count_with_non_model_descendants():
 
     # Only model should be counted (1), snapshot and exposure are not Model type
     assert parent.downstream_count == 1
+
+
+def test_group_owner_loaded(raw_manifest):
+    """Test that group owner is correctly loaded for models."""
+    with patch("dbt_score.models.Path.read_text"):
+        with patch("dbt_score.models.json.loads", return_value=raw_manifest):
+            loader = ManifestLoader(Path("some.json"))
+            assert len(loader.groups) == 2
+            assert "group.package.them_over_there" in loader.groups
+            group = loader.groups["group.package.them_over_there"]
+            assert group.name == "them_over_there"
+            assert group.owner is not None
+            assert group.owner.name == "Alice"
+            assert group.owner.email == "alice@example.com"
+
+            model_with_owner = loader.models["model.package.model2"]
+            assert model_with_owner.group == "them_over_there"
+            assert model_with_owner.group_owner is not None
+            assert model_with_owner.group_owner.name == "Alice"
+            assert model_with_owner.group_owner.email == "alice@example.com"
+
+            model_without_owner = loader.models["model.package.collision_test"]
+            assert model_without_owner.group == "default"
+            assert model_without_owner.group_owner is not None
+            assert model_without_owner.group_owner.name is None
+            assert model_without_owner.group_owner.email is None
+
+            model_no_group = loader.models["model.package.model1"]
+            assert model_no_group.group is None
+            assert model_no_group.group_owner is None
+
+
+def test_group_owner_with_list_email():
+    """Test group owner with email as list."""
+    raw_manifest = {
+        "metadata": {"project_name": "package"},
+        "nodes": {
+            "model.package.m1": {
+                "resource_type": "model",
+                "package_name": "package",
+                "unique_id": "model.package.m1",
+                "name": "m1",
+                "relation_name": "db.schema.m1",
+                "description": "",
+                "original_file_path": "/path/m1.sql",
+                "config": {},
+                "meta": {},
+                "columns": {},
+                "constraints": [],
+                "database": "db",
+                "schema": "schema",
+                "raw_code": "select 1",
+                "alias": "m1",
+                "patch_path": None,
+                "tags": [],
+                "depends_on": {"nodes": []},
+                "language": "sql",
+                "access": "public",
+                "group": "my_group",
+            }
+        },
+        "sources": {},
+        "exposures": {},
+        "macros": {},
+        "groups": {
+            "group.package.my_group": {
+                "name": "my_group",
+                "resource_type": "group",
+                "package_name": "package",
+                "path": "models/_groups.yml",
+                "original_file_path": "models/_groups.yml",
+                "unique_id": "group.package.my_group",
+                "owner": {
+                    "name": "Bob",
+                    "email": ["bob@example.com", "bob2@example.com"],
+                },
+                "description": None,
+                "config": {},
+            }
+        },
+    }
+    with patch("dbt_score.models.Path.read_text"):
+        with patch("dbt_score.models.json.loads", return_value=raw_manifest):
+            loader = ManifestLoader(Path("some.json"))
+            model = loader.models["model.package.m1"]
+            assert model.group_owner is not None
+            assert model.group_owner.name == "Bob"
+            assert model.group_owner.email == ["bob@example.com", "bob2@example.com"]
+
+
+def test_model_without_group_key():
+    """Test that model without group key is handled."""
+    raw_manifest = {
+        "metadata": {"project_name": "package"},
+        "nodes": {
+            "model.package.m1": {
+                "resource_type": "model",
+                "package_name": "package",
+                "unique_id": "model.package.m1",
+                "name": "m1",
+                "relation_name": "db.schema.m1",
+                "description": "",
+                "original_file_path": "/path/m1.sql",
+                "config": {},
+                "meta": {},
+                "columns": {},
+                "constraints": [],
+                "database": "db",
+                "schema": "schema",
+                "raw_code": "select 1",
+                "alias": "m1",
+                "patch_path": None,
+                "tags": [],
+                "depends_on": {"nodes": []},
+                "language": "sql",
+                "access": "public",
+            }
+        },
+        "sources": {},
+        "exposures": {},
+        "macros": {},
+        "groups": {},
+    }
+    with patch("dbt_score.models.Path.read_text"):
+        with patch("dbt_score.models.json.loads", return_value=raw_manifest):
+            loader = ManifestLoader(Path("some.json"))
+            model = loader.models["model.package.m1"]
+            assert model.group is None
+            assert model.group_owner is None
+
+
+def test_manifest_without_groups(raw_manifest):
+    """Test that manifest without groups still loads."""
+    raw_manifest_no_groups = {k: v for k, v in raw_manifest.items() if k != "groups"}
+    raw_manifest_no_groups.pop("group_map", None)
+    with patch("dbt_score.models.Path.read_text"):
+        with patch("dbt_score.models.json.loads", return_value=raw_manifest_no_groups):
+            loader = ManifestLoader(Path("some.json"))
+            assert len(loader.groups) == 0
+            assert loader.models["model.package.model2"].group == "them_over_there"
+            assert loader.models["model.package.model2"].group_owner is None

@@ -11,7 +11,12 @@
       "relation_name": "database.schema.snapshot1",
       "description": "A great snapshot.",
       "original_file_path": "/path/to/snapshot1.sql",
-      "config": { "strategy": "timestamp", "unique_key": ["a"] },
+      "config": {
+        "strategy": "timestamp",
+        "unique_key": [
+          "a"
+        ]
+      },
       "meta": {},
       "columns": {
         "a": {
@@ -30,7 +35,11 @@
       "alias": "snapshot1_alias",
       "patch_path": "/path/to/snapshot1.yml",
       "tags": [],
-      "depends_on": { "nodes": ["model.package.model1"] },
+      "depends_on": {
+        "nodes": [
+          "model.package.model1"
+        ]
+      },
       "language": "sql",
       "access": "protected"
     },
@@ -42,7 +51,12 @@
       "relation_name": "database.schema.snapshot2",
       "description": "A great snapshot.",
       "original_file_path": "/path/to/snapshot2.sql",
-      "config": { "strategy": "timestamp", "unique_key": ["a"] },
+      "config": {
+        "strategy": "timestamp",
+        "unique_key": [
+          "a"
+        ]
+      },
       "meta": {},
       "columns": {
         "a": {
@@ -61,7 +75,11 @@
       "alias": "snapshot2_alias",
       "patch_path": "/path/to/snapshot2.yml",
       "tags": [],
-      "depends_on": { "nodes": ["source.package.my_source.table1"] },
+      "depends_on": {
+        "nodes": [
+          "source.package.my_source.table1"
+        ]
+      },
       "language": "sql",
       "access": "protected"
     },
@@ -141,7 +159,9 @@
       "patch_path": "/path/to/model2.yml",
       "tags": [],
       "depends_on": {
-        "nodes": ["seed.package.seed1"]
+        "nodes": [
+          "seed.package.seed1"
+        ]
       },
       "language": "sql",
       "access": "public",
@@ -175,7 +195,9 @@
       "patch_path": "/path/to/collision_test.yml",
       "tags": [],
       "depends_on": {
-        "nodes": ["model.package.model2"]
+        "nodes": [
+          "model.package.model2"
+        ]
       },
       "language": "sql",
       "access": "public",
@@ -243,7 +265,11 @@
     },
     "test.package.test4": {
       "resource_type": "test",
-      "depends_on": { "nodes": ["model.package.model1"] },
+      "depends_on": {
+        "nodes": [
+          "model.package.model1"
+        ]
+      },
       "name": "test4",
       "package_name": "package",
       "tags": []
@@ -253,9 +279,16 @@
       "package_name": "package",
       "name": "source_test1",
       "attached_node": null,
-      "sources": [["my_source", "table1"]],
+      "sources": [
+        [
+          "my_source",
+          "table1"
+        ]
+      ],
       "depends_on": {
-        "nodes": ["source.package.my_source.table1"]
+        "nodes": [
+          "source.package.my_source.table1"
+        ]
       },
       "test_metadata": {
         "name": "type",
@@ -267,7 +300,12 @@
       "package_name": "package",
       "name": "source_test__malformed_missing_depends_on",
       "attached_node": null,
-      "sources": [["my_source", "table1"]],
+      "sources": [
+        [
+          "my_source",
+          "table1"
+        ]
+      ],
       "test_metadata": {
         "name": "type",
         "kwargs": {}
@@ -278,7 +316,12 @@
       "package_name": "package",
       "name": "source_test__malformed_missing_depends_on_nodes",
       "attached_node": null,
-      "sources": [["my_source", "table1"]],
+      "sources": [
+        [
+          "my_source",
+          "table1"
+        ]
+      ],
       "depends_on": {},
       "test_metadata": {
         "name": "type",
@@ -305,7 +348,6 @@
           "tags": []
         }
       },
-      "package_name": "package",
       "database": "db",
       "schema": "schema",
       "alias": "seed1_alias",
@@ -333,7 +375,6 @@
           "tags": []
         }
       },
-      "package_name": "package",
       "database": "db",
       "schema": "schema",
       "alias": "seed2_alias",
@@ -352,7 +393,11 @@
       "path": "models/sources/sources.yml",
       "original_file_path": "models/sources/sources.yml",
       "unique_id": "source.package.my_source.table1",
-      "fqn": ["package", "my_source", "table1"],
+      "fqn": [
+        "package",
+        "my_source",
+        "table1"
+      ],
       "source_name": "my_source",
       "source_description": "An important source table.",
       "loader": "Fivetran",
@@ -393,7 +438,11 @@
       "path": "models/sources/sources.yml",
       "original_file_path": "models/sources/sources.yml",
       "unique_id": "source.package.my_source.table2",
-      "fqn": ["package", "my_source", "table2"],
+      "fqn": [
+        "package",
+        "my_source",
+        "table2"
+      ],
       "source_name": "my_source",
       "source_description": "Another table with some columns declared.",
       "loader": "Fivetran",
@@ -451,7 +500,11 @@
       "path": "models/sources/sources.yml",
       "original_file_path": "models/sources/sources.yml",
       "unique_id": "source.package.my_other_source.table1",
-      "fqn": ["package", "my_other_source", "table1"],
+      "fqn": [
+        "package",
+        "my_other_source",
+        "table1"
+      ],
       "source_name": "my_other_source",
       "source_description": "A source in a different schema.",
       "loader": "Fivetran",
@@ -492,7 +545,11 @@
       "path": "models/exposures/exposures.yml",
       "original_file_path": "models/exposures/exposures.yml",
       "unique_id": "exposure.package.exposure1",
-      "fqn": ["package", "exposures", "exposure1"],
+      "fqn": [
+        "package",
+        "exposures",
+        "exposure1"
+      ],
       "type": "application",
       "owner": {
         "email": null,
@@ -502,7 +559,10 @@
       "label": null,
       "maturity": null,
       "meta": {},
-      "tags": ["tag1", "tag2"],
+      "tags": [
+        "tag1",
+        "tag2"
+      ],
       "config": {
         "enabled": true
       },
@@ -510,7 +570,9 @@
       "url": null,
       "depends_on": {
         "macros": [],
-        "nodes": ["model.package.model1"]
+        "nodes": [
+          "model.package.model1"
+        ]
       },
       "refs": [
         {
@@ -530,7 +592,11 @@
       "path": "models/exposures/exposures.yml",
       "original_file_path": "models/exposures/exposures.yml",
       "unique_id": "exposure.package.exposure2",
-      "fqn": ["package", "exposures", "exposure2"],
+      "fqn": [
+        "package",
+        "exposures",
+        "exposure2"
+      ],
       "type": "application",
       "owner": {
         "email": null,
@@ -540,7 +606,10 @@
       "label": null,
       "maturity": null,
       "meta": {},
-      "tags": ["tag1", "tag2"],
+      "tags": [
+        "tag1",
+        "tag2"
+      ],
       "config": {
         "enabled": true
       },
@@ -548,7 +617,9 @@
       "url": null,
       "depends_on": {
         "macros": [],
-        "nodes": ["model.package.model2"]
+        "nodes": [
+          "model.package.model2"
+        ]
       },
       "refs": [
         {
@@ -568,7 +639,11 @@
       "path": "models/exposures/exposures.yml",
       "original_file_path": "models/exposures/exposures.yml",
       "unique_id": "exposure.package.exposure_collision",
-      "fqn": ["package", "exposures", "exposure_collision"],
+      "fqn": [
+        "package",
+        "exposures",
+        "exposure_collision"
+      ],
       "type": "application",
       "owner": {
         "email": null,
@@ -578,7 +653,10 @@
       "label": null,
       "maturity": null,
       "meta": {},
-      "tags": ["collision", "test"],
+      "tags": [
+        "collision",
+        "test"
+      ],
       "config": {
         "enabled": true
       },
@@ -586,7 +664,9 @@
       "url": null,
       "depends_on": {
         "macros": [],
-        "nodes": ["model.package.collision_test"]
+        "nodes": [
+          "model.package.collision_test"
+        ]
       },
       "refs": [
         {
@@ -610,7 +690,9 @@
       "original_file_path": "macros/macro1.sql",
       "macro_sql": "{% macro macro1() %}\n  SELECT 1\n{% endmacro %}",
       "meta": {},
-      "tags": ["utility"],
+      "tags": [
+        "utility"
+      ],
       "depends_on": {
         "macros": []
       },
@@ -627,7 +709,9 @@
       "meta": {},
       "tags": [],
       "depends_on": {
-        "macros": ["macro.package.macro1"]
+        "macros": [
+          "macro.package.macro1"
+        ]
       },
       "arguments": [
         {
@@ -642,5 +726,43 @@
         }
       ]
     }
+  },
+  "groups": {
+    "group.package.them_over_there": {
+      "name": "them_over_there",
+      "resource_type": "group",
+      "package_name": "package",
+      "path": "models/_groups.yml",
+      "original_file_path": "models/_groups.yml",
+      "unique_id": "group.package.them_over_there",
+      "owner": {
+        "name": "Alice",
+        "email": "alice@example.com"
+      },
+      "description": "Team over there",
+      "config": {}
+    },
+    "group.package.default": {
+      "name": "default",
+      "resource_type": "group",
+      "package_name": "package",
+      "path": "models/_groups.yml",
+      "original_file_path": "models/_groups.yml",
+      "unique_id": "group.package.default",
+      "owner": {
+        "name": null,
+        "email": null
+      },
+      "description": null,
+      "config": {}
+    }
+  },
+  "group_map": {
+    "them_over_there": [
+      "model.package.model2"
+    ],
+    "default": [
+      "model.package.collision_test"
+    ]
   }
 }
