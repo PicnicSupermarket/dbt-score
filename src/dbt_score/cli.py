@@ -1,5 +1,6 @@
 """CLI interface."""
 
+import json
 import logging
 import traceback
 from pathlib import Path
@@ -173,6 +174,14 @@ def lint(  # noqa: PLR0913, C901
         logger.error(
             "dbt's manifest.json could not be found. If you're in a dbt project, be "
             "sure to run 'dbt parse' first, or use the option '--run-dbt-parse'."
+        )
+        ctx.exit(2)
+
+    except json.JSONDecodeError as exc:
+        logger.error(
+            "dbt's manifest.json could not be parsed. Make sure it is valid JSON. "
+            "If you're in a dbt project, be sure to run 'dbt parse' first, or use "
+            f"the option '--run-dbt-parse'. Parsing error: {exc}"
         )
         ctx.exit(2)
 
