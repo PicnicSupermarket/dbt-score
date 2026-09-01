@@ -4,16 +4,16 @@ requires-python = ">=3.10"
 resolution-markers = [
     "python_full_version >= '3.15' and extra != 'group-9-dbt-score-dbt110' and extra != 'group-9-dbt-score-dbt111' and extra != 'group-9-dbt-score-dbt15' and extra != 'group-9-dbt-score-dbt16' and extra == 'group-9-dbt-score-dbt17'",
     "python_full_version >= '3.11' and python_full_version < '3.15' and extra != 'group-9-dbt-score-dbt110' and extra != 'group-9-dbt-score-dbt111' and extra != 'group-9-dbt-score-dbt15' and extra != 'group-9-dbt-score-dbt16' and extra == 'group-9-dbt-score-dbt17'",
-    "python_full_version < '3.11' and extra != 'group-9-dbt-score-dbt110' and extra != 'group-9-dbt-score-dbt111' and extra != 'group-9-dbt-score-dbt15' and extra != 'group-9-dbt-score-dbt16' and extra == 'group-9-dbt-score-dbt17'",
     "python_full_version >= '3.11' and extra != 'group-9-dbt-score-dbt110' and extra != 'group-9-dbt-score-dbt111' and extra != 'group-9-dbt-score-dbt15' and extra == 'group-9-dbt-score-dbt16' and extra != 'group-9-dbt-score-dbt17'",
-    "python_full_version < '3.11' and extra != 'group-9-dbt-score-dbt110' and extra != 'group-9-dbt-score-dbt111' and extra != 'group-9-dbt-score-dbt15' and extra == 'group-9-dbt-score-dbt16' and extra != 'group-9-dbt-score-dbt17'",
     "python_full_version >= '3.11' and extra != 'group-9-dbt-score-dbt110' and extra != 'group-9-dbt-score-dbt111' and extra == 'group-9-dbt-score-dbt15' and extra != 'group-9-dbt-score-dbt16' and extra != 'group-9-dbt-score-dbt17'",
-    "python_full_version < '3.11' and extra != 'group-9-dbt-score-dbt110' and extra != 'group-9-dbt-score-dbt111' and extra == 'group-9-dbt-score-dbt15' and extra != 'group-9-dbt-score-dbt16' and extra != 'group-9-dbt-score-dbt17'",
     "python_full_version >= '3.11' and extra != 'group-9-dbt-score-dbt110' and extra == 'group-9-dbt-score-dbt111' and extra != 'group-9-dbt-score-dbt15' and extra != 'group-9-dbt-score-dbt16' and extra != 'group-9-dbt-score-dbt17'",
-    "python_full_version < '3.11' and extra != 'group-9-dbt-score-dbt110' and extra == 'group-9-dbt-score-dbt111' and extra != 'group-9-dbt-score-dbt15' and extra != 'group-9-dbt-score-dbt16' and extra != 'group-9-dbt-score-dbt17'",
     "python_full_version >= '3.11' and extra == 'group-9-dbt-score-dbt110' and extra != 'group-9-dbt-score-dbt111' and extra != 'group-9-dbt-score-dbt15' and extra != 'group-9-dbt-score-dbt16' and extra != 'group-9-dbt-score-dbt17'",
-    "python_full_version < '3.11' and extra == 'group-9-dbt-score-dbt110' and extra != 'group-9-dbt-score-dbt111' and extra != 'group-9-dbt-score-dbt15' and extra != 'group-9-dbt-score-dbt16' and extra != 'group-9-dbt-score-dbt17'",
     "python_full_version >= '3.11' and extra != 'group-9-dbt-score-dbt110' and extra != 'group-9-dbt-score-dbt111' and extra != 'group-9-dbt-score-dbt15' and extra != 'group-9-dbt-score-dbt16' and extra != 'group-9-dbt-score-dbt17'",
+    "python_full_version < '3.11' and extra != 'group-9-dbt-score-dbt110' and extra != 'group-9-dbt-score-dbt111' and extra != 'group-9-dbt-score-dbt15' and extra != 'group-9-dbt-score-dbt16' and extra == 'group-9-dbt-score-dbt17'",
+    "python_full_version < '3.11' and extra != 'group-9-dbt-score-dbt110' and extra != 'group-9-dbt-score-dbt111' and extra != 'group-9-dbt-score-dbt15' and extra == 'group-9-dbt-score-dbt16' and extra != 'group-9-dbt-score-dbt17'",
+    "python_full_version < '3.11' and extra != 'group-9-dbt-score-dbt110' and extra != 'group-9-dbt-score-dbt111' and extra == 'group-9-dbt-score-dbt15' and extra != 'group-9-dbt-score-dbt16' and extra != 'group-9-dbt-score-dbt17'",
+    "python_full_version < '3.11' and extra != 'group-9-dbt-score-dbt110' and extra == 'group-9-dbt-score-dbt111' and extra != 'group-9-dbt-score-dbt15' and extra != 'group-9-dbt-score-dbt16' and extra != 'group-9-dbt-score-dbt17'",
+    "python_full_version < '3.11' and extra == 'group-9-dbt-score-dbt110' and extra != 'group-9-dbt-score-dbt111' and extra != 'group-9-dbt-score-dbt15' and extra != 'group-9-dbt-score-dbt16' and extra != 'group-9-dbt-score-dbt17'",
     "python_full_version < '3.11' and extra != 'group-9-dbt-score-dbt110' and extra != 'group-9-dbt-score-dbt111' and extra != 'group-9-dbt-score-dbt15' and extra != 'group-9-dbt-score-dbt16' and extra != 'group-9-dbt-score-dbt17'",
 ]
 conflicts = [[
@@ -52,14 +52,14 @@ source = { registry = "https://pypi.org/simple" }
 resolution-markers = [
     "python_full_version >= '3.15' and extra != 'group-9-dbt-score-dbt110' and extra != 'group-9-dbt-score-dbt111' and extra != 'group-9-dbt-score-dbt15' and extra != 'group-9-dbt-score-dbt16' and extra == 'group-9-dbt-score-dbt17'",
     "python_full_version >= '3.11' and python_full_version < '3.15' and extra != 'group-9-dbt-score-dbt110' and extra != 'group-9-dbt-score-dbt111' and extra != 'group-9-dbt-score-dbt15' and extra != 'group-9-dbt-score-dbt16' and extra == 'group-9-dbt-score-dbt17'",
-    "python_full_version < '3.11' and extra != 'group-9-dbt-score-dbt110' and extra != 'group-9-dbt-score-dbt111' and extra != 'group-9-dbt-score-dbt15' and extra != 'group-9-dbt-score-dbt16' and extra == 'group-9-dbt-score-dbt17'",
     "python_full_version >= '3.11' and extra != 'group-9-dbt-score-dbt110' and extra != 'group-9-dbt-score-dbt111' and extra != 'group-9-dbt-score-dbt15' and extra == 'group-9-dbt-score-dbt16' and extra != 'group-9-dbt-score-dbt17'",
-    "python_full_version < '3.11' and extra != 'group-9-dbt-score-dbt110' and extra != 'group-9-dbt-score-dbt111' and extra != 'group-9-dbt-score-dbt15' and extra == 'group-9-dbt-score-dbt16' and extra != 'group-9-dbt-score-dbt17'",
     "python_full_version >= '3.11' and extra != 'group-9-dbt-score-dbt110' and extra == 'group-9-dbt-score-dbt111' and extra != 'group-9-dbt-score-dbt15' and extra != 'group-9-dbt-score-dbt16' and extra != 'group-9-dbt-score-dbt17'",
-    "python_full_version < '3.11' and extra != 'group-9-dbt-score-dbt110' and extra == 'group-9-dbt-score-dbt111' and extra != 'group-9-dbt-score-dbt15' and extra != 'group-9-dbt-score-dbt16' and extra != 'group-9-dbt-score-dbt17'",
     "python_full_version >= '3.11' and extra == 'group-9-dbt-score-dbt110' and extra != 'group-9-dbt-score-dbt111' and extra != 'group-9-dbt-score-dbt15' and extra != 'group-9-dbt-score-dbt16' and extra != 'group-9-dbt-score-dbt17'",
-    "python_full_version < '3.11' and extra == 'group-9-dbt-score-dbt110' and extra != 'group-9-dbt-score-dbt111' and extra != 'group-9-dbt-score-dbt15' and extra != 'group-9-dbt-score-dbt16' and extra != 'group-9-dbt-score-dbt17'",
     "python_full_version >= '3.11' and extra != 'group-9-dbt-score-dbt110' and extra != 'group-9-dbt-score-dbt111' and extra != 'group-9-dbt-score-dbt15' and extra != 'group-9-dbt-score-dbt16' and extra != 'group-9-dbt-score-dbt17'",
+    "python_full_version < '3.11' and extra != 'group-9-dbt-score-dbt110' and extra != 'group-9-dbt-score-dbt111' and extra != 'group-9-dbt-score-dbt15' and extra != 'group-9-dbt-score-dbt16' and extra == 'group-9-dbt-score-dbt17'",
+    "python_full_version < '3.11' and extra != 'group-9-dbt-score-dbt110' and extra != 'group-9-dbt-score-dbt111' and extra != 'group-9-dbt-score-dbt15' and extra == 'group-9-dbt-score-dbt16' and extra != 'group-9-dbt-score-dbt17'",
+    "python_full_version < '3.11' and extra != 'group-9-dbt-score-dbt110' and extra == 'group-9-dbt-score-dbt111' and extra != 'group-9-dbt-score-dbt15' and extra != 'group-9-dbt-score-dbt16' and extra != 'group-9-dbt-score-dbt17'",
+    "python_full_version < '3.11' and extra == 'group-9-dbt-score-dbt110' and extra != 'group-9-dbt-score-dbt111' and extra != 'group-9-dbt-score-dbt15' and extra != 'group-9-dbt-score-dbt16' and extra != 'group-9-dbt-score-dbt17'",
     "python_full_version < '3.11' and extra != 'group-9-dbt-score-dbt110' and extra != 'group-9-dbt-score-dbt111' and extra != 'group-9-dbt-score-dbt15' and extra != 'group-9-dbt-score-dbt16' and extra != 'group-9-dbt-score-dbt17'",
 ]
 dependencies = [
@@ -284,14 +284,11 @@ wheels = [
 
 [[package]]
 name = "click"
-version = "8.4.2"
+version = "8.5.0"
 source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "colorama", marker = "sys_platform == 'win32' or (extra == 'group-9-dbt-score-dbt110' and extra == 'group-9-dbt-score-dbt111') or (extra == 'group-9-dbt-score-dbt110' and extra == 'group-9-dbt-score-dbt15') or (extra == 'group-9-dbt-score-dbt110' and extra == 'group-9-dbt-score-dbt16') or (extra == 'group-9-dbt-score-dbt110' and extra == 'group-9-dbt-score-dbt17') or (extra == 'group-9-dbt-score-dbt111' and extra == 'group-9-dbt-score-dbt15') or (extra == 'group-9-dbt-score-dbt111' and extra == 'group-9-dbt-score-dbt16') or (extra == 'group-9-dbt-score-dbt111' and extra == 'group-9-dbt-score-dbt17') or (extra == 'group-9-dbt-score-dbt15' and extra == 'group-9-dbt-score-dbt16') or (extra == 'group-9-dbt-score-dbt15' and extra == 'group-9-dbt-score-dbt17') or (extra == 'group-9-dbt-score-dbt16' and extra == 'group-9-dbt-score-dbt17')" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/76/d4/81420972a676e8ffea40450d8c8c92943e7218a78fe9b64359836cc9876b/click-8.4.2.tar.gz", hash = "sha256:9a6cea6e60b17ebe0a44c5cc636d94f09bd66142c1cd7d8b4cd731c4917a15f6", size = 338000, upload-time = "2026-06-24T17:45:15.148Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/c7/0e/7fa0ef50764b67090eca4114772a2abf8b6148198475e54c660b97caeee6/click-8.5.0.tar.gz", hash = "sha256:ba0d2089de75ea0310e2dde03160e6ca10009947fb95a182f9b54021bb272e34", size = 382235, upload-time = "2026-08-26T13:33:14.56Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/fb/e2/79c688af8b210d232694e31e59da9f6ec747bae31c3f5946e4e9b98860d5/click-8.4.2-py3-none-any.whl", hash = "sha256:e6f9f66136c816745b9d65817da91d61d957fb16e02e4dcd0552553c5a197b76", size = 119243, upload-time = "2026-06-24T17:45:13.73Z" },
+    { url = "https://files.pythonhosted.org/packages/58/50/6c0d534c5f134586a8e1ba4e330569e32f057e33372ae556463212fb4cd3/click-8.5.0-py3-none-any.whl", hash = "sha256:255bc9599cf7748b4b1a446ccc735421bd08a2ae529a8b88597d3de5664ee360", size = 125251, upload-time = "2026-08-26T13:33:12.928Z" },
 ]
 
 [[package]]
@@ -683,12 +680,12 @@ source = { registry = "https://pypi.org/simple" }
 resolution-markers = [
     "python_full_version >= '3.15' and extra != 'group-9-dbt-score-dbt110' and extra != 'group-9-dbt-score-dbt111' and extra != 'group-9-dbt-score-dbt15' and extra != 'group-9-dbt-score-dbt16' and extra == 'group-9-dbt-score-dbt17'",
     "python_full_version >= '3.11' and python_full_version < '3.15' and extra != 'group-9-dbt-score-dbt110' and extra != 'group-9-dbt-score-dbt111' and extra != 'group-9-dbt-score-dbt15' and extra != 'group-9-dbt-score-dbt16' and extra == 'group-9-dbt-score-dbt17'",
-    "python_full_version < '3.11' and extra != 'group-9-dbt-score-dbt110' and extra != 'group-9-dbt-score-dbt111' and extra != 'group-9-dbt-score-dbt15' and extra != 'group-9-dbt-score-dbt16' and extra == 'group-9-dbt-score-dbt17'",
     "python_full_version >= '3.11' and extra != 'group-9-dbt-score-dbt110' and extra == 'group-9-dbt-score-dbt111' and extra != 'group-9-dbt-score-dbt15' and extra != 'group-9-dbt-score-dbt16' and extra != 'group-9-dbt-score-dbt17'",
-    "python_full_version < '3.11' and extra != 'group-9-dbt-score-dbt110' and extra == 'group-9-dbt-score-dbt111' and extra != 'group-9-dbt-score-dbt15' and extra != 'group-9-dbt-score-dbt16' and extra != 'group-9-dbt-score-dbt17'",
     "python_full_version >= '3.11' and extra == 'group-9-dbt-score-dbt110' and extra != 'group-9-dbt-score-dbt111' and extra != 'group-9-dbt-score-dbt15' and extra != 'group-9-dbt-score-dbt16' and extra != 'group-9-dbt-score-dbt17'",
-    "python_full_version < '3.11' and extra == 'group-9-dbt-score-dbt110' and extra != 'group-9-dbt-score-dbt111' and extra != 'group-9-dbt-score-dbt15' and extra != 'group-9-dbt-score-dbt16' and extra != 'group-9-dbt-score-dbt17'",
     "python_full_version >= '3.11' and extra != 'group-9-dbt-score-dbt110' and extra != 'group-9-dbt-score-dbt111' and extra != 'group-9-dbt-score-dbt15' and extra != 'group-9-dbt-score-dbt16' and extra != 'group-9-dbt-score-dbt17'",
+    "python_full_version < '3.11' and extra != 'group-9-dbt-score-dbt110' and extra != 'group-9-dbt-score-dbt111' and extra != 'group-9-dbt-score-dbt15' and extra != 'group-9-dbt-score-dbt16' and extra == 'group-9-dbt-score-dbt17'",
+    "python_full_version < '3.11' and extra != 'group-9-dbt-score-dbt110' and extra == 'group-9-dbt-score-dbt111' and extra != 'group-9-dbt-score-dbt15' and extra != 'group-9-dbt-score-dbt16' and extra != 'group-9-dbt-score-dbt17'",
+    "python_full_version < '3.11' and extra == 'group-9-dbt-score-dbt110' and extra != 'group-9-dbt-score-dbt111' and extra != 'group-9-dbt-score-dbt15' and extra != 'group-9-dbt-score-dbt16' and extra != 'group-9-dbt-score-dbt17'",
     "python_full_version < '3.11' and extra != 'group-9-dbt-score-dbt110' and extra != 'group-9-dbt-score-dbt111' and extra != 'group-9-dbt-score-dbt15' and extra != 'group-9-dbt-score-dbt16' and extra != 'group-9-dbt-score-dbt17'",
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/2c/d0/4ee14955ad0214da695b3c15dc0acf2ab54c9d263242f36073c999cb699a/dbt_extractor-0.5.1.tar.gz", hash = "sha256:cd5d95576a8dea4190240aaf9936a37fd74b4b7913ca69a3c368fc4472bb7e13", size = 266278, upload-time = "2023-11-28T17:25:19.934Z" }
@@ -1293,12 +1290,12 @@ source = { registry = "https://pypi.org/simple" }
 resolution-markers = [
     "python_full_version >= '3.15' and extra != 'group-9-dbt-score-dbt110' and extra != 'group-9-dbt-score-dbt111' and extra != 'group-9-dbt-score-dbt15' and extra != 'group-9-dbt-score-dbt16' and extra == 'group-9-dbt-score-dbt17'",
     "python_full_version >= '3.11' and python_full_version < '3.15' and extra != 'group-9-dbt-score-dbt110' and extra != 'group-9-dbt-score-dbt111' and extra != 'group-9-dbt-score-dbt15' and extra != 'group-9-dbt-score-dbt16' and extra == 'group-9-dbt-score-dbt17'",
-    "python_full_version < '3.11' and extra != 'group-9-dbt-score-dbt110' and extra != 'group-9-dbt-score-dbt111' and extra != 'group-9-dbt-score-dbt15' and extra != 'group-9-dbt-score-dbt16' and extra == 'group-9-dbt-score-dbt17'",
     "python_full_version >= '3.11' and extra != 'group-9-dbt-score-dbt110' and extra == 'group-9-dbt-score-dbt111' and extra != 'group-9-dbt-score-dbt15' and extra != 'group-9-dbt-score-dbt16' and extra != 'group-9-dbt-score-dbt17'",
-    "python_full_version < '3.11' and extra != 'group-9-dbt-score-dbt110' and extra == 'group-9-dbt-score-dbt111' and extra != 'group-9-dbt-score-dbt15' and extra != 'group-9-dbt-score-dbt16' and extra != 'group-9-dbt-score-dbt17'",
     "python_full_version >= '3.11' and extra == 'group-9-dbt-score-dbt110' and extra != 'group-9-dbt-score-dbt111' and extra != 'group-9-dbt-score-dbt15' and extra != 'group-9-dbt-score-dbt16' and extra != 'group-9-dbt-score-dbt17'",
-    "python_full_version < '3.11' and extra == 'group-9-dbt-score-dbt110' and extra != 'group-9-dbt-score-dbt111' and extra != 'group-9-dbt-score-dbt15' and extra != 'group-9-dbt-score-dbt16' and extra != 'group-9-dbt-score-dbt17'",
     "python_full_version >= '3.11' and extra != 'group-9-dbt-score-dbt110' and extra != 'group-9-dbt-score-dbt111' and extra != 'group-9-dbt-score-dbt15' and extra != 'group-9-dbt-score-dbt16' and extra != 'group-9-dbt-score-dbt17'",
+    "python_full_version < '3.11' and extra != 'group-9-dbt-score-dbt110' and extra != 'group-9-dbt-score-dbt111' and extra != 'group-9-dbt-score-dbt15' and extra != 'group-9-dbt-score-dbt16' and extra == 'group-9-dbt-score-dbt17'",
+    "python_full_version < '3.11' and extra != 'group-9-dbt-score-dbt110' and extra == 'group-9-dbt-score-dbt111' and extra != 'group-9-dbt-score-dbt15' and extra != 'group-9-dbt-score-dbt16' and extra != 'group-9-dbt-score-dbt17'",
+    "python_full_version < '3.11' and extra == 'group-9-dbt-score-dbt110' and extra != 'group-9-dbt-score-dbt111' and extra != 'group-9-dbt-score-dbt15' and extra != 'group-9-dbt-score-dbt16' and extra != 'group-9-dbt-score-dbt17'",
     "python_full_version < '3.11' and extra != 'group-9-dbt-score-dbt110' and extra != 'group-9-dbt-score-dbt111' and extra != 'group-9-dbt-score-dbt15' and extra != 'group-9-dbt-score-dbt16' and extra != 'group-9-dbt-score-dbt17'",
 ]
 dependencies = [
@@ -1442,12 +1439,12 @@ source = { registry = "https://pypi.org/simple" }
 resolution-markers = [
     "python_full_version >= '3.15' and extra != 'group-9-dbt-score-dbt110' and extra != 'group-9-dbt-score-dbt111' and extra != 'group-9-dbt-score-dbt15' and extra != 'group-9-dbt-score-dbt16' and extra == 'group-9-dbt-score-dbt17'",
     "python_full_version >= '3.11' and python_full_version < '3.15' and extra != 'group-9-dbt-score-dbt110' and extra != 'group-9-dbt-score-dbt111' and extra != 'group-9-dbt-score-dbt15' and extra != 'group-9-dbt-score-dbt16' and extra == 'group-9-dbt-score-dbt17'",
-    "python_full_version < '3.11' and extra != 'group-9-dbt-score-dbt110' and extra != 'group-9-dbt-score-dbt111' and extra != 'group-9-dbt-score-dbt15' and extra != 'group-9-dbt-score-dbt16' and extra == 'group-9-dbt-score-dbt17'",
     "python_full_version >= '3.11' and extra != 'group-9-dbt-score-dbt110' and extra == 'group-9-dbt-score-dbt111' and extra != 'group-9-dbt-score-dbt15' and extra != 'group-9-dbt-score-dbt16' and extra != 'group-9-dbt-score-dbt17'",
-    "python_full_version < '3.11' and extra != 'group-9-dbt-score-dbt110' and extra == 'group-9-dbt-score-dbt111' and extra != 'group-9-dbt-score-dbt15' and extra != 'group-9-dbt-score-dbt16' and extra != 'group-9-dbt-score-dbt17'",
     "python_full_version >= '3.11' and extra == 'group-9-dbt-score-dbt110' and extra != 'group-9-dbt-score-dbt111' and extra != 'group-9-dbt-score-dbt15' and extra != 'group-9-dbt-score-dbt16' and extra != 'group-9-dbt-score-dbt17'",
-    "python_full_version < '3.11' and extra == 'group-9-dbt-score-dbt110' and extra != 'group-9-dbt-score-dbt111' and extra != 'group-9-dbt-score-dbt15' and extra != 'group-9-dbt-score-dbt16' and extra != 'group-9-dbt-score-dbt17'",
     "python_full_version >= '3.11' and extra != 'group-9-dbt-score-dbt110' and extra != 'group-9-dbt-score-dbt111' and extra != 'group-9-dbt-score-dbt15' and extra != 'group-9-dbt-score-dbt16' and extra != 'group-9-dbt-score-dbt17'",
+    "python_full_version < '3.11' and extra != 'group-9-dbt-score-dbt110' and extra != 'group-9-dbt-score-dbt111' and extra != 'group-9-dbt-score-dbt15' and extra != 'group-9-dbt-score-dbt16' and extra == 'group-9-dbt-score-dbt17'",
+    "python_full_version < '3.11' and extra != 'group-9-dbt-score-dbt110' and extra == 'group-9-dbt-score-dbt111' and extra != 'group-9-dbt-score-dbt15' and extra != 'group-9-dbt-score-dbt16' and extra != 'group-9-dbt-score-dbt17'",
+    "python_full_version < '3.11' and extra == 'group-9-dbt-score-dbt110' and extra != 'group-9-dbt-score-dbt111' and extra != 'group-9-dbt-score-dbt15' and extra != 'group-9-dbt-score-dbt16' and extra != 'group-9-dbt-score-dbt17'",
     "python_full_version < '3.11' and extra != 'group-9-dbt-score-dbt110' and extra != 'group-9-dbt-score-dbt111' and extra != 'group-9-dbt-score-dbt15' and extra != 'group-9-dbt-score-dbt16' and extra != 'group-9-dbt-score-dbt17'",
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/ea/5d/38b681d3fce7a266dd9ab73c66959406d565b3e85f21d5e66e1181d93721/more_itertools-10.8.0.tar.gz", hash = "sha256:f638ddf8a1a0d134181275fb5d58b086ead7c6a72429ad725c67503f13ba30bd", size = 137431, upload-time = "2025-09-02T15:23:11.018Z" }
@@ -1663,14 +1660,14 @@ source = { registry = "https://pypi.org/simple" }
 resolution-markers = [
     "python_full_version >= '3.15' and extra != 'group-9-dbt-score-dbt110' and extra != 'group-9-dbt-score-dbt111' and extra != 'group-9-dbt-score-dbt15' and extra != 'group-9-dbt-score-dbt16' and extra == 'group-9-dbt-score-dbt17'",
     "python_full_version >= '3.11' and python_full_version < '3.15' and extra != 'group-9-dbt-score-dbt110' and extra != 'group-9-dbt-score-dbt111' and extra != 'group-9-dbt-score-dbt15' and extra != 'group-9-dbt-score-dbt16' and extra == 'group-9-dbt-score-dbt17'",
-    "python_full_version < '3.11' and extra != 'group-9-dbt-score-dbt110' and extra != 'group-9-dbt-score-dbt111' and extra != 'group-9-dbt-score-dbt15' and extra != 'group-9-dbt-score-dbt16' and extra == 'group-9-dbt-score-dbt17'",
     "python_full_version >= '3.11' and extra != 'group-9-dbt-score-dbt110' and extra != 'group-9-dbt-score-dbt111' and extra != 'group-9-dbt-score-dbt15' and extra == 'group-9-dbt-score-dbt16' and extra != 'group-9-dbt-score-dbt17'",
-    "python_full_version < '3.11' and extra != 'group-9-dbt-score-dbt110' and extra != 'group-9-dbt-score-dbt111' and extra != 'group-9-dbt-score-dbt15' and extra == 'group-9-dbt-score-dbt16' and extra != 'group-9-dbt-score-dbt17'",
     "python_full_version >= '3.11' and extra != 'group-9-dbt-score-dbt110' and extra == 'group-9-dbt-score-dbt111' and extra != 'group-9-dbt-score-dbt15' and extra != 'group-9-dbt-score-dbt16' and extra != 'group-9-dbt-score-dbt17'",
-    "python_full_version < '3.11' and extra != 'group-9-dbt-score-dbt110' and extra == 'group-9-dbt-score-dbt111' and extra != 'group-9-dbt-score-dbt15' and extra != 'group-9-dbt-score-dbt16' and extra != 'group-9-dbt-score-dbt17'",
     "python_full_version >= '3.11' and extra == 'group-9-dbt-score-dbt110' and extra != 'group-9-dbt-score-dbt111' and extra != 'group-9-dbt-score-dbt15' and extra != 'group-9-dbt-score-dbt16' and extra != 'group-9-dbt-score-dbt17'",
-    "python_full_version < '3.11' and extra == 'group-9-dbt-score-dbt110' and extra != 'group-9-dbt-score-dbt111' and extra != 'group-9-dbt-score-dbt15' and extra != 'group-9-dbt-score-dbt16' and extra != 'group-9-dbt-score-dbt17'",
     "python_full_version >= '3.11' and extra != 'group-9-dbt-score-dbt110' and extra != 'group-9-dbt-score-dbt111' and extra != 'group-9-dbt-score-dbt15' and extra != 'group-9-dbt-score-dbt16' and extra != 'group-9-dbt-score-dbt17'",
+    "python_full_version < '3.11' and extra != 'group-9-dbt-score-dbt110' and extra != 'group-9-dbt-score-dbt111' and extra != 'group-9-dbt-score-dbt15' and extra != 'group-9-dbt-score-dbt16' and extra == 'group-9-dbt-score-dbt17'",
+    "python_full_version < '3.11' and extra != 'group-9-dbt-score-dbt110' and extra != 'group-9-dbt-score-dbt111' and extra != 'group-9-dbt-score-dbt15' and extra == 'group-9-dbt-score-dbt16' and extra != 'group-9-dbt-score-dbt17'",
+    "python_full_version < '3.11' and extra != 'group-9-dbt-score-dbt110' and extra == 'group-9-dbt-score-dbt111' and extra != 'group-9-dbt-score-dbt15' and extra != 'group-9-dbt-score-dbt16' and extra != 'group-9-dbt-score-dbt17'",
+    "python_full_version < '3.11' and extra == 'group-9-dbt-score-dbt110' and extra != 'group-9-dbt-score-dbt111' and extra != 'group-9-dbt-score-dbt15' and extra != 'group-9-dbt-score-dbt16' and extra != 'group-9-dbt-score-dbt17'",
     "python_full_version < '3.11' and extra != 'group-9-dbt-score-dbt110' and extra != 'group-9-dbt-score-dbt111' and extra != 'group-9-dbt-score-dbt15' and extra != 'group-9-dbt-score-dbt16' and extra != 'group-9-dbt-score-dbt17'",
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/a8/20/cb587f6672dbe585d101f590c3871d16e7aec5a576a1694997a3777312ac/parsedatetime-2.6.tar.gz", hash = "sha256:4cb368fbb18a0b7231f4d76119165451c8d2e35951455dfee97c62a87b04d455", size = 60114, upload-time = "2020-05-31T23:50:57.443Z" }
@@ -1712,10 +1709,10 @@ source = { registry = "https://pypi.org/simple" }
 resolution-markers = [
     "python_full_version >= '3.15' and extra != 'group-9-dbt-score-dbt110' and extra != 'group-9-dbt-score-dbt111' and extra != 'group-9-dbt-score-dbt15' and extra != 'group-9-dbt-score-dbt16' and extra == 'group-9-dbt-score-dbt17'",
     "python_full_version >= '3.11' and python_full_version < '3.15' and extra != 'group-9-dbt-score-dbt110' and extra != 'group-9-dbt-score-dbt111' and extra != 'group-9-dbt-score-dbt15' and extra != 'group-9-dbt-score-dbt16' and extra == 'group-9-dbt-score-dbt17'",
-    "python_full_version < '3.11' and extra != 'group-9-dbt-score-dbt110' and extra != 'group-9-dbt-score-dbt111' and extra != 'group-9-dbt-score-dbt15' and extra != 'group-9-dbt-score-dbt16' and extra == 'group-9-dbt-score-dbt17'",
     "python_full_version >= '3.11' and extra != 'group-9-dbt-score-dbt110' and extra != 'group-9-dbt-score-dbt111' and extra != 'group-9-dbt-score-dbt15' and extra == 'group-9-dbt-score-dbt16' and extra != 'group-9-dbt-score-dbt17'",
-    "python_full_version < '3.11' and extra != 'group-9-dbt-score-dbt110' and extra != 'group-9-dbt-score-dbt111' and extra != 'group-9-dbt-score-dbt15' and extra == 'group-9-dbt-score-dbt16' and extra != 'group-9-dbt-score-dbt17'",
     "python_full_version >= '3.11' and extra != 'group-9-dbt-score-dbt110' and extra != 'group-9-dbt-score-dbt111' and extra == 'group-9-dbt-score-dbt15' and extra != 'group-9-dbt-score-dbt16' and extra != 'group-9-dbt-score-dbt17'",
+    "python_full_version < '3.11' and extra != 'group-9-dbt-score-dbt110' and extra != 'group-9-dbt-score-dbt111' and extra != 'group-9-dbt-score-dbt15' and extra != 'group-9-dbt-score-dbt16' and extra == 'group-9-dbt-score-dbt17'",
+    "python_full_version < '3.11' and extra != 'group-9-dbt-score-dbt110' and extra != 'group-9-dbt-score-dbt111' and extra != 'group-9-dbt-score-dbt15' and extra == 'group-9-dbt-score-dbt16' and extra != 'group-9-dbt-score-dbt17'",
     "python_full_version < '3.11' and extra != 'group-9-dbt-score-dbt110' and extra != 'group-9-dbt-score-dbt111' and extra == 'group-9-dbt-score-dbt15' and extra != 'group-9-dbt-score-dbt16' and extra != 'group-9-dbt-score-dbt17'",
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/d9/8e/d08c41a8c004e1d437ef467e7c4f9c3295cd784eba48ed5d1d01f94b1dad/protobuf-4.25.9.tar.gz", hash = "sha256:b0dc7e7c68de8b1ce831dacb12fb407e838edbb8b6cc0dc3a2a6b4cbf6de9cff", size = 381040, upload-time = "2026-03-25T23:09:36.423Z" }
@@ -1804,12 +1801,12 @@ source = { registry = "https://pypi.org/simple" }
 resolution-markers = [
     "python_full_version >= '3.15' and extra != 'group-9-dbt-score-dbt110' and extra != 'group-9-dbt-score-dbt111' and extra != 'group-9-dbt-score-dbt15' and extra != 'group-9-dbt-score-dbt16' and extra == 'group-9-dbt-score-dbt17'",
     "python_full_version >= '3.11' and python_full_version < '3.15' and extra != 'group-9-dbt-score-dbt110' and extra != 'group-9-dbt-score-dbt111' and extra != 'group-9-dbt-score-dbt15' and extra != 'group-9-dbt-score-dbt16' and extra == 'group-9-dbt-score-dbt17'",
-    "python_full_version < '3.11' and extra != 'group-9-dbt-score-dbt110' and extra != 'group-9-dbt-score-dbt111' and extra != 'group-9-dbt-score-dbt15' and extra != 'group-9-dbt-score-dbt16' and extra == 'group-9-dbt-score-dbt17'",
     "python_full_version >= '3.11' and extra != 'group-9-dbt-score-dbt110' and extra == 'group-9-dbt-score-dbt111' and extra != 'group-9-dbt-score-dbt15' and extra != 'group-9-dbt-score-dbt16' and extra != 'group-9-dbt-score-dbt17'",
-    "python_full_version < '3.11' and extra != 'group-9-dbt-score-dbt110' and extra == 'group-9-dbt-score-dbt111' and extra != 'group-9-dbt-score-dbt15' and extra != 'group-9-dbt-score-dbt16' and extra != 'group-9-dbt-score-dbt17'",
     "python_full_version >= '3.11' and extra == 'group-9-dbt-score-dbt110' and extra != 'group-9-dbt-score-dbt111' and extra != 'group-9-dbt-score-dbt15' and extra != 'group-9-dbt-score-dbt16' and extra != 'group-9-dbt-score-dbt17'",
-    "python_full_version < '3.11' and extra == 'group-9-dbt-score-dbt110' and extra != 'group-9-dbt-score-dbt111' and extra != 'group-9-dbt-score-dbt15' and extra != 'group-9-dbt-score-dbt16' and extra != 'group-9-dbt-score-dbt17'",
     "python_full_version >= '3.11' and extra != 'group-9-dbt-score-dbt110' and extra != 'group-9-dbt-score-dbt111' and extra != 'group-9-dbt-score-dbt15' and extra != 'group-9-dbt-score-dbt16' and extra != 'group-9-dbt-score-dbt17'",
+    "python_full_version < '3.11' and extra != 'group-9-dbt-score-dbt110' and extra != 'group-9-dbt-score-dbt111' and extra != 'group-9-dbt-score-dbt15' and extra != 'group-9-dbt-score-dbt16' and extra == 'group-9-dbt-score-dbt17'",
+    "python_full_version < '3.11' and extra != 'group-9-dbt-score-dbt110' and extra == 'group-9-dbt-score-dbt111' and extra != 'group-9-dbt-score-dbt15' and extra != 'group-9-dbt-score-dbt16' and extra != 'group-9-dbt-score-dbt17'",
+    "python_full_version < '3.11' and extra == 'group-9-dbt-score-dbt110' and extra != 'group-9-dbt-score-dbt111' and extra != 'group-9-dbt-score-dbt15' and extra != 'group-9-dbt-score-dbt16' and extra != 'group-9-dbt-score-dbt17'",
     "python_full_version < '3.11' and extra != 'group-9-dbt-score-dbt110' and extra != 'group-9-dbt-score-dbt111' and extra != 'group-9-dbt-score-dbt15' and extra != 'group-9-dbt-score-dbt16' and extra != 'group-9-dbt-score-dbt17'",
 ]
 dependencies = [
@@ -2015,12 +2012,12 @@ source = { registry = "https://pypi.org/simple" }
 resolution-markers = [
     "python_full_version >= '3.15' and extra != 'group-9-dbt-score-dbt110' and extra != 'group-9-dbt-score-dbt111' and extra != 'group-9-dbt-score-dbt15' and extra != 'group-9-dbt-score-dbt16' and extra == 'group-9-dbt-score-dbt17'",
     "python_full_version >= '3.11' and python_full_version < '3.15' and extra != 'group-9-dbt-score-dbt110' and extra != 'group-9-dbt-score-dbt111' and extra != 'group-9-dbt-score-dbt15' and extra != 'group-9-dbt-score-dbt16' and extra == 'group-9-dbt-score-dbt17'",
-    "python_full_version < '3.11' and extra != 'group-9-dbt-score-dbt110' and extra != 'group-9-dbt-score-dbt111' and extra != 'group-9-dbt-score-dbt15' and extra != 'group-9-dbt-score-dbt16' and extra == 'group-9-dbt-score-dbt17'",
     "python_full_version >= '3.11' and extra != 'group-9-dbt-score-dbt110' and extra == 'group-9-dbt-score-dbt111' and extra != 'group-9-dbt-score-dbt15' and extra != 'group-9-dbt-score-dbt16' and extra != 'group-9-dbt-score-dbt17'",
-    "python_full_version < '3.11' and extra != 'group-9-dbt-score-dbt110' and extra == 'group-9-dbt-score-dbt111' and extra != 'group-9-dbt-score-dbt15' and extra != 'group-9-dbt-score-dbt16' and extra != 'group-9-dbt-score-dbt17'",
     "python_full_version >= '3.11' and extra == 'group-9-dbt-score-dbt110' and extra != 'group-9-dbt-score-dbt111' and extra != 'group-9-dbt-score-dbt15' and extra != 'group-9-dbt-score-dbt16' and extra != 'group-9-dbt-score-dbt17'",
-    "python_full_version < '3.11' and extra == 'group-9-dbt-score-dbt110' and extra != 'group-9-dbt-score-dbt111' and extra != 'group-9-dbt-score-dbt15' and extra != 'group-9-dbt-score-dbt16' and extra != 'group-9-dbt-score-dbt17'",
     "python_full_version >= '3.11' and extra != 'group-9-dbt-score-dbt110' and extra != 'group-9-dbt-score-dbt111' and extra != 'group-9-dbt-score-dbt15' and extra != 'group-9-dbt-score-dbt16' and extra != 'group-9-dbt-score-dbt17'",
+    "python_full_version < '3.11' and extra != 'group-9-dbt-score-dbt110' and extra != 'group-9-dbt-score-dbt111' and extra != 'group-9-dbt-score-dbt15' and extra != 'group-9-dbt-score-dbt16' and extra == 'group-9-dbt-score-dbt17'",
+    "python_full_version < '3.11' and extra != 'group-9-dbt-score-dbt110' and extra == 'group-9-dbt-score-dbt111' and extra != 'group-9-dbt-score-dbt15' and extra != 'group-9-dbt-score-dbt16' and extra != 'group-9-dbt-score-dbt17'",
+    "python_full_version < '3.11' and extra == 'group-9-dbt-score-dbt110' and extra != 'group-9-dbt-score-dbt111' and extra != 'group-9-dbt-score-dbt15' and extra != 'group-9-dbt-score-dbt16' and extra != 'group-9-dbt-score-dbt17'",
     "python_full_version < '3.11' and extra != 'group-9-dbt-score-dbt110' and extra != 'group-9-dbt-score-dbt111' and extra != 'group-9-dbt-score-dbt15' and extra != 'group-9-dbt-score-dbt16' and extra != 'group-9-dbt-score-dbt17'",
 ]
 dependencies = [
@@ -2517,12 +2514,12 @@ source = { registry = "https://pypi.org/simple" }
 resolution-markers = [
     "python_full_version >= '3.15' and extra != 'group-9-dbt-score-dbt110' and extra != 'group-9-dbt-score-dbt111' and extra != 'group-9-dbt-score-dbt15' and extra != 'group-9-dbt-score-dbt16' and extra == 'group-9-dbt-score-dbt17'",
     "python_full_version >= '3.11' and python_full_version < '3.15' and extra != 'group-9-dbt-score-dbt110' and extra != 'group-9-dbt-score-dbt111' and extra != 'group-9-dbt-score-dbt15' and extra != 'group-9-dbt-score-dbt16' and extra == 'group-9-dbt-score-dbt17'",
-    "python_full_version < '3.11' and extra != 'group-9-dbt-score-dbt110' and extra != 'group-9-dbt-score-dbt111' and extra != 'group-9-dbt-score-dbt15' and extra != 'group-9-dbt-score-dbt16' and extra == 'group-9-dbt-score-dbt17'",
     "python_full_version >= '3.11' and extra != 'group-9-dbt-score-dbt110' and extra != 'group-9-dbt-score-dbt111' and extra != 'group-9-dbt-score-dbt15' and extra == 'group-9-dbt-score-dbt16' and extra != 'group-9-dbt-score-dbt17'",
-    "python_full_version < '3.11' and extra != 'group-9-dbt-score-dbt110' and extra != 'group-9-dbt-score-dbt111' and extra != 'group-9-dbt-score-dbt15' and extra == 'group-9-dbt-score-dbt16' and extra != 'group-9-dbt-score-dbt17'",
     "python_full_version >= '3.11' and extra != 'group-9-dbt-score-dbt110' and extra == 'group-9-dbt-score-dbt111' and extra != 'group-9-dbt-score-dbt15' and extra != 'group-9-dbt-score-dbt16' and extra != 'group-9-dbt-score-dbt17'",
-    "python_full_version < '3.11' and extra != 'group-9-dbt-score-dbt110' and extra == 'group-9-dbt-score-dbt111' and extra != 'group-9-dbt-score-dbt15' and extra != 'group-9-dbt-score-dbt16' and extra != 'group-9-dbt-score-dbt17'",
     "python_full_version >= '3.11' and extra != 'group-9-dbt-score-dbt110' and extra != 'group-9-dbt-score-dbt111' and extra != 'group-9-dbt-score-dbt15' and extra != 'group-9-dbt-score-dbt16' and extra != 'group-9-dbt-score-dbt17'",
+    "python_full_version < '3.11' and extra != 'group-9-dbt-score-dbt110' and extra != 'group-9-dbt-score-dbt111' and extra != 'group-9-dbt-score-dbt15' and extra != 'group-9-dbt-score-dbt16' and extra == 'group-9-dbt-score-dbt17'",
+    "python_full_version < '3.11' and extra != 'group-9-dbt-score-dbt110' and extra != 'group-9-dbt-score-dbt111' and extra != 'group-9-dbt-score-dbt15' and extra == 'group-9-dbt-score-dbt16' and extra != 'group-9-dbt-score-dbt17'",
+    "python_full_version < '3.11' and extra != 'group-9-dbt-score-dbt110' and extra == 'group-9-dbt-score-dbt111' and extra != 'group-9-dbt-score-dbt15' and extra != 'group-9-dbt-score-dbt16' and extra != 'group-9-dbt-score-dbt17'",
     "python_full_version < '3.11' and extra != 'group-9-dbt-score-dbt110' and extra != 'group-9-dbt-score-dbt111' and extra != 'group-9-dbt-score-dbt15' and extra != 'group-9-dbt-score-dbt16' and extra != 'group-9-dbt-score-dbt17'",
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/90/76/437d71068094df0726366574cf3432a4ed754217b436eb7429415cf2d480/sqlparse-0.5.5.tar.gz", hash = "sha256:e20d4a9b0b8585fdf63b10d30066c7c94c5d7a7ec47c889a2d83a3caa93ff28e", size = 120815, upload-time = "2025-12-19T07:17:45.073Z" }
