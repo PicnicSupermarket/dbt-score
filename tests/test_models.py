@@ -1,6 +1,7 @@
 """Test models."""
 
 from pathlib import Path
+from typing import Any
 from unittest.mock import patch
 
 from dbt_score.models import Exposure, ManifestLoader, Model, Snapshot
@@ -106,6 +107,44 @@ def test_manifest_load(mock_read_text, raw_manifest):
         assert macro2.name == "macro2"
         assert macro2.description == ""
         assert len(macro2.arguments) == 2
+
+
+# Optional keys that dbt v2 (Fusion) leaves out of the manifest where dbt-core
+# writes an explicit null. Observed across a 1097-model project on dbt 2.0.1.
+FUSION_OMITTED_KEYS = frozenset(
+    {
+        "data_type",
+        "group",
+        "patch_path",
+        "relation_name",
+        "source_meta",
+        "url",
+    }
+)
+
+
+@patch("dbt_score.models.Path.read_text")
+def test_manifest_load_without_omitted_keys(mock_read_text, raw_manifest):
+    """Test loading a manifest that omits optional keys instead of nulling them."""
+
+    def drop_omitted(value: Any) -> Any:
+        if isinstance(value, dict):
+            return {
+                k: drop_omitted(v)
+                for k, v in value.items()
+                if k not in FUSION_OMITTED_KEYS
+            }
+        if isinstance(value, list):
+            return [drop_omitted(v) for v in value]
+        return value
+
+    with patch("dbt_score.models.json.loads", return_value=drop_omitted(raw_manifest)):
+        loader = ManifestLoader(Path("some.json"))
+
+    assert loader.models["model.package.model1"].group is None
+    assert loader.models["model.package.model1"].relation_name is None
+    assert loader.sources["source.package.my_source.table1"].source_meta == {}
+    assert loader.exposures["exposure.package.exposure1"].url is None
 
 
 @patch("dbt_score.models.Path.read_text")

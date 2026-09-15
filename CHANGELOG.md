@@ -8,6 +8,9 @@ and this project adheres to
 
 ## [Unreleased]
 
+- Fix loading of manifests that omit optional keys such as `group` and
+  `data_type`, as written by dbt v2 (Fusion) (#231).
+
 ## [0.17.0] - 2026-08-26
 
 - Write score and badge to the manifest `meta` for seeds and macros when using
