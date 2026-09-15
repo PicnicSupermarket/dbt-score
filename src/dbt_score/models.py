@@ -109,7 +109,7 @@ class Column:
         return cls(
             name=values["name"],
             description=values["description"],
-            data_type=values["data_type"],
+            data_type=values.get("data_type"),
             config=values.get("config", {}),
             meta=values["meta"],
             constraints=[
@@ -196,7 +196,7 @@ class Model(HasColumnsMixin):
 
     unique_id: str
     name: str
-    relation_name: str
+    relation_name: str | None
     description: str
     original_file_path: str
     config: dict[str, Any]
@@ -208,7 +208,7 @@ class Model(HasColumnsMixin):
     raw_code: str
     language: str
     access: str
-    group: str
+    group: str | None
     alias: str | None = None
     patch_path: str | None = None
     tags: list[str] = field(default_factory=list)
@@ -228,7 +228,7 @@ class Model(HasColumnsMixin):
         return cls(
             unique_id=node_values["unique_id"],
             name=node_values["name"],
-            relation_name=node_values["relation_name"],
+            relation_name=node_values.get("relation_name"),
             description=node_values["description"],
             original_file_path=node_values["original_file_path"],
             config=node_values["config"],
@@ -240,9 +240,9 @@ class Model(HasColumnsMixin):
             raw_code=node_values["raw_code"],
             language=node_values["language"],
             access=node_values["access"],
-            group=node_values["group"],
+            group=node_values.get("group"),
             alias=node_values["alias"],
-            patch_path=node_values["patch_path"],
+            patch_path=node_values.get("patch_path"),
             tags=node_values["tags"],
             tests=[
                 Test.from_node(test)
@@ -375,7 +375,7 @@ class Source(HasColumnsMixin):
     schema: str
     identifier: str
     loader: str
-    freshness: SourceFreshness
+    freshness: SourceFreshness | None
     patch_path: str | None = None
     tags: list[str] = field(default_factory=list)
     tests: list[Test] = field(default_factory=list)
@@ -407,15 +407,15 @@ class Source(HasColumnsMixin):
             original_file_path=node_values["original_file_path"],
             config=node_values["config"],
             meta=node_values["meta"],
-            source_meta=node_values["source_meta"],
+            source_meta=node_values.get("source_meta", {}),
             columns=cls._get_columns(node_values, test_values),
             package_name=node_values["package_name"],
             database=node_values["database"],
             schema=node_values["schema"],
             identifier=node_values["identifier"],
             loader=node_values["loader"],
-            freshness=node_values["freshness"],
-            patch_path=node_values["patch_path"],
+            freshness=node_values.get("freshness"),
+            patch_path=node_values.get("patch_path"),
             tags=node_values["tags"],
             tests=[
                 Test.from_node(test)
@@ -469,7 +469,7 @@ class Snapshot(HasColumnsMixin):
 
     unique_id: str
     name: str
-    relation_name: str
+    relation_name: str | None
     description: str
     original_file_path: str
     config: dict[str, Any]
@@ -500,7 +500,7 @@ class Snapshot(HasColumnsMixin):
         return cls(
             unique_id=node_values["unique_id"],
             name=node_values["name"],
-            relation_name=node_values["relation_name"],
+            relation_name=node_values.get("relation_name"),
             description=node_values["description"],
             original_file_path=node_values["original_file_path"],
             config=node_values["config"],
@@ -512,7 +512,7 @@ class Snapshot(HasColumnsMixin):
             raw_code=node_values["raw_code"],
             language=node_values["language"],
             alias=node_values["alias"],
-            patch_path=node_values["patch_path"],
+            patch_path=node_values.get("patch_path"),
             tags=node_values["tags"],
             tests=[
                 Test.from_node(test)
@@ -559,9 +559,9 @@ class Exposure:
     unique_id: str
     name: str
     description: str
-    label: str
-    url: str
-    maturity: str
+    label: str | None
+    url: str | None
+    maturity: str | None
     original_file_path: str
     type: str
     owner: dict[str, Any]
@@ -579,9 +579,9 @@ class Exposure:
             unique_id=node_values["unique_id"],
             name=node_values["name"],
             description=node_values["description"],
-            label=node_values["label"],
-            url=node_values["url"],
-            maturity=node_values["maturity"],
+            label=node_values.get("label"),
+            url=node_values.get("url"),
+            maturity=node_values.get("maturity"),
             original_file_path=node_values["original_file_path"],
             type=node_values["type"],
             owner=node_values["owner"],
@@ -624,7 +624,7 @@ class Seed(HasColumnsMixin):
 
     unique_id: str
     name: str
-    relation_name: str
+    relation_name: str | None
     description: str
     original_file_path: str
     config: dict[str, Any]
@@ -649,7 +649,7 @@ class Seed(HasColumnsMixin):
         return cls(
             unique_id=node_values["unique_id"],
             name=node_values["name"],
-            relation_name=node_values["relation_name"],
+            relation_name=node_values.get("relation_name"),
             description=node_values["description"],
             original_file_path=node_values["original_file_path"],
             config=node_values["config"],
@@ -659,7 +659,7 @@ class Seed(HasColumnsMixin):
             database=node_values["database"],
             schema=node_values["schema"],
             alias=node_values["alias"],
-            patch_path=node_values["patch_path"],
+            patch_path=node_values.get("patch_path"),
             tags=node_values["tags"],
             tests=[
                 Test.from_node(test)
