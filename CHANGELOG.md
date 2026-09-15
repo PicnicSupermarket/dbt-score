@@ -10,6 +10,8 @@ and this project adheres to
 
 - Handle unparseable `manifest.json` gracefully with a clear error message
   instead of a traceback (#70).
+- Fix loading of manifests that omit optional keys such as `group` and
+  `data_type`, as written by dbt v2 (Fusion) (#231).
 
 ## [0.17.0] - 2026-08-26
 
