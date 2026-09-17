@@ -10,6 +10,8 @@ and this project adheres to
 
 - Handle unparseable `manifest.json` gracefully with a clear error message
   instead of a traceback (#70).
+- Expose group owner as `Model.group_owner`, with `Group` and `Owner` also
+  importable from `dbt_score` (#121).
 
 ## [0.17.0] - 2026-08-26
 
