@@ -8,6 +8,9 @@ and this project adheres to
 
 ## [Unreleased]
 
+- Expose group owner as `Model.group_owner`, with `Group` and `Owner` also
+  importable from `dbt_score` (#121).
+
 ## [0.17.0] - 2026-08-26
 
 - Write score and badge to the manifest `meta` for seeds and macros when using
