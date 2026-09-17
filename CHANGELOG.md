@@ -8,6 +8,9 @@ and this project adheres to
 
 ## [Unreleased]
 
+- Handle unparseable `manifest.json` gracefully with a clear error message
+  instead of a traceback (#70).
+
 ## [0.17.0] - 2026-08-26
 
 - Write score and badge to the manifest `meta` for seeds and macros when using

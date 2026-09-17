@@ -48,6 +48,21 @@ def test_lint_non_existing_manifest(caplog):
         assert "dbt's manifest.json could not be found" in caplog.text
 
 
+def test_lint_unparseable_manifest(tmp_path, caplog):
+    """Test lint with a manifest that is not valid JSON."""
+    runner = CliRunner()
+    invalid_manifest = tmp_path / "manifest.json"
+    invalid_manifest.write_text("", encoding="utf-8")
+
+    with patch("dbt_score.cli.Config._load_toml_file"):
+        result = runner.invoke(
+            lint, ["--manifest", invalid_manifest], catch_exceptions=False
+        )
+
+    assert result.exit_code == 2
+    assert "dbt's manifest.json could not be parsed" in caplog.text
+
+
 def test_lint_dbt_parse_exception(caplog):
     """Test lint with a dbt parse error."""
     runner = CliRunner()
