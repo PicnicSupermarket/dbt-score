@@ -4,9 +4,10 @@ import json
 import logging
 import re
 from collections import defaultdict, deque
+from collections.abc import Iterable
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any, Iterable, Literal, TypeAlias, Union
+from typing import Any, Literal, TypeAlias, Union
 
 from dbt_score.dbt_utils import dbt_ls
 
