@@ -2,7 +2,7 @@
 
 import json
 from pathlib import Path
-from typing import Any, Type
+from typing import Any
 
 from pytest import fixture
 
@@ -173,7 +173,7 @@ def exposure_collision(raw_manifest) -> Exposure:
 
 
 @fixture
-def decorator_rule() -> Type[Rule]:
+def decorator_rule() -> type[Rule]:
     """An example rule created with the rule decorator."""
 
     @rule()
@@ -186,7 +186,7 @@ def decorator_rule() -> Type[Rule]:
 
 
 @fixture
-def decorator_rule_no_parens() -> Type[Rule]:
+def decorator_rule_no_parens() -> type[Rule]:
     """An example rule created with the rule decorator without parentheses."""
 
     @rule
@@ -199,7 +199,7 @@ def decorator_rule_no_parens() -> Type[Rule]:
 
 
 @fixture
-def decorator_rule_args() -> Type[Rule]:
+def decorator_rule_args() -> type[Rule]:
     """An example rule created with the rule decorator with arguments."""
 
     @rule(description="Description of the rule.")
@@ -211,7 +211,7 @@ def decorator_rule_args() -> Type[Rule]:
 
 
 @fixture
-def class_rule() -> Type[Rule]:
+def class_rule() -> type[Rule]:
     """An example rule created with a class."""
 
     class ExampleRule(Rule):
@@ -228,7 +228,7 @@ def class_rule() -> Type[Rule]:
 
 
 @fixture
-def decorator_rule_snapshot() -> Type[Rule]:
+def decorator_rule_snapshot() -> type[Rule]:
     """An example rule created with the rule decorator."""
 
     @rule()
@@ -241,7 +241,7 @@ def decorator_rule_snapshot() -> Type[Rule]:
 
 
 @fixture
-def decorator_rule_no_parens_snapshot() -> Type[Rule]:
+def decorator_rule_no_parens_snapshot() -> type[Rule]:
     """An example rule created with the rule decorator without parentheses."""
 
     @rule
@@ -254,7 +254,7 @@ def decorator_rule_no_parens_snapshot() -> Type[Rule]:
 
 
 @fixture
-def decorator_rule_args_snapshot() -> Type[Rule]:
+def decorator_rule_args_snapshot() -> type[Rule]:
     """An example rule created with the rule decorator with arguments."""
 
     @rule(description="Description of the rule.")
@@ -266,7 +266,7 @@ def decorator_rule_args_snapshot() -> Type[Rule]:
 
 
 @fixture
-def class_rule_snapshot() -> Type[Rule]:
+def class_rule_snapshot() -> type[Rule]:
     """An example rule created with a class."""
 
     class ExampleRule(Rule):
@@ -283,7 +283,7 @@ def class_rule_snapshot() -> Type[Rule]:
 
 
 @fixture
-def decorator_rule_exposure() -> Type[Rule]:
+def decorator_rule_exposure() -> type[Rule]:
     """An example rule created with the rule decorator."""
 
     @rule()
@@ -296,7 +296,7 @@ def decorator_rule_exposure() -> Type[Rule]:
 
 
 @fixture
-def decorator_rule_no_parens_exposure() -> Type[Rule]:
+def decorator_rule_no_parens_exposure() -> type[Rule]:
     """An example rule created with the rule decorator without parentheses."""
 
     @rule
@@ -309,7 +309,7 @@ def decorator_rule_no_parens_exposure() -> Type[Rule]:
 
 
 @fixture
-def decorator_rule_args_exposure() -> Type[Rule]:
+def decorator_rule_args_exposure() -> type[Rule]:
     """An example rule created with the rule decorator with arguments."""
 
     @rule(description="Description of the rule.")
@@ -321,7 +321,7 @@ def decorator_rule_args_exposure() -> Type[Rule]:
 
 
 @fixture
-def class_rule_exposure() -> Type[Rule]:
+def class_rule_exposure() -> type[Rule]:
     """An example rule created with a class."""
 
     class ExampleRule(Rule):
@@ -338,7 +338,7 @@ def class_rule_exposure() -> Type[Rule]:
 
 
 @fixture
-def decorator_rule_source() -> Type[Rule]:
+def decorator_rule_source() -> type[Rule]:
     """An example rule created with the rule decorator."""
 
     @rule()
@@ -351,7 +351,7 @@ def decorator_rule_source() -> Type[Rule]:
 
 
 @fixture
-def decorator_rule_no_parens_source() -> Type[Rule]:
+def decorator_rule_no_parens_source() -> type[Rule]:
     """An example rule created with the rule decorator without parentheses."""
 
     @rule
@@ -364,7 +364,7 @@ def decorator_rule_no_parens_source() -> Type[Rule]:
 
 
 @fixture
-def decorator_rule_args_source() -> Type[Rule]:
+def decorator_rule_args_source() -> type[Rule]:
     """An example rule created with the rule decorator with arguments."""
 
     @rule(description="Description of the rule.")
@@ -376,7 +376,7 @@ def decorator_rule_args_source() -> Type[Rule]:
 
 
 @fixture
-def class_rule_source() -> Type[Rule]:
+def class_rule_source() -> type[Rule]:
     """An example rule created with a class."""
 
     class ExampleRuleSource(Rule):
@@ -396,7 +396,7 @@ def class_rule_source() -> Type[Rule]:
 
 
 @fixture
-def rule_severity_low() -> Type[Rule]:
+def rule_severity_low() -> type[Rule]:
     """An example rule with LOW severity."""
 
     @rule(severity=Severity.LOW)
@@ -409,7 +409,7 @@ def rule_severity_low() -> Type[Rule]:
 
 
 @fixture
-def rule_severity_medium() -> Type[Rule]:
+def rule_severity_medium() -> type[Rule]:
     """An example rule with MEDIUM severity."""
 
     @rule(severity=Severity.MEDIUM)
@@ -422,7 +422,7 @@ def rule_severity_medium() -> Type[Rule]:
 
 
 @fixture
-def rule_severity_high() -> Type[Rule]:
+def rule_severity_high() -> type[Rule]:
     """An example rule with HIGH severity."""
 
     @rule(severity=Severity.HIGH)
@@ -435,7 +435,7 @@ def rule_severity_high() -> Type[Rule]:
 
 
 @fixture
-def rule_severity_critical() -> Type[Rule]:
+def rule_severity_critical() -> type[Rule]:
     """An example rule with CRITICAL severity."""
 
     @rule(severity=Severity.CRITICAL)
@@ -448,7 +448,7 @@ def rule_severity_critical() -> Type[Rule]:
 
 
 @fixture
-def rule_with_config() -> Type[Rule]:
+def rule_with_config() -> type[Rule]:
     """An example rule with additional configuration."""
 
     @rule
@@ -463,7 +463,7 @@ def rule_with_config() -> Type[Rule]:
 
 
 @fixture
-def rule_error() -> Type[Rule]:
+def rule_error() -> type[Rule]:
     """An example rule which fails to run."""
 
     @rule
@@ -475,7 +475,7 @@ def rule_error() -> Type[Rule]:
 
 
 @fixture
-def model_rule_with_filter() -> Type[Rule]:
+def model_rule_with_filter() -> type[Rule]:
     """An example rule that skips through a filter."""
 
     @rule_filter
@@ -492,7 +492,7 @@ def model_rule_with_filter() -> Type[Rule]:
 
 
 @fixture
-def source_rule_with_filter() -> Type[Rule]:
+def source_rule_with_filter() -> type[Rule]:
     """An example rule that skips through a filter."""
 
     @rule_filter
@@ -509,7 +509,7 @@ def source_rule_with_filter() -> Type[Rule]:
 
 
 @fixture
-def snapshot_rule_with_filter() -> Type[Rule]:
+def snapshot_rule_with_filter() -> type[Rule]:
     """An example rule that skips through a filter."""
 
     @rule_filter
@@ -526,7 +526,7 @@ def snapshot_rule_with_filter() -> Type[Rule]:
 
 
 @fixture
-def exposure_rule_with_filter() -> Type[Rule]:
+def exposure_rule_with_filter() -> type[Rule]:
     """An example rule that skips through a filter."""
 
     @rule_filter
@@ -543,7 +543,7 @@ def exposure_rule_with_filter() -> Type[Rule]:
 
 
 @fixture
-def model_class_rule_with_filter() -> Type[Rule]:
+def model_class_rule_with_filter() -> type[Rule]:
     """Using class definitions for filters and rules."""
 
     class SkipModel1(RuleFilter):
@@ -564,7 +564,7 @@ def model_class_rule_with_filter() -> Type[Rule]:
 
 
 @fixture
-def source_class_rule_with_filter() -> Type[Rule]:
+def source_class_rule_with_filter() -> type[Rule]:
     """Using class definitions for filters and rules."""
 
     class SkipSource1(RuleFilter):
@@ -585,7 +585,7 @@ def source_class_rule_with_filter() -> Type[Rule]:
 
 
 @fixture
-def snapshot_class_rule_with_filter() -> Type[Rule]:
+def snapshot_class_rule_with_filter() -> type[Rule]:
     """Using class definitions for filters and rules."""
 
     class SkipSnapshot1(RuleFilter):
@@ -606,7 +606,7 @@ def snapshot_class_rule_with_filter() -> Type[Rule]:
 
 
 @fixture
-def exposure_class_rule_with_filter() -> Type[Rule]:
+def exposure_class_rule_with_filter() -> type[Rule]:
     """Using class definitions for filters and rules."""
 
     class SkipExposure1(RuleFilter):
@@ -657,7 +657,7 @@ def macro2(raw_manifest) -> Macro:
 
 
 @fixture
-def decorator_rule_seed() -> Type[Rule]:
+def decorator_rule_seed() -> type[Rule]:
     """An example rule created with the rule decorator."""
 
     @rule()
@@ -670,7 +670,7 @@ def decorator_rule_seed() -> Type[Rule]:
 
 
 @fixture
-def decorator_rule_no_parens_seed() -> Type[Rule]:
+def decorator_rule_no_parens_seed() -> type[Rule]:
     """An example rule created with the rule decorator without parentheses."""
 
     @rule
@@ -683,7 +683,7 @@ def decorator_rule_no_parens_seed() -> Type[Rule]:
 
 
 @fixture
-def decorator_rule_args_seed() -> Type[Rule]:
+def decorator_rule_args_seed() -> type[Rule]:
     """An example rule created with the rule decorator with arguments."""
 
     @rule(description="Description of the rule.")
@@ -695,7 +695,7 @@ def decorator_rule_args_seed() -> Type[Rule]:
 
 
 @fixture
-def class_rule_seed() -> Type[Rule]:
+def class_rule_seed() -> type[Rule]:
     """An example rule created with a class."""
 
     class ExampleRule(Rule):
@@ -712,7 +712,7 @@ def class_rule_seed() -> Type[Rule]:
 
 
 @fixture
-def seed_rule_with_filter() -> Type[Rule]:
+def seed_rule_with_filter() -> type[Rule]:
     """An example rule that skips through a filter."""
 
     @rule_filter
@@ -729,7 +729,7 @@ def seed_rule_with_filter() -> Type[Rule]:
 
 
 @fixture
-def seed_class_rule_with_filter() -> Type[Rule]:
+def seed_class_rule_with_filter() -> type[Rule]:
     """Using class definitions for filters and rules."""
 
     class SkipSeed1(RuleFilter):
@@ -750,7 +750,7 @@ def seed_class_rule_with_filter() -> Type[Rule]:
 
 
 @fixture
-def decorator_rule_macro() -> Type[Rule]:
+def decorator_rule_macro() -> type[Rule]:
     """An example rule created with the rule decorator."""
 
     @rule()
@@ -763,7 +763,7 @@ def decorator_rule_macro() -> Type[Rule]:
 
 
 @fixture
-def decorator_rule_no_parens_macro() -> Type[Rule]:
+def decorator_rule_no_parens_macro() -> type[Rule]:
     """An example rule created with the rule decorator without parentheses."""
 
     @rule
@@ -776,7 +776,7 @@ def decorator_rule_no_parens_macro() -> Type[Rule]:
 
 
 @fixture
-def decorator_rule_args_macro() -> Type[Rule]:
+def decorator_rule_args_macro() -> type[Rule]:
     """An example rule created with the rule decorator with arguments."""
 
     @rule(description="Description of the rule.")
@@ -788,7 +788,7 @@ def decorator_rule_args_macro() -> Type[Rule]:
 
 
 @fixture
-def class_rule_macro() -> Type[Rule]:
+def class_rule_macro() -> type[Rule]:
     """An example rule created with a class."""
 
     class ExampleRule(Rule):
@@ -805,7 +805,7 @@ def class_rule_macro() -> Type[Rule]:
 
 
 @fixture
-def macro_rule_with_filter() -> Type[Rule]:
+def macro_rule_with_filter() -> type[Rule]:
     """An example rule that skips through a filter."""
 
     @rule_filter
