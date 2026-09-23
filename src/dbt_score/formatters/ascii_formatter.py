@@ -69,7 +69,6 @@ class ASCIIFormatter(Formatter):
         self, evaluable: Evaluable, results: EvaluableResultsType, score: Score
     ) -> None:
         """Callback when an evaluable item has been evaluated."""
-        pass
 
     def project_evaluated(self, score: Score) -> None:
         """Callback when a project has been evaluated."""
