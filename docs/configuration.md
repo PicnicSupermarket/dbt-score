@@ -29,6 +29,12 @@ third.threshold = 6.0
 third.icon = "🥉"
 wip.icon = "🏗️"
 
+[tool.dbt-score.severity_values]
+low = 1
+medium = 5
+high = 15
+critical = 50
+
 [tool.dbt-score.rules."dbt_score.rules.generic.sql_has_reasonable_number_of_lines"]
 severity = 1
 max_lines = 300
@@ -75,6 +81,29 @@ All badges except `wip` can be configured with the following option:
 The default values can be found in the
 [BadgeConfig](reference/config.md#dbt_score.config.BadgeConfig).
 
+#### Severity values configuration
+
+```toml
+[tool.dbt-score.severity_values]
+```
+
+The value of each severity determines how many points a rule violation of that
+severity costs when computing a score. Four severities can be configured:
+
+- `low` (default: `1`)
+- `medium` (default: `2`)
+- `high` (default: `3`)
+- `critical` (default: `4`)
+
+Values must be positive integers and strictly increasing
+(`low < medium < high < critical`). A rule is worth the highest configured value
+in points; a violation costs its severity's value. Note that `critical` is
+special: regardless of its configured value, any critical violation always
+forces the score to `0`.
+
+The default values can be found in the
+[SeverityValueConfig](reference/config.md#dbt_score.config.SeverityValueConfig).
+
 #### Rule configuration
 
 ```toml
@@ -84,8 +113,9 @@ The default values can be found in the
 Every rule can be configured with the following option:
 
 - `severity`: The severity of the rule. Rules have a default severity and can be
-  overridden. It's an integer with a minimum value of 1 and a maximum value
-  of 4.
+  overridden. See
+  [Severity values configuration](#severity-values-configuration) for how
+  severities map to values, and the special behaviour of `critical`.
 - `rule_filter_names`: Filters used by the rule. Takes a list of names that can
   be found in the same namespace as the rules (see
   [Package rules](package_rules.md)).

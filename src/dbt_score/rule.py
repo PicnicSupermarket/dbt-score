@@ -3,7 +3,7 @@
 import inspect
 import typing
 from dataclasses import dataclass, field
-from enum import Enum
+from enum import Enum, auto
 from typing import (
     Any,
     Callable,
@@ -20,12 +20,12 @@ from dbt_score.rule_filter import RuleFilter
 
 
 class Severity(Enum):
-    """The severity/weight of a rule."""
+    """The severity level of a rule."""
 
-    LOW = 1
-    MEDIUM = 2
-    HIGH = 3
-    CRITICAL = 4
+    LOW = auto()
+    MEDIUM = auto()
+    HIGH = auto()
+    CRITICAL = auto()
 
 
 @dataclass
@@ -37,14 +37,20 @@ class RuleConfig:
     rule_filter_names: list[str] = field(default_factory=list)
 
     @staticmethod
-    def from_dict(rule_config: dict[str, Any]) -> "RuleConfig":
+    def from_dict(
+        rule_config: dict[str, Any],
+        severity_values: dict["Severity", int],
+    ) -> "RuleConfig":
         """Create a RuleConfig from a dictionary."""
         config = rule_config.copy()
-        severity = (
-            Severity(config.pop("severity", None))
-            if "severity" in rule_config
-            else None
-        )
+        if "severity" in rule_config:
+            raw = config.pop("severity")
+            reverse = {v: k for k, v in severity_values.items()}
+            if raw not in reverse:
+                raise ValueError(f"{raw} is not a valid severity value.")
+            severity = reverse[raw]
+        else:
+            severity = None
         filter_names = (
             config.pop("rule_filter_names", None)
             if "rule_filter_names" in rule_config

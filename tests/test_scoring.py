@@ -1,5 +1,6 @@
 """Unit tests for the scoring module."""
 
+from dbt_score.config import Config
 from dbt_score.rule import RuleViolation
 from dbt_score.scoring import Score, Scorer
 
@@ -119,6 +120,26 @@ def test_scorer_model_multiple_rules(
             2,
         )
         == 8.89
+    )
+
+
+def test_scorer_custom_severity_values(rule_severity_low, rule_severity_high):
+    """Test scorer honoring custom severity values from config."""
+    config = Config()
+    config.severity_value_config.low = 1
+    config.severity_value_config.medium = 3
+    config.severity_value_config.high = 5
+    config.severity_value_config.critical = 10
+    scorer = Scorer(config=config)
+
+    # Cardinality becomes max(values) = 5, so a low violation earns (5-1)/5.
+    assert (
+        scorer.score_evaluable({rule_severity_low: RuleViolation("error")}).value == 8.0
+    )
+    # The highest non-critical value still yields 0.
+    assert (
+        scorer.score_evaluable({rule_severity_high: RuleViolation("error")}).value
+        == 0.0
     )
 
 
