@@ -8,6 +8,8 @@ and this project adheres to
 
 ## [Unreleased]
 
+## [0.18.0] - 2026-09-28
+
 - Handle unparseable `manifest.json` gracefully with a clear error message
   instead of a traceback (#70).
 - Fix loading of manifests that omit optional keys such as `group` and
