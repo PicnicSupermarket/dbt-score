@@ -2,7 +2,8 @@
 
 import inspect
 import typing
-from typing import Any, Callable, Type, TypeAlias, cast, overload
+from collections.abc import Callable
+from typing import Any, TypeAlias, cast, overload
 
 from dbt_score.models import Evaluable, Exposure, Macro, Model, Seed, Snapshot, Source
 from dbt_score.more_itertools import first_true
@@ -31,7 +32,6 @@ class RuleFilter:
 
     def __init__(self) -> None:
         """Initialize the filter."""
-        pass
 
     def __init_subclass__(cls, **kwargs) -> None:  # type: ignore
         """Initializes the subclass."""
@@ -42,7 +42,7 @@ class RuleFilter:
         cls.resource_type = cls._introspect_resource_type()
 
     @classmethod
-    def _introspect_resource_type(cls) -> Type[Evaluable]:
+    def _introspect_resource_type(cls) -> type[Evaluable]:
         evaluate_func = getattr(cls, "_orig_evaluate", cls.evaluate)
 
         sig = inspect.signature(evaluate_func)
@@ -79,41 +79,41 @@ class RuleFilter:
 
 
 @overload
-def rule_filter(__func: ModelFilterEvaluationType) -> Type[RuleFilter]: ...
+def rule_filter(__func: ModelFilterEvaluationType) -> type[RuleFilter]: ...
 
 
 @overload
-def rule_filter(__func: SourceFilterEvaluationType) -> Type[RuleFilter]: ...
+def rule_filter(__func: SourceFilterEvaluationType) -> type[RuleFilter]: ...
 
 
 @overload
-def rule_filter(__func: SnapshotFilterEvaluationType) -> Type[RuleFilter]: ...
+def rule_filter(__func: SnapshotFilterEvaluationType) -> type[RuleFilter]: ...
 
 
 @overload
-def rule_filter(__func: ExposureFilterEvaluationType) -> Type[RuleFilter]: ...
+def rule_filter(__func: ExposureFilterEvaluationType) -> type[RuleFilter]: ...
 
 
 @overload
-def rule_filter(__func: SeedRuleEvaluationType) -> Type[RuleFilter]: ...
+def rule_filter(__func: SeedRuleEvaluationType) -> type[RuleFilter]: ...
 
 
 @overload
-def rule_filter(__func: MacroFilterEvaluationType) -> Type[RuleFilter]: ...
+def rule_filter(__func: MacroFilterEvaluationType) -> type[RuleFilter]: ...
 
 
 @overload
 def rule_filter(
     *,
     description: str | None = None,
-) -> Callable[[FilterEvaluationType], Type[RuleFilter]]: ...
+) -> Callable[[FilterEvaluationType], type[RuleFilter]]: ...
 
 
 def rule_filter(
     __func: FilterEvaluationType | None = None,
     *,
     description: str | None = None,
-) -> Type[RuleFilter] | Callable[[FilterEvaluationType], Type[RuleFilter]]:
+) -> type[RuleFilter] | Callable[[FilterEvaluationType], type[RuleFilter]]:
     """Rule-filter decorator.
 
     The rule_filter decorator creates a filter class (subclass of RuleFilter)
@@ -128,7 +128,7 @@ def rule_filter(
         description: The description of the filter.
     """
 
-    def decorator_filter(func: FilterEvaluationType) -> Type[RuleFilter]:
+    def decorator_filter(func: FilterEvaluationType) -> type[RuleFilter]:
         """Decorator function."""
         if func.__doc__ is None and description is None:
             raise AttributeError(

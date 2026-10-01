@@ -1,7 +1,6 @@
 """Unit tests for the JSON formatter."""
 
 import json
-from typing import Type
 
 from dbt_score.formatters.json_formatter import JSONFormatter
 from dbt_score.rule import Rule, RuleViolation
@@ -20,7 +19,7 @@ def test_json_formatter(
 ):
     """Ensure the formatter has the correct output after evaluation."""
     formatter = JSONFormatter(manifest_loader=manifest_loader, config=default_config)
-    results: dict[Type[Rule], RuleViolation | Exception | None] = {
+    results: dict[type[Rule], RuleViolation | Exception | None] = {
         rule_severity_low: None,
         rule_severity_medium: Exception("Oh noes"),
         rule_severity_critical: RuleViolation("Error"),
@@ -104,7 +103,7 @@ def test_json_formatter_name_collision_prevention(
     assert model_collision_test.unique_id != exposure_collision.unique_id
 
     formatter = JSONFormatter(manifest_loader=manifest_loader, config=default_config)
-    results: dict[Type[Rule], RuleViolation | Exception | None] = {
+    results: dict[type[Rule], RuleViolation | Exception | None] = {
         rule_severity_medium: RuleViolation("Test violation")
     }
 
