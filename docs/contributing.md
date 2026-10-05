@@ -67,11 +67,8 @@ running these commands from the project's root:
 
 ```shell
 pre-commit install
-uv sync --all-groups
+uv sync --group lint --group test --group docs
 ```
-
-The uv command will install all project's dependency groups, including all the
-dependencies needed for development purposes.
 
 ### Lint
 
@@ -109,10 +106,10 @@ uv run pytest
 uv run coverage run -m pytest
 
 # Test a specific Python and dbt version combination
-uv run tox -e py313-dbt111
+uv run tox -e py314-dbt112
 
 # Test all Python versions with one dbt version
-uv run tox -f dbt111
+uv run tox -f dbt112
 
 # Test one Python version with all dbt versions
 uv run tox -f py312

@@ -22,6 +22,7 @@ classifiers = [
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
     "Intended Audience :: Developers",
     "Operating System :: OS Independent",
 ]
@@ -62,6 +63,9 @@ dbt16 = ["dbt-core>=1.6,<1.7"]
 dbt17 = ["dbt-core>=1.7,<1.8"]
 dbt110 = ["dbt-core>=1.10,<1.11"]
 dbt111 = ["dbt-core>=1.11,<1.12"]
+# dbt-core 1.12 is the first release supporting Python 3.14, which needs
+# mashumaro >=3.15. Force it, as uv would otherwise reuse dbt111's older one.
+dbt112 = ["dbt-core>=1.12,<1.13", "mashumaro>=3.15"]
 
 [tool.uv]
 conflicts = [
@@ -71,6 +75,7 @@ conflicts = [
         { group = "dbt17" },
         { group = "dbt110" },
         { group = "dbt111" },
+        { group = "dbt112" },
     ],
 ]
 

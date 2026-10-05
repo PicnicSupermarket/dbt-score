@@ -8,6 +8,9 @@ and this project adheres to
 
 ## [Unreleased]
 
+- Documenting support for Python 3.14.
+- Test against dbt-core 1.12.
+
 ## [0.18.0] - 2026-09-28
 
 - Handle unparseable `manifest.json` gracefully with a clear error message
