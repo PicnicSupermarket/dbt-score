@@ -58,7 +58,7 @@ documentation website.
 
 You'll need the following:
 
-- Any Python version starting from 3.10
+- Any Python version starting from 3.11
 - [pre-commit](https://pre-commit.com/) (recommended)
 - [uv](https://docs.astral.sh/uv/)
 

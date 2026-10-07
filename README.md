@@ -211,7 +211,7 @@ Check out the [contributing guide][contributors-guide] to get started. 🚀
 
 ## Requirements
 
-- Python 3.10+
+- Python 3.11+
 - dbt-core 1.5+
 
 ## License
