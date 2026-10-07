@@ -1,5 +1,6 @@
 """Test models."""
 
+import copy
 from pathlib import Path
 from typing import Any
 from unittest.mock import patch
@@ -425,3 +426,80 @@ def test_downstream_count_with_non_model_descendants():
 
     # Only model should be counted (1), snapshot and exposure are not Model type
     assert parent.downstream_count == 1
+
+
+def _load(raw_manifest: dict[str, Any]) -> ManifestLoader:
+    with patch("dbt_score.models.Path.read_text"):
+        with patch("dbt_score.models.json.loads", return_value=raw_manifest):
+            return ManifestLoader(Path("some.json"))
+
+
+def test_groups_loaded(raw_manifest):
+    """Test that groups are loaded from the manifest."""
+    loader = _load(raw_manifest)
+    assert set(loader.groups) == {
+        "group.package.them_over_there",
+        "group.package.default",
+    }
+    group = loader.groups["group.package.them_over_there"]
+    assert group.name == "them_over_there"
+    assert group.description == "Team over there"
+    assert group.owner.name == "Alice"
+    assert group.owner.email == "alice@example.com"
+
+
+def test_model_group_details(raw_manifest):
+    """Test that models are linked to the group they belong to."""
+    loader = _load(raw_manifest)
+
+    owned = loader.models["model.package.model2"]
+    assert owned.group == "them_over_there"
+    assert owned.group_details is loader.groups["group.package.them_over_there"]
+
+    unowned = loader.models["model.package.collision_test"]
+    assert unowned.group == "default"
+    assert unowned.group_details is not None
+    assert unowned.group_details.owner.name is None
+    assert unowned.group_details.owner.email is None
+
+    no_group = loader.models["model.package.model1"]
+    assert no_group.group is None
+    assert no_group.group_details is None
+
+
+def test_group_owner_with_list_email(raw_manifest):
+    """Test a group owner whose email is a list."""
+    manifest = copy.deepcopy(raw_manifest)
+    emails = ["alice@example.com", "alice2@example.com"]
+    manifest["groups"]["group.package.them_over_there"]["owner"]["email"] = emails
+    loader = _load(manifest)
+    group_details = loader.models["model.package.model2"].group_details
+    assert group_details is not None
+    assert group_details.owner.email == emails
+
+
+def test_group_without_optional_keys(raw_manifest):
+    """Test a group that omits optional keys, as dbt v2 (Fusion) may do."""
+    manifest = copy.deepcopy(raw_manifest)
+    group_values = manifest["groups"]["group.package.them_over_there"]
+    for key in ("path", "original_file_path", "owner", "description", "config"):
+        del group_values[key]
+    loader = _load(manifest)
+    group = loader.groups["group.package.them_over_there"]
+    assert group.path is None
+    assert group.original_file_path is None
+    assert group.owner.name is None
+    assert group.owner.email is None
+    assert group.description is None
+    assert group.config == {}
+
+
+def test_model_group_not_in_manifest(raw_manifest):
+    """Test a model referencing a group that the manifest does not define."""
+    manifest = copy.deepcopy(raw_manifest)
+    del manifest["groups"]
+    loader = _load(manifest)
+    assert loader.groups == {}
+    model = loader.models["model.package.model2"]
+    assert model.group == "them_over_there"
+    assert model.group_details is None

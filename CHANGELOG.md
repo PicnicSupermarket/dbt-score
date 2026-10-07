@@ -8,6 +8,9 @@ and this project adheres to
 
 ## [Unreleased]
 
+- Expose the group a model belongs to as `Model.group_details`, with `Group`
+  and `Owner` also importable from `dbt_score` (#121).
+
 ## [0.18.0] - 2026-09-28
 
 - Handle unparseable `manifest.json` gracefully with a clear error message

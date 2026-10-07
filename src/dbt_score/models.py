@@ -123,6 +123,74 @@ class Column:
         )
 
 
+@dataclass
+class Owner:
+    """Represents a group owner.
+
+    Attributes:
+        name: The name of the owner.
+        email: The email of the owner, either a single string or list of strings.
+        _raw_values: The raw values of the owner in the manifest.
+    """
+
+    name: str | None = None
+    email: str | list[str] | None = None
+    _raw_values: dict[str, Any] = field(default_factory=dict)
+
+    @classmethod
+    def from_raw_values(cls, raw_values: dict[str, Any] | None) -> "Owner":
+        """Create an owner from raw values."""
+        if raw_values is None:
+            return cls()
+        return cls(
+            name=raw_values.get("name"),
+            email=raw_values.get("email"),
+            _raw_values=raw_values,
+        )
+
+
+@dataclass
+class Group:
+    """Represents a dbt group.
+
+    Attributes:
+        name: The name of the group.
+        package_name: The package name of the group.
+        unique_id: The unique id of the group, e.g. `group.package.my_group`.
+        path: The path of the group definition.
+        original_file_path: The original file path of the group definition.
+        owner: The owner of the group.
+        description: The description of the group.
+        config: The config of the group.
+        _raw_values: The raw values of the group in the manifest.
+    """
+
+    name: str
+    package_name: str
+    unique_id: str
+    path: str | None = None
+    original_file_path: str | None = None
+    owner: Owner = field(default_factory=Owner)
+    description: str | None = None
+    config: dict[str, Any] = field(default_factory=dict)
+    _raw_values: dict[str, Any] = field(default_factory=dict)
+
+    @classmethod
+    def from_raw_values(cls, raw_values: dict[str, Any]) -> "Group":
+        """Create a group from raw values."""
+        return cls(
+            name=raw_values["name"],
+            package_name=raw_values["package_name"],
+            unique_id=raw_values["unique_id"],
+            path=raw_values.get("path"),
+            original_file_path=raw_values.get("original_file_path"),
+            owner=Owner.from_raw_values(raw_values.get("owner")),
+            description=raw_values.get("description"),
+            config=raw_values.get("config", {}),
+            _raw_values=raw_values,
+        )
+
+
 class HasColumnsMixin:
     """Common methods for resource types that have columns."""
 
@@ -192,6 +260,7 @@ class Model(HasColumnsMixin):
         children: The list of models and snapshots that depend on this model.
         _raw_values: The raw values of the model (node) in the manifest.
         _raw_test_values: The raw test values of the model (node) in the manifest.
+        group_details: The group the model is in, resolved from the manifest.
     """
 
     unique_id: str
@@ -219,6 +288,7 @@ class Model(HasColumnsMixin):
     children: list[ChildType] = field(default_factory=list)
     _raw_values: dict[str, Any] = field(default_factory=dict)
     _raw_test_values: list[dict[str, Any]] = field(default_factory=list)
+    group_details: Group | None = None
 
     @classmethod
     def from_node(
@@ -773,8 +843,14 @@ class ManifestLoader:
             for macro_id, macro_values in self.raw_manifest.get("macros", {}).items()
             if macro_values["package_name"] == self.project_name
         }
+        self.raw_groups = {
+            group_id: group_values
+            for group_id, group_values in self.raw_manifest.get("groups", {}).items()
+            if group_values.get("package_name") == self.project_name
+        }
 
         self.models: dict[str, Model] = {}
+        self.groups: dict[str, Group] = {}
         self.tests: dict[str, list[dict[str, Any]]] = defaultdict(list)
         self.sources: dict[str, Source] = {}
         self.snapshots: dict[str, Snapshot] = {}
@@ -783,6 +859,7 @@ class ManifestLoader:
         self.macros: dict[str, Macro] = {}
 
         self._reindex_tests()
+        self._load_groups()
         self._load_models()
         self._load_sources()
         self._load_snapshots()
@@ -803,11 +880,21 @@ class ManifestLoader:
         ) == 0:
             logger.warning("Nothing to evaluate!")
 
+    def _load_groups(self) -> None:
+        """Load the groups from the manifest."""
+        for group_id, group_values in self.raw_groups.items():
+            if group_values.get("resource_type") == "group":
+                self.groups[group_id] = Group.from_raw_values(group_values)
+
     def _load_models(self) -> None:
         """Load the models from the manifest."""
         for node_id, node_values in self.raw_nodes.items():
             if node_values.get("resource_type") == "model":
                 model = Model.from_node(node_values, self.tests.get(node_id, []))
+                if model.group:
+                    model.group_details = self.groups.get(
+                        f"group.{model.package_name}.{model.group}"
+                    )
                 self.models[node_id] = model
 
     def _load_sources(self) -> None:
