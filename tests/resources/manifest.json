@@ -642,5 +642,43 @@
         }
       ]
     }
+  },
+  "groups": {
+    "group.package.them_over_there": {
+      "name": "them_over_there",
+      "resource_type": "group",
+      "package_name": "package",
+      "path": "models/_groups.yml",
+      "original_file_path": "models/_groups.yml",
+      "unique_id": "group.package.them_over_there",
+      "owner": {
+        "name": "Alice",
+        "email": "alice@example.com"
+      },
+      "description": "Team over there",
+      "config": {}
+    },
+    "group.package.default": {
+      "name": "default",
+      "resource_type": "group",
+      "package_name": "package",
+      "path": "models/_groups.yml",
+      "original_file_path": "models/_groups.yml",
+      "unique_id": "group.package.default",
+      "owner": {
+        "name": null,
+        "email": null
+      },
+      "description": null,
+      "config": {}
+    }
+  },
+  "group_map": {
+    "them_over_there": [
+      "model.package.model2"
+    ],
+    "default": [
+      "model.package.collision_test"
+    ]
   }
 }
