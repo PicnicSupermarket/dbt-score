@@ -8,6 +8,9 @@ and this project adheres to
 
 ## [Unreleased]
 
+- Add `--project-dir` option to `dbt-score lint` to lint a dbt project located
+  outside of the current working directory (#67).
+
 ## [0.19.0] - 2026-10-07
 
 - Drop support for Python 3.10. The minimum required version is now 3.11.

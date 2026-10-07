@@ -74,11 +74,19 @@ def cli() -> None:
     multiple=True,
 )
 @click.option(
+    "--project-dir",
+    help="Directory of the dbt project. Used to locate the manifest and to run "
+    "dbt. Defaults to the current working directory.",
+    type=click.Path(exists=True, file_okay=False, path_type=Path),
+    default=None,
+)
+@click.option(
     "--manifest",
     "-m",
-    help="Manifest filepath.",
+    help="Manifest filepath. Defaults to `manifest.json` in the target directory "
+    "of the dbt project.",
     type=click.Path(path_type=Path),
-    default=get_default_manifest_path(),
+    default=None,
 )
 @click.option(
     "--run-dbt-parse",
@@ -129,7 +137,8 @@ def lint(  # noqa: PLR0913, C901, PLR0912
     exclude: tuple[str, ...],
     namespace: list[str],
     disabled_rule: list[str],
-    manifest: Path,
+    project_dir: Path | None,
+    manifest: Path | None,
     run_dbt_parse: bool,
     fail_project_under: float | None,
     fail_any_item_under: float | None,
@@ -143,9 +152,11 @@ def lint(  # noqa: PLR0913, C901, PLR0912
     )
     if manifest_provided and run_dbt_parse:
         raise click.UsageError("--run-dbt-parse cannot be used with --manifest.")
+    if manifest is None:
+        manifest = get_default_manifest_path(project_dir)
 
     config = Config()
-    config.load()
+    config.load(project_dir)
     if namespace:
         config.overload({"rule_namespaces": namespace})
     if disabled_rule:
@@ -161,13 +172,14 @@ def lint(  # noqa: PLR0913, C901, PLR0912
 
     try:
         if run_dbt_parse:
-            dbt_parse()
+            dbt_parse(project_dir=project_dir)
         evaluation = lint_dbt_project(
             manifest_path=manifest,
             config=config,
             format=format,
             select=select,
             exclude=exclude,
+            project_dir=project_dir,
         )
 
     except FileNotFoundError:

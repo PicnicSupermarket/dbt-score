@@ -65,8 +65,12 @@ def _disable_dbt_stdout() -> Iterator[None]:
 
 
 @dbt_required
-def dbt_parse() -> "dbtRunnerResult":
+def dbt_parse(project_dir: Path | None = None) -> "dbtRunnerResult":
     """Parse a dbt project.
+
+    Args:
+        project_dir: The dbt project directory. Defaults to the directory dbt
+            would use on its own, i.e. the current working directory.
 
     Returns:
         The dbt parse run result.
@@ -74,8 +78,12 @@ def dbt_parse() -> "dbtRunnerResult":
     Raises:
         DbtParseException: dbt parse failed.
     """
+    cmd = ["parse"]
+    if project_dir is not None:
+        cmd += ["--project-dir", str(project_dir)]
+
     with _disable_dbt_stdout():
-        result: "dbtRunnerResult" = dbtRunner().invoke(["parse"])
+        result: "dbtRunnerResult" = dbtRunner().invoke(cmd)
 
     if not result.success:
         raise DbtParseException(root_cause=result.exception)
@@ -85,7 +93,9 @@ def dbt_parse() -> "dbtRunnerResult":
 
 @dbt_required
 def dbt_ls(
-    select: Iterable[str] | None, exclude: Iterable[str] | None = None
+    select: Iterable[str] | None,
+    exclude: Iterable[str] | None = None,
+    project_dir: Path | None = None,
 ) -> Iterable[str]:
     """Run dbt ls."""
     cmd = [
@@ -103,6 +113,8 @@ def dbt_ls(
         cmd += ["--select", *select]
     if exclude:
         cmd += ["--exclude", *exclude]
+    if project_dir is not None:
+        cmd += ["--project-dir", str(project_dir)]
 
     with _disable_dbt_stdout():
         result: "dbtRunnerResult" = dbtRunner().invoke(cmd)
@@ -114,11 +126,17 @@ def dbt_ls(
     return selected
 
 
-def get_default_manifest_path() -> Path:
-    """Get the manifest path."""
-    return (
-        Path().cwd()
-        / os.getenv("DBT_PROJECT_DIR", "")
-        / os.getenv("DBT_TARGET_DIR", "target")
-        / "manifest.json"
-    )
+def get_default_manifest_path(project_dir: Path | None = None) -> Path:
+    """Get the manifest path.
+
+    Args:
+        project_dir: The dbt project directory. Defaults to the current working
+            directory, combined with the `DBT_PROJECT_DIR` environment variable
+            if it is set.
+
+    Returns:
+        The path of `manifest.json` in the target directory of the project.
+    """
+    if project_dir is None:
+        project_dir = Path.cwd() / os.getenv("DBT_PROJECT_DIR", "")
+    return project_dir / os.getenv("DBT_TARGET_DIR", "target") / "manifest.json"

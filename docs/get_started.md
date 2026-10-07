@@ -40,6 +40,15 @@ It's also possible to automatically run `dbt parse`, to generate the
 dbt-score lint --run-dbt-parse
 ```
 
+To lint a dbt project located outside of the current working directory, use the
+`--project-dir` option. Similar to dbt, `dbt-score` will look for the project,
+its `manifest.json`, its `pyproject.toml` configuration and its local rules in
+that directory, and run dbt from there:
+
+```shell
+dbt-score lint --project-dir path/to/dbt_project --run-dbt-parse
+```
+
 To lint only a selection of dbt entities, the argument `--select` can be used.
 It accepts any
 [dbt node selection syntax](https://docs.getdbt.com/reference/node-selection/syntax):

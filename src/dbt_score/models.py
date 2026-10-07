@@ -741,6 +741,7 @@ class ManifestLoader:
         file_path: Path,
         select: Iterable[str] | None = None,
         exclude: Iterable[str] | None = None,
+        project_dir: Path | None = None,
     ):
         """Initialize the ManifestLoader.
 
@@ -748,7 +749,10 @@ class ManifestLoader:
             file_path: The file path of the JSON manifest.
             select: An optional dbt selection.
             exclude: An optional dbt exclusion.
+            project_dir: An optional dbt project directory, used when the
+                selection requires running dbt.
         """
+        self.project_dir = project_dir
         self.raw_manifest = json.loads(file_path.read_text(encoding="utf-8"))
         self.project_name = self.raw_manifest["metadata"]["project_name"]
         self.raw_nodes = {
@@ -913,7 +917,7 @@ class ManifestLoader:
 
         else:
             # Use dbt's implementation of --select and --exclude
-            result_list = dbt_ls(select, exclude)
+            result_list = dbt_ls(select, exclude, project_dir=self.project_dir)
 
         self.models = {k: m for k, m in self.models.items() if m.name in result_list}
         self.sources = {

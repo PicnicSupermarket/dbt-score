@@ -8,6 +8,7 @@ import logging
 import os
 import pkgutil
 import sys
+from pathlib import Path
 from typing import Iterator, Type
 
 from dbt_score.config import Config
@@ -90,12 +91,17 @@ class RuleRegistry:
             raise DuplicatedRuleException(filter_name)
         self._rule_filters[filter_name] = rule_filter()
 
-    def load_all(self) -> None:
-        """Load all rules, core and third-party."""
-        # Add cwd to Python path
+    def load_all(self, project_dir: Path | None = None) -> None:
+        """Load all rules, core and third-party.
+
+        Local rules are imported from `project_dir`, or from the current
+        directory when it is not given.
+        """
+        # Add the project directory (default: cwd) to Python path
         old_sys_path = sys.path  # Save original values
-        if self.config.inject_cwd_in_python_path and os.getcwd() not in sys.path:
-            sys.path.append(os.getcwd())
+        rules_root = str(project_dir.resolve()) if project_dir else os.getcwd()
+        if self.config.inject_cwd_in_python_path and rules_root not in sys.path:
+            sys.path.append(rules_root)
 
         for namespace in self.config.rule_namespaces:
             self._load(namespace)
