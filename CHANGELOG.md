@@ -8,6 +8,8 @@ and this project adheres to
 
 ## [Unreleased]
 
+## [0.19.0] - 2026-10-07
+
 - Drop support for Python 3.10. The minimum required version is now 3.11.
 - Documenting support for Python 3.14.
 - Test against dbt-core 1.12.
