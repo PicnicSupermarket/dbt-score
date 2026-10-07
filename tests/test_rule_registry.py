@@ -67,3 +67,29 @@ def test_rule_registry_rule_filters(valid_config_path, model1, model2):
 
     assert not r.rules["tests.rules.rules.rule_test_example"].should_evaluate(model1)
     assert r.rules["tests.rules.rules.rule_test_example"].should_evaluate(model2)
+
+
+def test_rule_registry_local_rules_from_project_dir(tmp_path, monkeypatch):
+    """Ensure local rules are imported from the project directory, not the cwd."""
+    project_dir = tmp_path / "my_project"
+    package = project_dir / "project_dir_rules"
+    package.mkdir(parents=True)
+    (package / "__init__.py").write_text("")
+    (package / "rules.py").write_text(
+        "from dbt_score import Model, RuleViolation, rule\n"
+        "\n"
+        "\n"
+        "@rule\n"
+        "def rule_from_project_dir(model: Model) -> RuleViolation | None:\n"
+        '    """A local rule."""\n'
+    )
+    other_dir = tmp_path / "elsewhere"
+    other_dir.mkdir()
+    monkeypatch.chdir(other_dir)
+    monkeypatch.setattr("sys.path", list(__import__("sys").path))
+
+    config = Config()
+    config.rule_namespaces = ["project_dir_rules"]
+    r = RuleRegistry(config)
+    r.load_all(project_dir=project_dir)
+    assert "project_dir_rules.rules.rule_from_project_dir" in r.rules

@@ -130,9 +130,9 @@ class Config:
             if config_file.exists():
                 return config_file
 
-    def load(self) -> None:
-        """Load the config."""
-        config_file = self.get_config_file(Path.cwd())
+    def load(self, directory: Path | None = None) -> None:
+        """Load the config, searching from `directory` (default: the cwd)."""
+        config_file = self.get_config_file(directory or Path.cwd())
         if config_file:
             self._load_toml_file(str(config_file))
 

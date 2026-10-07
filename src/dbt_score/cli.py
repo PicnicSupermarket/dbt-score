@@ -156,7 +156,7 @@ def lint(  # noqa: PLR0913, C901, PLR0912
         manifest = get_default_manifest_path(project_dir)
 
     config = Config()
-    config.load()
+    config.load(project_dir)
     if namespace:
         config.overload({"rule_namespaces": namespace})
     if disabled_rule:

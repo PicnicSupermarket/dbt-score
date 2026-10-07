@@ -41,8 +41,9 @@ dbt-score lint --run-dbt-parse
 ```
 
 To lint a dbt project located outside of the current working directory, use the
-`--project-dir` option. Similar to dbt, `dbt-score` will look for the project
-and its `manifest.json` in that directory, and run dbt from there:
+`--project-dir` option. Similar to dbt, `dbt-score` will look for the project,
+its `manifest.json`, its `pyproject.toml` configuration and its local rules in
+that directory, and run dbt from there:
 
 ```shell
 dbt-score lint --project-dir path/to/dbt_project --run-dbt-parse

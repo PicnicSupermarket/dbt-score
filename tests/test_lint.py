@@ -38,3 +38,20 @@ def test_lint_dbt_project_project_dir(
         exclude=None,
         project_dir=Path("my_project"),
     )
+
+
+@patch("dbt_score.lint.Evaluation")
+@patch("dbt_score.lint.ManifestLoader")
+@patch("dbt_score.lint.RuleRegistry.load_all")
+def test_lint_dbt_project_loads_rules_from_project_dir(
+    mock_load_all, mock_manifest_loader, mock_evaluation, manifest_path
+):
+    """Test that local rules are loaded from the project directory."""
+    lint_dbt_project(
+        manifest_path=manifest_path,
+        config=Config(),
+        format="plain",
+        project_dir=Path("my_project"),
+    )
+
+    mock_load_all.assert_called_once_with(project_dir=Path("my_project"))

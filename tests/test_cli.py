@@ -96,6 +96,26 @@ def test_lint_project_dir(tmp_path, manifest_path):
     assert mock_lint_dbt_project.call_args.kwargs["project_dir"] == project_dir
 
 
+def test_lint_project_dir_loads_project_config(tmp_path, manifest_path):
+    """Test that the config is loaded from the project directory, not the cwd."""
+    runner = CliRunner()
+    project_dir = tmp_path / "my_project"
+    (project_dir / "target").mkdir(parents=True)
+    shutil.copy(manifest_path, project_dir / "target" / "manifest.json")
+
+    with (
+        patch("dbt_score.cli.Config.load") as mock_config_load,
+        patch("dbt_score.cli.lint_dbt_project") as mock_lint_dbt_project,
+    ):
+        mock_lint_dbt_project.return_value = passing_evaluation()
+        result = runner.invoke(
+            lint, ["--project-dir", str(project_dir)], catch_exceptions=False
+        )
+
+    assert result.exit_code == 0
+    mock_config_load.assert_called_once_with(project_dir)
+
+
 def test_lint_project_dir_with_manifest(tmp_path, manifest_path):
     """Test lint with a project directory and an explicit manifest."""
     runner = CliRunner()

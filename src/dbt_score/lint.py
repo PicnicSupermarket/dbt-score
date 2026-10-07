@@ -27,7 +27,7 @@ def lint_dbt_project(
         raise FileNotFoundError(f"Manifest not found at {manifest_path}.")
 
     rule_registry = RuleRegistry(config)
-    rule_registry.load_all()
+    rule_registry.load_all(project_dir=project_dir)
 
     manifest_loader = ManifestLoader(
         manifest_path, select=select, exclude=exclude, project_dir=project_dir

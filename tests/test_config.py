@@ -136,3 +136,13 @@ def test_config_overload(valid_config_path):
     config.overload({"rule_namespaces": ["x", "y"], "disabled_rules": ["foo"]})
     assert config.rule_namespaces == ["x", "y"]
     assert config.disabled_rules == ["foo"]
+
+
+def test_load_from_directory(tmp_path, monkeypatch):
+    """Test that the config file is searched from the given directory, not the cwd."""
+    monkeypatch.chdir(tmp_path)
+    directory = Path(__file__).parent / "resources"
+    config = Config()
+    config.load(directory)
+    assert config.fail_project_under == 7.5
+    assert config.rule_namespaces == ["foo", "tests"]
