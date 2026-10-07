@@ -138,10 +138,10 @@ class Owner:
     _raw_values: dict[str, Any] = field(default_factory=dict)
 
     @classmethod
-    def from_raw_values(cls, raw_values: dict[str, Any] | None) -> "Owner | None":
+    def from_raw_values(cls, raw_values: dict[str, Any] | None) -> "Owner":
         """Create an owner from raw values."""
         if raw_values is None:
-            return None
+            return cls()
         return cls(
             name=raw_values.get("name"),
             email=raw_values.get("email"),
@@ -168,9 +168,9 @@ class Group:
     name: str
     package_name: str
     unique_id: str
-    path: str
-    original_file_path: str
-    owner: Owner | None = None
+    path: str | None = None
+    original_file_path: str | None = None
+    owner: Owner = field(default_factory=Owner)
     description: str | None = None
     config: dict[str, Any] = field(default_factory=dict)
     _raw_values: dict[str, Any] = field(default_factory=dict)
@@ -182,8 +182,8 @@ class Group:
             name=raw_values["name"],
             package_name=raw_values["package_name"],
             unique_id=raw_values["unique_id"],
-            path=raw_values["path"],
-            original_file_path=raw_values["original_file_path"],
+            path=raw_values.get("path"),
+            original_file_path=raw_values.get("original_file_path"),
             owner=Owner.from_raw_values(raw_values.get("owner")),
             description=raw_values.get("description"),
             config=raw_values.get("config", {}),
@@ -260,7 +260,7 @@ class Model(HasColumnsMixin):
         children: The list of models and snapshots that depend on this model.
         _raw_values: The raw values of the model (node) in the manifest.
         _raw_test_values: The raw test values of the model (node) in the manifest.
-        group_node: The group object the model is in.
+        group_details: The group the model is in, resolved from the manifest.
     """
 
     unique_id: str
@@ -288,7 +288,7 @@ class Model(HasColumnsMixin):
     children: list[ChildType] = field(default_factory=list)
     _raw_values: dict[str, Any] = field(default_factory=dict)
     _raw_test_values: list[dict[str, Any]] = field(default_factory=list)
-    group_node: Group | None = None
+    group_details: Group | None = None
 
     @classmethod
     def from_node(
@@ -886,24 +886,14 @@ class ManifestLoader:
             if group_values.get("resource_type") == "group":
                 self.groups[group_id] = Group.from_raw_values(group_values)
 
-    def _find_group_for_model(self, group_name: str, package_name: str) -> Group | None:
-        """Find a group by name and package."""
-        unique_id = f"group.{package_name}.{group_name}"
-        if unique_id in self.groups:
-            return self.groups[unique_id]
-        for group in self.groups.values():
-            if group.name == group_name and group.package_name == package_name:
-                return group
-        return None
-
     def _load_models(self) -> None:
         """Load the models from the manifest."""
         for node_id, node_values in self.raw_nodes.items():
             if node_values.get("resource_type") == "model":
                 model = Model.from_node(node_values, self.tests.get(node_id, []))
                 if model.group:
-                    model.group_node = self._find_group_for_model(
-                        model.group, model.package_name
+                    model.group_details = self.groups.get(
+                        f"group.{model.package_name}.{model.group}"
                     )
                 self.models[node_id] = model
 

@@ -8,8 +8,8 @@ and this project adheres to
 
 ## [Unreleased]
 
-- Expose group object as `Model.group_node`, with `Group` and `Owner` also
-  importable from `dbt_score` (#121).
+- Expose the group a model belongs to as `Model.group_details`, with `Group`
+  and `Owner` also importable from `dbt_score` (#121).
 
 ## [0.18.0] - 2026-09-28
 
