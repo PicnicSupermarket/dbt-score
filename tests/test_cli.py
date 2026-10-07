@@ -1,5 +1,7 @@
 """Test the CLI."""
 
+import shutil
+from pathlib import Path
 from unittest.mock import MagicMock, patch
 
 from click.testing import CliRunner
@@ -61,6 +63,92 @@ def test_lint_unparseable_manifest(tmp_path, caplog):
 
     assert result.exit_code == 2
     assert "dbt's manifest.json could not be parsed" in caplog.text
+
+
+def passing_evaluation() -> MagicMock:
+    """Return a mock evaluation with passing scores."""
+    mock_eval = MagicMock()
+    mock_eval.project_score = Score(10.0, "🥇")
+    mock_eval.scores = {}
+    return mock_eval
+
+
+def test_lint_project_dir(tmp_path, manifest_path):
+    """Test lint with a project directory, which is used to find the manifest."""
+    runner = CliRunner()
+    project_dir = tmp_path / "my_project"
+    (project_dir / "target").mkdir(parents=True)
+    shutil.copy(manifest_path, project_dir / "target" / "manifest.json")
+
+    with (
+        patch("dbt_score.cli.Config._load_toml_file"),
+        patch("dbt_score.cli.lint_dbt_project") as mock_lint_dbt_project,
+    ):
+        mock_lint_dbt_project.return_value = passing_evaluation()
+        result = runner.invoke(
+            lint, ["--project-dir", str(project_dir)], catch_exceptions=False
+        )
+
+    assert result.exit_code == 0
+    assert mock_lint_dbt_project.call_args.kwargs["manifest_path"] == (
+        project_dir / "target" / "manifest.json"
+    )
+    assert mock_lint_dbt_project.call_args.kwargs["project_dir"] == project_dir
+
+
+def test_lint_project_dir_with_manifest(tmp_path, manifest_path):
+    """Test lint with a project directory and an explicit manifest."""
+    runner = CliRunner()
+
+    with (
+        patch("dbt_score.cli.Config._load_toml_file"),
+        patch("dbt_score.cli.lint_dbt_project") as mock_lint_dbt_project,
+    ):
+        mock_lint_dbt_project.return_value = passing_evaluation()
+        result = runner.invoke(
+            lint,
+            ["--project-dir", str(tmp_path), "--manifest", str(manifest_path)],
+            catch_exceptions=False,
+        )
+
+    assert result.exit_code == 0
+    assert mock_lint_dbt_project.call_args.kwargs["manifest_path"] == Path(
+        manifest_path
+    )
+    assert mock_lint_dbt_project.call_args.kwargs["project_dir"] == tmp_path
+
+
+def test_lint_project_dir_run_dbt_parse(tmp_path):
+    """Test lint with a project directory and dbt parse."""
+    runner = CliRunner()
+    project_dir = tmp_path / "my_project"
+    project_dir.mkdir()
+
+    with (
+        patch("dbt_score.cli.Config._load_toml_file"),
+        patch("dbt_score.cli.dbt_parse") as mock_dbt_parse,
+        patch("dbt_score.cli.lint_dbt_project") as mock_lint_dbt_project,
+    ):
+        mock_lint_dbt_project.return_value = passing_evaluation()
+        result = runner.invoke(
+            lint,
+            ["--project-dir", str(project_dir), "--run-dbt-parse"],
+            catch_exceptions=False,
+        )
+
+    assert result.exit_code == 0
+    mock_dbt_parse.assert_called_once_with(project_dir=project_dir)
+
+
+def test_lint_project_dir_non_existing(tmp_path):
+    """Test lint with a non-existing project directory."""
+    runner = CliRunner()
+
+    with patch("dbt_score.cli.Config._load_toml_file"):
+        result = runner.invoke(lint, ["--project-dir", str(tmp_path / "nope")])
+
+    assert result.exit_code == 2
+    assert "does not exist" in result.output
 
 
 def test_lint_dbt_parse_exception(caplog):

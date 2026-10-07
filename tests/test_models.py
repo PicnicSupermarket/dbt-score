@@ -165,7 +165,24 @@ def test_manifest_select_models_dbt_ls(mock_dbt_ls, mock_read_text, raw_manifest
         manifest_loader = ManifestLoader(Path("some.json"), select=["+model1"])
 
     assert [x.name for x in manifest_loader.models.values()] == ["model1"]
-    mock_dbt_ls.assert_called_once_with(["+model1"], None)
+    mock_dbt_ls.assert_called_once_with(["+model1"], None, project_dir=None)
+
+
+@patch("dbt_score.models.Path.read_text")
+@patch("dbt_score.models.dbt_ls")
+def test_manifest_select_models_dbt_ls_project_dir(
+    mock_dbt_ls, mock_read_text, raw_manifest
+):
+    """Test that the project directory is passed on to dbt ls."""
+    mock_dbt_ls.return_value = ["model1"]
+    with patch("dbt_score.models.json.loads", return_value=raw_manifest):
+        ManifestLoader(
+            Path("some.json"), select=["+model1"], project_dir=Path("my_project")
+        )
+
+    mock_dbt_ls.assert_called_once_with(
+        ["+model1"], None, project_dir=Path("my_project")
+    )
 
 
 @patch("dbt_score.models.Path.read_text")
@@ -203,7 +220,7 @@ def test_manifest_exclude_ancestors(mock_dbt_ls, mock_read_text, chain_raw_manif
     assert sorted(m.name for m in loader.models.values()) == sorted(
         ["model2", "model3", "standalone"]
     )
-    mock_dbt_ls.assert_called_once_with(None, ["+model1"])
+    mock_dbt_ls.assert_called_once_with(None, ["+model1"], project_dir=None)
 
 
 @patch("dbt_score.models.Path.read_text")
@@ -220,7 +237,7 @@ def test_manifest_exclude_descendants(mock_dbt_ls, mock_read_text, chain_raw_man
     assert sorted(m.name for m in loader.models.values()) == sorted(
         ["model0", "standalone"]
     )
-    mock_dbt_ls.assert_called_once_with(None, ["model1+"])
+    mock_dbt_ls.assert_called_once_with(None, ["model1+"], project_dir=None)
 
 
 @patch("dbt_score.models.Path.read_text")

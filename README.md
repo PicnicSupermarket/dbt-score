@@ -69,6 +69,9 @@ dbt-score lint --exclude my_model+
 
 # Auto-generate manifest (via `dbt parse`) and lint
 dbt-score lint --run-dbt-parse
+
+# Lint a dbt project in another directory
+dbt-score lint --project-dir path/to/dbt_project --run-dbt-parse
 ```
 
 ### Example Output
