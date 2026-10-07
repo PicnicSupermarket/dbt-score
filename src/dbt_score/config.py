@@ -1,17 +1,12 @@
 """This module is responsible for loading configuration."""
 
 import logging
-import sys
+import tomllib
 from dataclasses import dataclass, field, replace
 from pathlib import Path
 from typing import Any, Final
 
 from dbt_score.rule import RuleConfig
-
-if sys.version_info >= (3, 11):
-    import tomllib
-else:
-    import tomli as tomllib
 
 logger = logging.getLogger(__name__)
 
