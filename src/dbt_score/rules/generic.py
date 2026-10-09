@@ -137,6 +137,30 @@ def has_no_unused_is_incremental(model: Model) -> RuleViolation | None:
 
 
 @rule
+def high_fan_out_model_has_contract(
+    model: Model, max_downstream_count: int = 10
+) -> RuleViolation | None:
+    """A model with many downstream models should have an enforced contract."""
+    # Contracts are not supported for Python, ephemeral or materialized view models
+    if model.language != "sql" or model.config.get("materialized") in {
+        "ephemeral",
+        "materialized_view",
+    }:
+        return None
+
+    contract = model.config.get("contract") or {}
+    if contract.get("enforced"):
+        return None
+
+    downstream_count = model.downstream_count
+    if downstream_count > max_downstream_count:
+        return RuleViolation(
+            message=f"Model has {downstream_count} downstream models "
+            f"(> {max_downstream_count}) but no enforced contract."
+        )
+
+
+@rule
 def seed_has_description(seed: Seed) -> RuleViolation | None:
     """A seed should have a description."""
     if not seed.description:
