@@ -8,6 +8,10 @@ and this project adheres to
 
 ## [Unreleased]
 
+- Add rule `high_fan_out_model_has_contract`: a model with more than
+  `max_downstream_count` (default: 10) downstream models should have an enforced
+  contract. (#184)
+
 ## [0.19.0] - 2026-10-07
 
 - Drop support for Python 3.10. The minimum required version is now 3.11.
