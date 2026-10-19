@@ -117,13 +117,12 @@ max-complexity = 11
 convention = "google"
 
 [tool.ruff.lint.pylint]
-max-args = 9
+max-args = 12
 
 [tool.ruff.lint.per-file-ignores]
 "tests/**/*.py" = [
     "PLR2004",  # Magic value comparisons
     "PLR0913",  # Too many args in func def
-    "PLR0917",  # Too many positional args in func def
     "TRY002",  # Raising vanilla Exception
 ]
 
