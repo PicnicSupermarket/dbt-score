@@ -199,27 +199,27 @@ class Rule:
 
 
 @overload
-def rule(__func: ModelRuleEvaluationType) -> type[Rule]: ...
+def rule(func: ModelRuleEvaluationType, /) -> type[Rule]: ...
 
 
 @overload
-def rule(__func: SourceRuleEvaluationType) -> type[Rule]: ...
+def rule(func: SourceRuleEvaluationType, /) -> type[Rule]: ...
 
 
 @overload
-def rule(__func: SnapshotRuleEvaluationType) -> type[Rule]: ...
+def rule(func: SnapshotRuleEvaluationType, /) -> type[Rule]: ...
 
 
 @overload
-def rule(__func: ExposureRuleEvaluationType) -> type[Rule]: ...
+def rule(func: ExposureRuleEvaluationType, /) -> type[Rule]: ...
 
 
 @overload
-def rule(__func: SeedRuleEvaluationType) -> type[Rule]: ...
+def rule(func: SeedRuleEvaluationType, /) -> type[Rule]: ...
 
 
 @overload
-def rule(__func: MacroRuleEvaluationType) -> type[Rule]: ...
+def rule(func: MacroRuleEvaluationType, /) -> type[Rule]: ...
 
 
 @overload
@@ -232,7 +232,8 @@ def rule(
 
 
 def rule(
-    __func: RuleEvaluationType | None = None,
+    func: RuleEvaluationType | None = None,
+    /,
     *,
     description: str | None = None,
     severity: Severity = Severity.MEDIUM,
@@ -247,7 +248,7 @@ def rule(
     - ``@rule(description="...")``
 
     Args:
-        __func: The rule evaluation function being decorated.
+        func: The rule evaluation function being decorated.
         description: The description of the rule.
         severity: The severity of the rule.
         rule_filters: Set of RuleFilter that filters the items that the rule applies to.
@@ -294,9 +295,9 @@ def rule(
 
         return rule_class
 
-    if __func is not None:
+    if func is not None:
         # The syntax @rule is used
-        return decorator_rule(__func)
+        return decorator_rule(func)
     else:
         # The syntax @rule(...) is used
         return decorator_rule

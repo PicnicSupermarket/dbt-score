@@ -28,11 +28,7 @@ class ManifestFormatter(Formatter):
         """Callback when a project has been evaluated."""
         manifest = copy.copy(self._manifest_loader.raw_manifest)
         for evaluable_id, evaluable_score in self._evaluable_scores.items():
-            if (
-                evaluable_id.startswith("model")
-                or evaluable_id.startswith("snapshot")
-                or evaluable_id.startswith("seed")
-            ):
+            if evaluable_id.startswith(("model", "snapshot", "seed")):
                 nodes_manifest = manifest["nodes"][evaluable_id]
                 nodes_manifest["meta"]["score"] = evaluable_score.value
                 nodes_manifest["meta"]["badge"] = evaluable_score.badge

@@ -79,27 +79,27 @@ class RuleFilter:
 
 
 @overload
-def rule_filter(__func: ModelFilterEvaluationType) -> type[RuleFilter]: ...
+def rule_filter(func: ModelFilterEvaluationType, /) -> type[RuleFilter]: ...
 
 
 @overload
-def rule_filter(__func: SourceFilterEvaluationType) -> type[RuleFilter]: ...
+def rule_filter(func: SourceFilterEvaluationType, /) -> type[RuleFilter]: ...
 
 
 @overload
-def rule_filter(__func: SnapshotFilterEvaluationType) -> type[RuleFilter]: ...
+def rule_filter(func: SnapshotFilterEvaluationType, /) -> type[RuleFilter]: ...
 
 
 @overload
-def rule_filter(__func: ExposureFilterEvaluationType) -> type[RuleFilter]: ...
+def rule_filter(func: ExposureFilterEvaluationType, /) -> type[RuleFilter]: ...
 
 
 @overload
-def rule_filter(__func: SeedRuleEvaluationType) -> type[RuleFilter]: ...
+def rule_filter(func: SeedRuleEvaluationType, /) -> type[RuleFilter]: ...
 
 
 @overload
-def rule_filter(__func: MacroFilterEvaluationType) -> type[RuleFilter]: ...
+def rule_filter(func: MacroFilterEvaluationType, /) -> type[RuleFilter]: ...
 
 
 @overload
@@ -110,7 +110,8 @@ def rule_filter(
 
 
 def rule_filter(
-    __func: FilterEvaluationType | None = None,
+    func: FilterEvaluationType | None = None,
+    /,
     *,
     description: str | None = None,
 ) -> type[RuleFilter] | Callable[[FilterEvaluationType], type[RuleFilter]]:
@@ -124,7 +125,7 @@ def rule_filter(
     - ``@rule_filter(description="...")``
 
     Args:
-        __func: The filter evaluation function being decorated.
+        func: The filter evaluation function being decorated.
         description: The description of the filter.
     """
 
@@ -161,9 +162,9 @@ def rule_filter(
 
         return filter_class
 
-    if __func is not None:
+    if func is not None:
         # The syntax @rule_filter is used
-        return decorator_filter(__func)
+        return decorator_filter(func)
     else:
         # The syntax @rule_filter(...) is used
         return decorator_filter

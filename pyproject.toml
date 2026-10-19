@@ -106,6 +106,9 @@ extend-select = [
     "E", # pycodestyle errors
     "W", # pycodestyle warnings
 ]
+ignore = [
+    "BLE001", # Blind `except Exception`
+]
 
 [tool.ruff.lint.mccabe]
 max-complexity = 11
@@ -120,6 +123,8 @@ max-args = 9
 "tests/**/*.py" = [
     "PLR2004",  # Magic value comparisons
     "PLR0913",  # Too many args in func def
+    "PLR0917",  # Too many positional args in func def
+    "TRY002",  # Raising vanilla Exception
 ]
 
 ### Coverage ###

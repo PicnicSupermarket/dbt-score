@@ -155,6 +155,7 @@ Create organization-specific rules by writing simple Python functions:
 ```python
 from dbt_score import Model, rule, RuleViolation
 
+
 @rule
 def model_has_business_owner(model: Model) -> RuleViolation:
     if model.meta.get("business_owner") is None:

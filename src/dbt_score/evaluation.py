@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-import pdb
+import pdb  # noqa: T100
 import traceback
 from itertools import chain
 from typing import cast
@@ -18,7 +18,7 @@ from dbt_score.scoring import Score, Scorer
 # - None if there was no issue
 # - A RuleViolation if a linting error was found
 # - An Exception if the rule failed to run
-EvaluableResultsType = dict[type[Rule], None | RuleViolation | Exception]
+EvaluableResultsType = dict[type[Rule], RuleViolation | Exception | None]
 
 
 class Evaluation:
