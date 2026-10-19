@@ -20,6 +20,7 @@ The `@rule` decorator can be used to easily create a new rule:
 ```python
 from dbt_score import Model, rule, RuleViolation
 
+
 @rule
 def model_has_description(model: Model) -> RuleViolation | None:
     """A model should have a description."""
@@ -39,11 +40,12 @@ Here is the same example rule, applied to sources:
 ```python
 from dbt_score import rule, RuleViolation, Source
 
+
 @rule
 def source_has_description(source: Source) -> RuleViolation | None:
-   """A source should have a description."""
-   if not source.description:
-      return RuleViolation(message="Source lacks a description.")
+    """A source should have a description."""
+    if not source.description:
+        return RuleViolation(message="Source lacks a description.")
 ```
 
 The severity of a rule can be set using the `severity` argument:
@@ -62,6 +64,7 @@ class:
 ```python
 from dbt_score import Model, Rule, RuleViolation, Source
 
+
 class ModelHasDescription(Rule):
     description = "A model should have a description."
 
@@ -70,13 +73,14 @@ class ModelHasDescription(Rule):
         if not model.description:
             return RuleViolation(message="Model lacks a description.")
 
-class SourceHasDescription(Rule):
-   description = "A source should have a description."
 
-   def evaluate(self, source: Source) -> RuleViolation | None:
-      """Evaluate the rule."""
-      if not source.description:
-         return RuleViolation(message="Source lacks a description.")
+class SourceHasDescription(Rule):
+    description = "A source should have a description."
+
+    def evaluate(self, source: Source) -> RuleViolation | None:
+        """Evaluate the rule."""
+        if not source.description:
+            return RuleViolation(message="Source lacks a description.")
 ```
 
 ### Rules location
@@ -104,8 +108,11 @@ configured in the `pyproject.toml` file.
 ```python
 from dbt_score import Model, rule, RuleViolation
 
+
 @rule
-def sql_has_reasonable_number_of_lines(model: Model, max_lines: int = 200) -> RuleViolation | None:
+def sql_has_reasonable_number_of_lines(
+    model: Model, max_lines: int = 200
+) -> RuleViolation | None:
     """The SQL query of a model should not be too long."""
     count_lines = len(model.raw_code.split("\n"))
     if count_lines > max_lines:
@@ -128,15 +135,18 @@ evaluated, otherwise it should be ignored.
 ```python
 from dbt_score import Model, RuleFilter, rule_filter
 
+
 @rule_filter
 def only_schema_x(model: Model) -> bool:
     """Only applies a rule to schema X."""
-    return model.schema.lower() == 'x'
+    return model.schema.lower() == "x"
+
 
 class SkipSchemaY(RuleFilter):
     description = "Applies a rule to every schema but Y."
+
     def evaluate(self, model: Model) -> bool:
-      return model.schema.lower() != 'y'
+        return model.schema.lower() != "y"
 ```
 
 Filters also rely on type-annotations to dictate whether they apply to models,
@@ -145,15 +155,18 @@ sources, snapshots, seeds, or exposures:
 ```python
 from dbt_score import RuleFilter, rule_filter, Source
 
+
 @rule_filter
 def only_from_source_a(source: Source) -> bool:
-   """Only applies a rule to source tables from source X."""
-   return source.source_name.lower() == 'a'
+    """Only applies a rule to source tables from source X."""
+    return source.source_name.lower() == "a"
+
 
 class SkipSourceDatabaseB(RuleFilter):
-   description = "Applies a rule to every source except Database B."
-   def evaluate(self, source: Source) -> bool:
-      return source.database.lower() != 'b'
+    description = "Applies a rule to every source except Database B."
+
+    def evaluate(self, source: Source) -> bool:
+        return source.database.lower() != "b"
 ```
 
 Similar to setting a rule severity, standard rules can have filters set in the
@@ -163,6 +176,7 @@ accept the configuration file or a decorator parameter.
 ```python
 from dbt_score import Model, rule, RuleViolation
 from my_project import only_schema_x
+
 
 @rule(rule_filters={only_schema_x()})
 def models_in_x_follow_naming_standard(model: Model) -> RuleViolation | None:

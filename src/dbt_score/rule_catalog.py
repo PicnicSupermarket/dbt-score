@@ -114,7 +114,7 @@ def display_catalog(config: Config, title: str, format: str) -> None:
     elif format == "markdown":
         formatter = MarkdownFormatter()
     else:
-        raise Exception(f"Format {format} is not valid.")
+        raise ValueError(f"Format {format} is not valid.")
 
     rule_registry = RuleRegistry(config)
     rule_registry.load_all()

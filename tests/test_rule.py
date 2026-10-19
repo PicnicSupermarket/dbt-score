@@ -168,7 +168,6 @@ class TestRuleFilterValidation:
             @rule(rule_filters={rule_filter})
             def model_always_passes(model: Model) -> RuleViolation | None:
                 """Description."""
-                pass
 
         assert "Mismatched resource_type on filter" in str(excinfo.value)
         assert "Expected Model, but got Source" in str(excinfo.value)

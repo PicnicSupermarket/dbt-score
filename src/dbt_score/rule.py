@@ -2,13 +2,11 @@
 
 import inspect
 import typing
+from collections.abc import Callable, Iterable
 from dataclasses import dataclass, field
 from enum import Enum
 from typing import (
     Any,
-    Callable,
-    Iterable,
-    Type,
     TypeAlias,
     cast,
     overload,
@@ -117,7 +115,7 @@ class Rule:
                 )
 
     @classmethod
-    def _introspect_resource_type(cls) -> Type[Evaluable]:
+    def _introspect_resource_type(cls) -> type[Evaluable]:
         evaluate_func = getattr(cls, "_orig_evaluate", cls.evaluate)
 
         sig = inspect.signature(evaluate_func)
@@ -201,27 +199,27 @@ class Rule:
 
 
 @overload
-def rule(__func: ModelRuleEvaluationType) -> Type[Rule]: ...
+def rule(func: ModelRuleEvaluationType, /) -> type[Rule]: ...
 
 
 @overload
-def rule(__func: SourceRuleEvaluationType) -> Type[Rule]: ...
+def rule(func: SourceRuleEvaluationType, /) -> type[Rule]: ...
 
 
 @overload
-def rule(__func: SnapshotRuleEvaluationType) -> Type[Rule]: ...
+def rule(func: SnapshotRuleEvaluationType, /) -> type[Rule]: ...
 
 
 @overload
-def rule(__func: ExposureRuleEvaluationType) -> Type[Rule]: ...
+def rule(func: ExposureRuleEvaluationType, /) -> type[Rule]: ...
 
 
 @overload
-def rule(__func: SeedRuleEvaluationType) -> Type[Rule]: ...
+def rule(func: SeedRuleEvaluationType, /) -> type[Rule]: ...
 
 
 @overload
-def rule(__func: MacroRuleEvaluationType) -> Type[Rule]: ...
+def rule(func: MacroRuleEvaluationType, /) -> type[Rule]: ...
 
 
 @overload
@@ -230,16 +228,17 @@ def rule(
     description: str | None = None,
     severity: Severity = Severity.MEDIUM,
     rule_filters: set[RuleFilter] | None = None,
-) -> Callable[[RuleEvaluationType], Type[Rule]]: ...
+) -> Callable[[RuleEvaluationType], type[Rule]]: ...
 
 
 def rule(
-    __func: RuleEvaluationType | None = None,
+    func: RuleEvaluationType | None = None,
+    /,
     *,
     description: str | None = None,
     severity: Severity = Severity.MEDIUM,
     rule_filters: set[RuleFilter] | None = None,
-) -> Type[Rule] | Callable[[RuleEvaluationType], Type[Rule]]:
+) -> type[Rule] | Callable[[RuleEvaluationType], type[Rule]]:
     """Rule decorator.
 
     The rule decorator creates a rule class (subclass of Rule) and returns it.
@@ -249,13 +248,13 @@ def rule(
     - ``@rule(description="...")``
 
     Args:
-        __func: The rule evaluation function being decorated.
+        func: The rule evaluation function being decorated.
         description: The description of the rule.
         severity: The severity of the rule.
         rule_filters: Set of RuleFilter that filters the items that the rule applies to.
     """
 
-    def decorator_rule(func: RuleEvaluationType) -> Type[Rule]:
+    def decorator_rule(func: RuleEvaluationType) -> type[Rule]:
         """Decorator function."""
         if func.__doc__ is None and description is None:
             raise AttributeError("Rule must define `description` or `func.__doc__`.")
@@ -296,9 +295,9 @@ def rule(
 
         return rule_class
 
-    if __func is not None:
+    if func is not None:
         # The syntax @rule is used
-        return decorator_rule(__func)
+        return decorator_rule(func)
     else:
         # The syntax @rule(...) is used
         return decorator_rule
