@@ -29,19 +29,22 @@ class Score:
 class Scorer:
     """Logic for computing scores."""
 
-    # This magic number comes from rule severity.
-    # Assuming a rule violation:
-    # - A low severity yields a score 2/3
-    # - A medium severity yields a score 1/3
-    # - A high severity yields a score 0/3
-    score_cardinality = 3
-
     min_score = 0.0
     max_score = 10.0
 
     def __init__(self, config: Config) -> None:
         """Create a Scorer object."""
         self._config = config
+
+        # Values come from severity. A rule is worth `score_cardinality`
+        # points; a violation costs the severity's value. With the default
+        # values (low=1, medium=2, high=3) and cardinality of 3, a violation
+        # yields a score of 2/3 (low), 1/3 (medium) or 0/3 (high). CRITICAL is
+        # excluded from the cardinality and handled separately: any critical
+        # violation forces the score to 0.
+        self._values = config.severity_value_config.as_dict()
+        non_critical = {k: v for k, v in self._values.items() if k != Severity.CRITICAL}
+        self.score_cardinality = max(non_critical.values())
 
     def score_evaluable(self, evaluable_results: EvaluableResultsType) -> Score:
         """Compute the score of a given evaluable."""
@@ -62,9 +65,9 @@ class Scorer:
                 sum(
                     [
                         # The more severe the violation, the more points are lost
-                        self.score_cardinality - rule.severity.value
-                        if isinstance(result, RuleViolation)  # Either 0/3, 1/3 or 2/3
-                        else self.score_cardinality  # 3/3
+                        self.score_cardinality - self._values[rule.severity]
+                        if isinstance(result, RuleViolation)
+                        else self.score_cardinality
                         for rule, result in evaluable_results.items()
                     ]
                 )

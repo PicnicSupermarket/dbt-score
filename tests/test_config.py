@@ -5,7 +5,7 @@ from unittest.mock import patch
 
 import pytest
 
-from dbt_score.config import BadgeConfig, Config
+from dbt_score.config import BadgeConfig, Config, SeverityValueConfig
 from dbt_score.rule import RuleConfig, Severity
 
 
@@ -27,6 +27,10 @@ def test_load_valid_toml_file(valid_config_path):
     assert config.badge_config.third.icon == "3️⃣"
     assert config.badge_config.second.icon == "2️⃣"
     assert config.badge_config.first.icon == "1️⃣"
+    assert config.severity_value_config.low == 1
+    assert config.severity_value_config.medium == 3
+    assert config.severity_value_config.high == 5
+    assert config.severity_value_config.critical == 7
     assert config.fail_project_under == 7.5
     assert config.fail_any_item_under == 6.9
     assert config.rules_config[
@@ -104,9 +108,42 @@ def test_invalid_badge_thresholds():
         badge_config.validate()
 
 
+@patch("dbt_score.config.open")
+def test_load_invalid_severity_value_config(mock_open):
+    """Test that an invalid severity value config raises an exception."""
+    config = Config()
+
+    with patch("dbt_score.config.tomllib.load") as mock_load:
+        mock_load.return_value = {
+            "tool": {"dbt-score": {"severity_values": {"foo": 1}}}
+        }
+        with pytest.raises(
+            AttributeError, match="Severity values: config only accepts"
+        ):
+            config._load_toml_file("foo")
+
+
+def test_invalid_severity_values():
+    """Test that invalid severity values raise an exception."""
+    severity_value_config = SeverityValueConfig()
+    severity_value_config.medium = 0
+    with pytest.raises(ValueError, match=r"'medium' must be greater than 0."):
+        severity_value_config.validate()
+
+    severity_value_config = SeverityValueConfig()
+    severity_value_config.high = "3"  # type: ignore[assignment]
+    with pytest.raises(ValueError, match=r"'high' must be an integer."):
+        severity_value_config.validate()
+
+    severity_value_config = SeverityValueConfig()
+    severity_value_config.low = 5
+    with pytest.raises(ValueError, match=r"strictly increasing"):
+        severity_value_config.validate()
+
+
 def test_valid_rule_config(valid_config_path, rule_with_config):
     """Test that a valid rule config can be loaded."""
-    config = RuleConfig(severity=Severity(4), config={"model_name": "baz"})
+    config = RuleConfig(severity=Severity.CRITICAL, config={"model_name": "baz"})
     rule_with_config = rule_with_config(config)
     assert rule_with_config.severity == Severity.CRITICAL
     assert rule_with_config.default_config == {"model_name": "model1"}
