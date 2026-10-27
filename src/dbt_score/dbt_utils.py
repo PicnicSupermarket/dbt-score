@@ -2,9 +2,10 @@
 
 import contextlib
 import os
+from collections.abc import Callable, Iterable, Iterator
 from functools import wraps
 from pathlib import Path
-from typing import Any, Callable, Iterable, Iterator, cast
+from typing import Any, cast
 
 # Conditionally import dbt objects.
 try:
@@ -75,7 +76,7 @@ def dbt_parse() -> "dbtRunnerResult":
         DbtParseException: dbt parse failed.
     """
     with _disable_dbt_stdout():
-        result: "dbtRunnerResult" = dbtRunner().invoke(["parse"])
+        result: dbtRunnerResult = dbtRunner().invoke(["parse"])
 
     if not result.success:
         raise DbtParseException(root_cause=result.exception)
@@ -105,7 +106,7 @@ def dbt_ls(
         cmd += ["--exclude", *exclude]
 
     with _disable_dbt_stdout():
-        result: "dbtRunnerResult" = dbtRunner().invoke(cmd)
+        result: dbtRunnerResult = dbtRunner().invoke(cmd)
 
     if not result.success:
         raise DbtLsException("dbt ls failed.") from result.exception

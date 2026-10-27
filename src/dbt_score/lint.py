@@ -1,7 +1,8 @@
 """Lint dbt metadata."""
 
+from collections.abc import Iterable
 from pathlib import Path
-from typing import Iterable, Literal
+from typing import Literal
 
 from dbt_score.config import Config
 from dbt_score.evaluation import Evaluation

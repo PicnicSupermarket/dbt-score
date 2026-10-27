@@ -8,7 +8,7 @@ import logging
 import os
 import pkgutil
 import sys
-from typing import Iterator, Type
+from collections.abc import Iterator
 
 from dbt_score.config import Config
 from dbt_score.exceptions import DuplicatedRuleException
@@ -74,7 +74,7 @@ class RuleRegistry:
                 ):
                     self._add_filter(obj)
 
-    def _add_rule(self, rule: Type[Rule]) -> None:
+    def _add_rule(self, rule: type[Rule]) -> None:
         """Initialize and add a rule."""
         rule_name = rule.source()
         if rule_name in self._rules:
@@ -83,7 +83,7 @@ class RuleRegistry:
             rule_config = self.config.rules_config.get(rule_name, RuleConfig())
             self._rules[rule_name] = rule(rule_config=rule_config)
 
-    def _add_filter(self, rule_filter: Type[RuleFilter]) -> None:
+    def _add_filter(self, rule_filter: type[RuleFilter]) -> None:
         """Initialize and add a filter."""
         filter_name = rule_filter.source()
         if filter_name in self._rule_filters:

@@ -1,9 +1,7 @@
 """Vendored utility functions from https://github.com/more-itertools/more-itertools."""
 
+from collections.abc import Callable, Iterable
 from typing import (
-    Callable,
-    Iterable,
-    Optional,
     TypeVar,
     overload,
 )
@@ -28,8 +26,8 @@ def first_true(
 
 def first_true(
     iterable: Iterable[_T],
-    default: Optional[_U] = None,
-    pred: Optional[Callable[[_T], object]] = None,
+    default: _U | None = None,
+    pred: Callable[[_T], object] | None = None,
 ) -> _T | _U | None:
     """Returns the first true value in the iterable.
 

@@ -61,41 +61,43 @@ def sql_has_reasonable_number_of_lines(
 @rule(severity=Severity.LOW)
 def has_example_sql(model: Model) -> RuleViolation | None:
     """The documentation of a model should have an example query."""
-    if model.language == "sql":
-        if "```sql" not in (model.description or ""):
-            return RuleViolation(
-                "The model description does not include an example SQL query."
-            )
+    if model.language == "sql" and "```sql" not in (model.description or ""):
+        return RuleViolation(
+            "The model description does not include an example SQL query."
+        )
 
 
 @rule(rule_filters={is_table()})
 def single_pk_defined_at_column_level(model: Model) -> RuleViolation | None:
     """Single-column PK must be defined as a column constraint."""
     for constraint in model.constraints:
-        if constraint.type == "primary_key":
-            if constraint.columns is not None and len(constraint.columns) == 1:
-                return RuleViolation(
-                    f"Single-column PK {constraint.columns[0]} must be defined as a "
-                    f"column constraint."
-                )
+        if (
+            constraint.type == "primary_key"
+            and constraint.columns is not None
+            and len(constraint.columns) == 1
+        ):
+            return RuleViolation(
+                f"Single-column PK {constraint.columns[0]} must be defined as a "
+                f"column constraint."
+            )
 
 
 @rule(rule_filters={is_table()})
 def single_column_uniqueness_at_column_level(model: Model) -> RuleViolation | None:
     """Single-column uniqueness test must be defined as a column test."""
     for data_test in model.tests:
-        if data_test.type == "unique_combination_of_columns":
-            if len(data_test.kwargs.get("combination_of_columns", [])) == 1:
-                return RuleViolation(
-                    "Single-column uniqueness test must be defined as a column test."
-                )
+        if (
+            data_test.type == "unique_combination_of_columns"
+            and len(data_test.kwargs.get("combination_of_columns", [])) == 1
+        ):
+            return RuleViolation(
+                "Single-column uniqueness test must be defined as a column test."
+            )
 
 
 @rule(rule_filters={is_table()})
 def has_uniqueness_test(model: Model) -> RuleViolation | None:
     """Model has uniqueness test for primary key."""
-    # ruff: noqa: C901 [too-complex]
-
     # Single-column PK
     for column in model.columns:
         for column_constraint in column.constraints:
@@ -118,9 +120,10 @@ def has_uniqueness_test(model: Model) -> RuleViolation | None:
         return None
 
     for data_test in model.tests:
-        if data_test.type == "unique_combination_of_columns":
-            if set(data_test.kwargs.get("combination_of_columns")) == set(pk_columns):  # type: ignore
-                return None
+        if data_test.type == "unique_combination_of_columns" and set(
+            data_test.kwargs.get("combination_of_columns")  # type: ignore
+        ) == set(pk_columns):
+            return None
     return RuleViolation(
         f"No uniqueness test defined and matching PK {','.join(pk_columns)}."
     )
