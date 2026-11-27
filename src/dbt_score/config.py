@@ -62,6 +62,7 @@ class Config:
         """Initialize the Config object."""
         self.rule_namespaces: list[str] = ["dbt_score.rules", "dbt_score_rules"]
         self.disabled_rules: list[str] = []
+        self.selected_rules: list[str] = []
         self.inject_cwd_in_python_path = True
         self.rules_config: dict[str, RuleConfig] = {}
         self.config_file: Path | None = None

@@ -33,6 +33,29 @@ def test_disabled_rule_registry_discovery():
     ]
 
 
+def test_selected_rule_registry_discovery():
+    """Ensure only selected rules are discovered."""
+    config = Config()
+    config.selected_rules = ["tests.rules.nested.example.rule_test_nested_example"]
+    r = RuleRegistry(config)
+    r._load("tests.rules")
+    assert sorted(r._rules.keys()) == [
+        "tests.rules.nested.example.rule_test_nested_example",
+    ]
+
+
+def test_selected_rule_ignores_disabled_rules():
+    """Ensure selected rules are discovered even if they are disabled."""
+    config = Config()
+    config.disabled_rules = ["tests.rules.nested.example.rule_test_nested_example"]
+    config.selected_rules = ["tests.rules.nested.example.rule_test_nested_example"]
+    r = RuleRegistry(config)
+    r._load("tests.rules")
+    assert sorted(r._rules.keys()) == [
+        "tests.rules.nested.example.rule_test_nested_example",
+    ]
+
+
 def test_configured_rule_registry_discovery(valid_config_path):
     """Ensure rules are discovered and configured correctly."""
     config = Config()

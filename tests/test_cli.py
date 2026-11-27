@@ -4,7 +4,7 @@ from unittest.mock import MagicMock, patch
 
 from click.testing import CliRunner
 
-from dbt_score.cli import lint
+from dbt_score.cli import lint, list_command
 from dbt_score.dbt_utils import DbtParseException
 from dbt_score.scoring import Score
 
@@ -17,6 +17,53 @@ def test_invalid_options():
             lint, ["--manifest", "fake_manifest.json", "--run-dbt-parse"]
         )
         assert result.exit_code == 2  # pylint: disable=PLR2004
+
+
+def test_selected_and_disabled_rule_cannot_be_combined():
+    """Test that --selected-rule and --disabled-rule cannot be used together."""
+    runner = CliRunner()
+    with patch("dbt_score.cli.Config._load_toml_file"):
+        for command, args in [
+            (lint, ["--manifest", "fake_manifest.json"]),
+            (list_command, []),
+        ]:
+            result = runner.invoke(
+                command,
+                [*args, "--selected-rule", "foo", "--disabled-rule", "bar"],
+            )
+            assert result.exit_code == 2  # pylint: disable=PLR2004
+            assert "cannot be used with" in result.output
+
+
+def test_lint_selected_rule(manifest_path):
+    """Test that lint only runs the selected rule."""
+    runner = CliRunner()
+    with patch("dbt_score.cli.Config._load_toml_file"):
+        result = runner.invoke(
+            lint,
+            [
+                "--manifest",
+                manifest_path,
+                "--show",
+                "all",
+                "--selected-rule",
+                "dbt_score.rules.generic.has_owner",
+            ],
+        )
+        assert "dbt_score.rules.generic.has_owner" in result.output
+        assert "dbt_score.rules.generic.has_description" not in result.output
+
+
+def test_list_selected_rule():
+    """Test that list only shows the selected rule."""
+    runner = CliRunner()
+    with patch("dbt_score.cli.Config._load_toml_file"):
+        result = runner.invoke(
+            list_command, ["--selected-rule", "dbt_score.rules.generic.has_owner"]
+        )
+        assert result.exit_code == 0
+        assert "dbt_score.rules.generic.has_owner" in result.output
+        assert "dbt_score.rules.generic.has_description" not in result.output
 
 
 def test_lint_existing_manifest(manifest_path):
