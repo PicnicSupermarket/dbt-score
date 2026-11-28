@@ -15,6 +15,7 @@ from dbt_score.dbt_utils import (
     dbt_parse,
     get_default_manifest_path,
 )
+from dbt_score.exceptions import RuleNotFoundException
 from dbt_score.lint import lint_dbt_project
 from dbt_score.rule_catalog import display_catalog
 
@@ -74,6 +75,12 @@ def cli() -> None:
     multiple=True,
 )
 @click.option(
+    "--selected-rule",
+    help="Rule to select. Only selected rules are run.",
+    default=None,
+    multiple=True,
+)
+@click.option(
     "--manifest",
     "-m",
     help="Manifest filepath.",
@@ -122,13 +129,14 @@ def cli() -> None:
     default=False,
 )
 @click.pass_context
-def lint(  # noqa: PLR0912, C901
+def lint(  # noqa: PLR0912, PLR0913, PLR0917, C901
     ctx: click.Context,
     format: Literal["plain", "manifest", "ascii", "json"],
     select: tuple[str, ...],
     exclude: tuple[str, ...],
     namespace: list[str],
     disabled_rule: list[str],
+    selected_rule: list[str],
     manifest: Path,
     run_dbt_parse: bool,
     fail_project_under: float | None,
@@ -143,6 +151,8 @@ def lint(  # noqa: PLR0912, C901
     )
     if manifest_provided and run_dbt_parse:
         raise click.UsageError("--run-dbt-parse cannot be used with --manifest.")
+    if disabled_rule and selected_rule:
+        raise click.UsageError("--disabled-rule cannot be used with --selected-rule.")
 
     config = Config()
     config.load()
@@ -150,6 +160,8 @@ def lint(  # noqa: PLR0912, C901
         config.overload({"rule_namespaces": namespace})
     if disabled_rule:
         config.overload({"disabled_rules": disabled_rule})
+    if selected_rule:
+        config.overload({"selected_rules": selected_rule})
     if fail_project_under is not None:
         config.overload({"fail_project_under": fail_project_under})
     if fail_any_item_under is not None:
@@ -189,6 +201,10 @@ def lint(  # noqa: PLR0912, C901
         logger.error(exc)
         ctx.exit(2)
 
+    except RuleNotFoundException as exc:
+        logger.error(exc)
+        ctx.exit(2)
+
     except Exception:
         logger.error(traceback.format_exc())
         ctx.exit(2)
@@ -215,6 +231,12 @@ def lint(  # noqa: PLR0912, C901
     multiple=True,
 )
 @click.option(
+    "--selected-rule",
+    help="Rule to select. Select only one rule",
+    default=None,
+    multiple=True,
+)
+@click.option(
     "--title",
     help="Page title (Markdown only).",
     default=None,
@@ -227,14 +249,25 @@ def lint(  # noqa: PLR0912, C901
     default="terminal",
 )
 def list_command(
-    namespace: list[str], disabled_rule: list[str], title: str, format: str
+    namespace: list[str],
+    disabled_rule: list[str],
+    selected_rule: list[str],
+    title: str,
+    format: str,
 ) -> None:
     """Display rules list."""
+    if disabled_rule and selected_rule:
+        raise click.UsageError("--disabled-rule cannot be used with --selected-rule.")
     config = Config()
     config.load()
     if namespace:
         config.overload({"rule_namespaces": namespace})
     if disabled_rule:
         config.overload({"disabled_rules": disabled_rule})
+    if selected_rule:
+        config.overload({"selected_rules": selected_rule})
 
-    display_catalog(config, title, format)
+    try:
+        display_catalog(config, title, format)
+    except RuleNotFoundException as exc:
+        raise click.UsageError(str(exc)) from exc

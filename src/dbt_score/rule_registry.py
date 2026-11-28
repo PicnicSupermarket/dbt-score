@@ -11,7 +11,7 @@ import sys
 from collections.abc import Iterator
 
 from dbt_score.config import Config
-from dbt_score.exceptions import DuplicatedRuleException
+from dbt_score.exceptions import DuplicatedRuleException, RuleNotFoundException
 from dbt_score.rule import Rule, RuleConfig
 from dbt_score.rule_filter import RuleFilter
 
@@ -79,7 +79,11 @@ class RuleRegistry:
         rule_name = rule.source()
         if rule_name in self._rules:
             raise DuplicatedRuleException(rule_name)
-        if rule_name not in self.config.disabled_rules:
+        if self.config.selected_rules:
+            should_load = rule_name in self.config.selected_rules
+        else:
+            should_load = rule_name not in self.config.disabled_rules
+        if should_load:
             rule_config = self.config.rules_config.get(rule_name, RuleConfig())
             self._rules[rule_name] = rule(rule_config=rule_config)
 
@@ -104,6 +108,11 @@ class RuleRegistry:
         sys.path = old_sys_path
 
         self._load_filters_into_rules()
+        unknown_rules = [
+            name for name in self.config.selected_rules if name not in self._rules
+        ]
+        if unknown_rules:
+            raise RuleNotFoundException(unknown_rules)
 
     def _load_filters_into_rules(self) -> None:
         """Loads RuleFilters into Rule objects.

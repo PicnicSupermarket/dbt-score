@@ -203,3 +203,11 @@ The debugger is the standard `pdb`, see
 
 Naturally, you're free to use your debugger of choice, this option exists to
 enable quick debugging in any environment.
+
+To only run the rule you're working on, select it with `--selected-rule`. The
+option can be repeated to select several rules, and cannot be combined with
+`--disabled-rule`:
+
+```shell
+dbt-score lint --selected-rule custom_rules.my_new_rule
+```

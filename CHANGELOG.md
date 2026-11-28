@@ -8,6 +8,9 @@ and this project adheres to
 
 ## [Unreleased]
 
+- Add a `--selected-rule` option to `lint` and `list` to only run the selected
+  rules (#118).
+
 ## [0.19.0] - 2026-10-07
 
 - Drop support for Python 3.10. The minimum required version is now 3.11.
