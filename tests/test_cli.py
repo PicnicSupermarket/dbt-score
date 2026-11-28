@@ -219,3 +219,23 @@ def test_lint_fail_thresholds_zero(manifest_path):
         )
     # With thresholds at 0 and scores at 0, nothing is strictly under -> pass.
     assert result.exit_code == 0
+
+
+def test_lint_selected_rule_not_found(manifest_path, caplog):
+    """Test that lint fails when a selected rule does not exist."""
+    runner = CliRunner()
+    with patch("dbt_score.cli.Config._load_toml_file"):
+        result = runner.invoke(
+            lint, ["--manifest", manifest_path, "--selected-rule", "does.not.exist"]
+        )
+        assert result.exit_code == 2  # pylint: disable=PLR2004
+        assert "does.not.exist" in caplog.text
+
+
+def test_list_selected_rule_not_found():
+    """Test that list fails when a selected rule does not exist."""
+    runner = CliRunner()
+    with patch("dbt_score.cli.Config._load_toml_file"):
+        result = runner.invoke(list_command, ["--selected-rule", "does.not.exist"])
+        assert result.exit_code == 2  # pylint: disable=PLR2004
+        assert "does.not.exist" in result.output

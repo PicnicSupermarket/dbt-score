@@ -15,6 +15,7 @@ from dbt_score.dbt_utils import (
     dbt_parse,
     get_default_manifest_path,
 )
+from dbt_score.exceptions import RuleNotFoundException
 from dbt_score.lint import lint_dbt_project
 from dbt_score.rule_catalog import display_catalog
 
@@ -200,6 +201,10 @@ def lint(  # noqa: PLR0912, PLR0913, PLR0917, C901
         logger.error(exc)
         ctx.exit(2)
 
+    except RuleNotFoundException as exc:
+        logger.error(exc)
+        ctx.exit(2)
+
     except Exception:
         logger.error(traceback.format_exc())
         ctx.exit(2)
@@ -262,4 +267,7 @@ def list_command(
     if selected_rule:
         config.overload({"selected_rules": selected_rule})
 
-    display_catalog(config, title, format)
+    try:
+        display_catalog(config, title, format)
+    except RuleNotFoundException as exc:
+        raise click.UsageError(str(exc)) from exc

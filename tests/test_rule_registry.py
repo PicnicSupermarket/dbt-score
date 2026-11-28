@@ -4,7 +4,7 @@ import pytest
 
 from dbt_score import Severity
 from dbt_score.config import Config
-from dbt_score.exceptions import DuplicatedRuleException
+from dbt_score.exceptions import DuplicatedRuleException, RuleNotFoundException
 from dbt_score.rule_registry import RuleRegistry
 
 
@@ -90,3 +90,13 @@ def test_rule_registry_rule_filters(valid_config_path, model1, model2):
 
     assert not r.rules["tests.rules.rules.rule_test_example"].should_evaluate(model1)
     assert r.rules["tests.rules.rules.rule_test_example"].should_evaluate(model2)
+
+
+def test_selected_rule_not_found():
+    """Ensure an error is raised when a selected rule does not exist."""
+    config = Config()
+    config.rule_namespaces = ["tests.rules"]
+    config.selected_rules = ["tests.rules.does_not_exist"]
+    r = RuleRegistry(config)
+    with pytest.raises(RuleNotFoundException):
+        r.load_all()
